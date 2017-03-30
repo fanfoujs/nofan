@@ -31,4 +31,5 @@ $ nofan h              # alias for `nofan home`
 $ nofan p              # alias for `nofan public`
 $ nofan m              # alias for `nofan mentions`
 $ nofan "hi nofan."    # post status "hi nofan"
+$ nofan undo           # delete last status
 ```

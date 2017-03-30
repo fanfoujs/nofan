@@ -114,6 +114,17 @@ class Nofan {
     });
   }
 
+  static undo() {
+    Nofan._get('/statuses/user_timeline', {}, (e, res, obj) => {
+      if (e) console.error(e);
+      else {
+        Nofan._post('/statuses/destroy', {id: obj[0].id}, (e, res, obj) => {
+          if (e) console.error(e);
+        });
+      }
+    });
+  }
+
   static mentions(count) {
     count = count || 10;
     Nofan._get('/statuses/mentions', {count: count}, (e, res, obj) => {
@@ -164,6 +175,7 @@ class Nofan {
       if (e) {
         if (e.code === 'ENOENT') {
           console.error(`file '${homedir()}/.nofan/config.json' does not exist`.red);
+          console.log(`use 'nofan --help' list available commands`);
           return;
         }
         throw e;

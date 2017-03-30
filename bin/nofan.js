@@ -5,7 +5,14 @@ const program = require('commander');
 const Nofan = require('../lib/nofan');
 
 program
-  .version('0.0.1');
+  .version(require('../package').version);
+
+program
+  .command('config')
+  .description('config consumer key and consumer secret')
+  .action(function () {
+    Nofan.config();
+  });
 
 program
   .command('login')
@@ -19,13 +26,6 @@ program
   .description('logout nofan')
   .action(function () {
     Nofan.logout();
-  });
-
-program
-  .command('config')
-  .description('config nofan')
-  .action(function () {
-    Nofan.config();
   });
 
 program
@@ -50,6 +50,13 @@ program
   .description('show public timeline')
   .action(function (count) {
     Nofan.publicTimeline(count);
+  });
+
+program
+  .command('undo')
+  .description('delete last status')
+  .action(function () {
+    Nofan.undo();
   });
 
 program
