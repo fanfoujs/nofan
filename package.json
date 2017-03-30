@@ -1,0 +1,31 @@
+{
+  "name": "nofan",
+  "version": "0.0.1",
+  "description": "Fanfou Cli for Node.js",
+  "main": "index.js",
+  "bin": "bin/nofan.js",
+  "scripts": {
+    "build": "babel src -d lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LitoMore/nofan.git"
+  },
+  "author": "LitoMore",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LitoMore/nofan/issues"
+  },
+  "homepage": "https://github.com/LitoMore/nofan#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "fanfou-sdk": "^2.0.5",
+    "homedir": "^0.6.0",
+    "prompt": "^1.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-es2015": "^6.24.0"
+  }
+}
