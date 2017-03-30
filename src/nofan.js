@@ -233,7 +233,7 @@ class Nofan {
       let ats = status.text.match(/@([\u4E00-\u9FA5\uF900-\uFA2D\w\.]+)/g);
       if (ats === null) ats = [];
       ats.forEach((v) => {
-        text = text.replace(eval(`/${v}/`), v.blue);
+        text = text.replace(eval(`/${v}/g`), v.blue);
       });
       let photo_url = '';
       // if (status.hasOwnProperty('photo')) photo_url = ` ${status.photo.originurl}`.blue;
