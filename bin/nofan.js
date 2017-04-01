@@ -29,6 +29,14 @@ program
   });
 
 program
+  .command('switch')
+  .alias('s')
+  .description('switch account')
+  .action(function () {
+    Nofan.switchUser();
+  });
+
+program
   .command('home [count]')
   .alias('h')
   .description('show home timeline')
@@ -60,10 +68,10 @@ program
   });
 
 program
-  .command('*')
+  .command('* [more...]')
   .description('post')
   .action(function (text) {
-    Nofan.update(text);
+    Nofan.update(text.join(' '));
   });
 
 program.parse(process.argv);

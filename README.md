@@ -14,7 +14,7 @@ $ npm install -g nofan
 # config consumer key and consumer secret
 $ nofan config
 
-# login fanfou
+# login fanfou account
 $ nofan login
 ```
 
@@ -22,11 +22,16 @@ $ nofan login
 
 ```bash
 $ nofan --help         # show help
+$ nofan config         # config consumer key and consumer secret
+$ nofan login          # login fanfou account
+$ nofan logout         # logout current account
+$ nofan switch         # switch fanfou account
 $ nofan                # get the latest 10 messages from home timeline
 $ nofan home           # get the latest 10 messages from home timeline
 $ nofan mentions       # get the latest 10 messages from mentions
 $ nofan public         # get the latest 10 messages from public timeline
 $ nofan home 20        # get the latest 20 messages from public timeline
+$ nofan s              # alias for `nofan switch`
 $ nofan h              # alias for `nofan home`
 $ nofan p              # alias for `nofan public`
 $ nofan m              # alias for `nofan mentions`

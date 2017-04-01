@@ -5,6 +5,7 @@ const colors = require('colors');
 const prompt = require('prompt');
 const homedir = require('homedir');
 const Fanfou = require('fanfou-sdk');
+const inquirer = require('inquirer');
 
 class Nofan {
   static login() {
@@ -34,12 +35,23 @@ class Nofan {
             username: res.username,
             password: res.password,
           });
-          ff.xauth((e, res) => {
-            if (e) console.log('Login failed!');
+          ff.xauth((e, token) => {
+            if (e) console.log('Login failed!'.red);
             else {
-              Nofan._createTokenFile(JSON.stringify(res), () => {
-                console.log('Login succeed!');
-              })
+              config.USER = res.username;
+              Nofan._createJsonFile('config', config, () => {
+                Nofan._getAccount((account) => {
+                  account[res.username] = {
+                    CONSUMER_KEY: config.CONSUMER_KEY,
+                    CONSUMER_SECRET: config.CONSUMER_SECRET,
+                    OAUTH_TOKEN: token.oauth_token,
+                    OAUTH_TOKEN_SECRET: token.oauth_token_secret
+                  };
+                  Nofan._createJsonFile('account', account, () => {
+                    console.log('Login succeed!'.green);
+                  });
+                });
+              });
             }
           });
         }
@@ -48,11 +60,15 @@ class Nofan {
   }
 
   static logout() {
-    Nofan._createTokenFile(JSON.stringify({
-      oauth_token: '',
-      oauth_token_secret: '',
-    }), () => {
-      console.log('Logout succeed!');
+    Nofan._getConfig((config) => {
+      if (config.hasOwnProperty('USER')) {
+        Nofan._getAccount((account) => {
+          delete account[config.USER];
+          Nofan._createJsonFile('account', account, () => {
+            console.log('Logout succeed!');
+          });
+        });
+      }
     });
   }
 
@@ -79,12 +95,44 @@ class Nofan {
           CONSUMER_SECRET: res.consumer_secret,
         };
         Nofan._createConfigFile(
-          JSON.stringify(config),
+          config,
           () => {
             console.log(JSON.stringify(config));
           }
         );
       }
+    });
+  }
+
+  static switchUser() {
+    Nofan._getConfig((config) => {
+      Nofan._getAccount((account) => {
+        const choices = [];
+        const currentName = config.USER;
+        for (const name in account) {
+          if (account.hasOwnProperty(name)) {
+            if (currentName === name) choices.push({name: name, disabled: 'current'.green});
+            else choices.push(name);
+          }
+        }
+        if (choices.length > 1) {
+          inquirer.prompt([
+            {
+              type: 'list',
+              name: 'username',
+              message: 'Switch account',
+              choices: choices,
+            }
+          ]).then((user) => {
+            config.USER = user.username;
+            Nofan._createJsonFile('config', config, () => {
+              console.log(`Switch to '${user.username}'`);
+            });
+          });
+        } else {
+          console.log('no more account');
+        }
+      });
     });
   }
 
@@ -143,30 +191,33 @@ class Nofan {
 
   static _createConfigFile(config, callback) {
     Nofan._createNofanDir((res) => {
-      fs.writeFile(homedir() + '/.nofan/config.json', config, 'utf8', (err) => {
+      fs.writeFile(homedir() + '/.nofan/config.json', JSON.stringify(config, null, 2), 'utf8', (err) => {
         if (err) console.error(err);
         else callback(null);
       });
     });
   }
 
-  static _createTokenFile(token, callback) {
-    Nofan._createNofanDir((res) => {
-      fs.writeFile(homedir() + '/.nofan/token.json', token, 'utf8', (err) => {
-        if (err) console.error(err);
-        else {
-          callback(null);
-        }
-      })
+  static _createJsonFile(filename, content, callback) {
+    Nofan._createNofanDir(() => {
+      fs.writeFile(`${homedir()}/.nofan/${filename}.json`, JSON.stringify(content, null, 2), 'utf8', (e) => {
+        if (e) console.error(e);
+        else callback(null);
+      });
     });
   }
 
-  static _getTokens(callback) {
-    fs.readFile(homedir() + '/.nofan/token.json', 'utf8', (err, data) => {
-      if (err) callback(err);
-      else {
-        callback(null, data);
+  static _getToken(callback) {
+    fs.open(homedir() + '/.nofan/token.json', 'r', (e, fd) => {
+      if (e) {
+        if (e.code === 'ENOENT') {
+          console.error(`file '${homedir()}/.nofan/token.json' does not exist`.red);
+          console.log(`use 'nfoan --help' list availabe commands`);
+          return;
+        }
+        throw e;
       }
+      else callback(require(`${homedir()}/.nofan/token`));
     });
   }
 
@@ -184,44 +235,80 @@ class Nofan {
     });
   }
 
-  static _get(uri, params, callback) {
-    Nofan._getConfig((config) => {
-      Nofan._getTokens((e, data) => {
-        if (e) callback(e);
-        else {
-          const tokens = JSON.parse(data);
-          const ff = new Fanfou({
-            auth_type: 'oauth',
-            consumer_key: config.CONSUMER_KEY,
-            consumer_secret: config.CONSUMER_SECRET,
-            oauth_token: tokens.oauth_token,
-            oauth_token_secret: tokens.oauth_token_secret,
-          });
-          ff.get(uri, params, (e, res, obj) => {
-            callback(e, res, obj);
+  static _getAccount(callback) {
+    fs.open(homedir() + '/.nofan/account.json', 'r', (e, fd) => {
+      if (e) {
+        if (e.code === 'ENOENT') {
+          Nofan._createJsonFile('account', {}, () => {
+            callback(require(`${homedir()}/.nofan/account`));
           });
         }
+        else throw e;
+      }
+      else callback(require(`${homedir()}/.nofan/account`));
+    });
+  }
+
+  static _get(uri, params, callback) {
+    Nofan._getConfig((config) => {
+      Nofan._getAccount((account) => {
+        let user = account[config.USER];
+        if (!user) {
+          for (const name in account) {
+            if (account.hasOwnProperty(name)) {
+              user = account[name];
+              config.USER = name;
+              break;
+            }
+          }
+          if (!user) {
+            console.log('not logged in');
+            return;
+          }
+        }
+        Nofan._createJsonFile('config', config, () => {});
+        const ff = new Fanfou({
+          auth_type: 'oauth',
+          consumer_key: user.CONSUMER_KEY,
+          consumer_secret: user.CONSUMER_SECRET,
+          oauth_token: user.OAUTH_TOKEN,
+          oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+        });
+        ff.get(uri, params, (e, res, obj) => {
+          callback(e, res, obj);
+        });
       });
     });
   }
 
   static _post(uri, params, callback) {
     Nofan._getConfig((config) => {
-      Nofan._getTokens((e, data) => {
-        if (e) callback(e);
-        else {
-          const tokens = JSON.parse(data);
-          const ff = new Fanfou({
-            auth_type: 'oauth',
-            consumer_key: config.CONSUMER_KEY,
-            consumer_secret: config.CONSUMER_SECRET,
-            oauth_token: tokens.oauth_token,
-            oauth_token_secret: tokens.oauth_token_secret,
-          });
-          ff.post(uri, params, (e, res, obj) => {
-            callback(e, res, obj);
-          });
+      Nofan._getAccount((account) => {
+        let user = account[config.USER];
+        if (!user) {
+          for (const name in account) {
+            if (account.hasOwnProperty(name)) {
+              user = account[name];
+              config.USER = name;
+              break;
+            }
+          }
+          if (!user) {
+            console.log('not logged in');
+            return;
+          }
         }
+        Nofan._createJsonFile('config', config, () => {});
+        const ff = new Fanfou({
+          auth_type: 'oauth',
+          consumer_key: user.CONSUMER_KEY,
+          consumer_secret: user.CONSUMER_SECRET,
+          oauth_token: user.OAUTH_TOKEN,
+          oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+        });
+        ff.post(uri, params, (e, res, obj) => {
+          callback(e, res, obj);
+        });
       });
     });
   }
