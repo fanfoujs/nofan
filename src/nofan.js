@@ -6,26 +6,18 @@ const prompt = require('prompt');
 const homedir = require('homedir');
 const Fanfou = require('fanfou-sdk');
 const inquirer = require('inquirer');
+const async = require('async');
+const schema = require('./schema');
 
 class Nofan {
-  static login() {
-    Nofan._getConfig((config) => {
-      const schema = {
-        properties: {
-          username: {
-            description: 'Enter your username',
-            required: true
-          },
-          password: {
-            description: 'Enter your password',
-            hidden: true,
-            replace: '*'
-          }
-        }
-      };
+  /**
+   * command `nofan login`
+   */
+  static login () {
+    Nofan._getConfig((e, config) => {
       prompt.message = '<nofan>';
       prompt.start();
-      prompt.get(schema, function (e, res) {
+      prompt.get(schema.login, function (e, res) {
         if (e) console.error(e);
         else {
           const ff = new Fanfou({
@@ -40,7 +32,7 @@ class Nofan {
             else {
               config.USER = res.username;
               Nofan._createJsonFile('config', config, () => {
-                Nofan._getAccount((account) => {
+                Nofan._getAccount((e, account) => {
                   account[res.username] = {
                     CONSUMER_KEY: config.CONSUMER_KEY,
                     CONSUMER_SECRET: config.CONSUMER_SECRET,
@@ -59,10 +51,13 @@ class Nofan {
     });
   }
 
-  static logout() {
-    Nofan._getConfig((config) => {
+  /**
+   * command `nofan logout`
+   */
+  static logout () {
+    Nofan._getConfig((e, config) => {
       if (config.hasOwnProperty('USER')) {
-        Nofan._getAccount((account) => {
+        Nofan._getAccount((e, account) => {
           delete account[config.USER];
           Nofan._createJsonFile('account', account, () => {
             console.log('Logout succeed!');
@@ -72,29 +67,21 @@ class Nofan {
     });
   }
 
-  static config() {
-    const schema = {
-      properties: {
-        consumer_key: {
-          description: 'Enter your consumer key',
-          required: true
-        },
-        consumer_secret: {
-          description: 'Enter your consumer secret',
-          required: true
-        }
-      }
-    };
+  /**
+   * command `nofan config`
+   */
+  static config () {
     prompt.message = '<nofan>';
     prompt.start();
-    prompt.get(schema, function (e, res) {
+    prompt.get(schema.config, function (e, res) {
       if (e) console.error(e);
       else {
         const config = {
           CONSUMER_KEY: res.consumer_key,
           CONSUMER_SECRET: res.consumer_secret,
         };
-        Nofan._createConfigFile(
+        Nofan._createJsonFile(
+          'config',
           config,
           () => {
             console.log(JSON.stringify(config));
@@ -104,39 +91,43 @@ class Nofan {
     });
   }
 
-  static switchUser() {
-    Nofan._getConfig((config) => {
-      Nofan._getAccount((account) => {
-        const choices = [];
-        const currentName = config.USER;
-        for (const name in account) {
-          if (account.hasOwnProperty(name)) {
-            if (currentName === name) choices.push({name: name, disabled: 'current'.green});
-            else choices.push(name);
+  /**
+   * command `nofan switch`
+   */
+  static switchUser () {
+    Nofan._getFiles((e, config, account) => {
+      const choices = [];
+      const currentName = config.USER;
+      for (const name in account) {
+        if (account.hasOwnProperty(name)) {
+          if (currentName === name) choices.push({name: name, disabled: 'current'.green});
+          else choices.push(name);
+        }
+      }
+      if (choices.length > 1) {
+        inquirer.prompt([
+          {
+            type: 'list',
+            name: 'username',
+            message: 'Switch account to',
+            choices: choices,
           }
-        }
-        if (choices.length > 1) {
-          inquirer.prompt([
-            {
-              type: 'list',
-              name: 'username',
-              message: 'Switch account',
-              choices: choices,
-            }
-          ]).then((user) => {
-            config.USER = user.username;
-            Nofan._createJsonFile('config', config, () => {
-              console.log(`Switch to '${user.username}'`);
-            });
+        ]).then((user) => {
+          config.USER = user.username;
+          Nofan._createJsonFile('config', config, () => {
           });
-        } else {
-          console.log('no more account');
-        }
-      });
+        });
+      } else {
+        console.log('no more account');
+      }
     });
   }
 
-  static homeTimeline(count) {
+  /**
+   * Show home timeline
+   * @param count {number}
+   */
+  static homeTimeline (count) {
     count = count || 10;
     Nofan._get('/statuses/home_timeline', {count: count}, (e, res, obj) => {
       if (e) console.error(e);
@@ -146,7 +137,11 @@ class Nofan {
     });
   }
 
-  static publicTimeline(count) {
+  /**
+   * Show public timeline
+   * @param count {number}
+   */
+  static publicTimeline (count) {
     count = count || 10;
     Nofan._get('/statuses/public_timeline', {count: count}, (e, res, obj) => {
       if (e) console.error(e);
@@ -156,13 +151,20 @@ class Nofan {
     });
   }
 
-  static update(text) {
+  /**
+   * Post new status
+   * @param text {text}
+   */
+  static update (text) {
     Nofan._post('/statuses/update', {status: text}, (e, res, obj) => {
       if (e) console.log(e);
     });
   }
 
-  static undo() {
+  /**
+   * command `nofan undo`
+   */
+  static undo () {
     Nofan._get('/statuses/user_timeline', {}, (e, res, obj) => {
       if (e) console.error(e);
       else {
@@ -173,7 +175,11 @@ class Nofan {
     });
   }
 
-  static mentions(count) {
+  /**
+   * command `nofan mentions`
+   * @param count {number}
+   */
+  static mentions (count) {
     count = count || 10;
     Nofan._get('/statuses/mentions', {count: count}, (e, res, obj) => {
       if (e) console.error(e);
@@ -183,22 +189,23 @@ class Nofan {
     });
   }
 
-  static _createNofanDir(callback) {
+  /**
+   * @param callback
+   * @private
+   */
+  static _createNofanDir (callback) {
     fs.mkdir(homedir() + '/.nofan/', (res) => {
       callback(res);
     });
   }
 
-  static _createConfigFile(config, callback) {
-    Nofan._createNofanDir((res) => {
-      fs.writeFile(homedir() + '/.nofan/config.json', JSON.stringify(config, null, 2), 'utf8', (err) => {
-        if (err) console.error(err);
-        else callback(null);
-      });
-    });
-  }
-
-  static _createJsonFile(filename, content, callback) {
+  /**
+   * @param filename {text}
+   * @param content {object}
+   * @param callback
+   * @private
+   */
+  static _createJsonFile (filename, content, callback) {
     Nofan._createNofanDir(() => {
       fs.writeFile(`${homedir()}/.nofan/${filename}.json`, JSON.stringify(content, null, 2), 'utf8', (e) => {
         if (e) console.error(e);
@@ -207,21 +214,11 @@ class Nofan {
     });
   }
 
-  static _getToken(callback) {
-    fs.open(homedir() + '/.nofan/token.json', 'r', (e, fd) => {
-      if (e) {
-        if (e.code === 'ENOENT') {
-          console.error(`file '${homedir()}/.nofan/token.json' does not exist`.red);
-          console.log(`use 'nfoan --help' list availabe commands`);
-          return;
-        }
-        throw e;
-      }
-      else callback(require(`${homedir()}/.nofan/token`));
-    });
-  }
-
-  static _getConfig(callback) {
+  /**
+   * @param callback
+   * @private
+   */
+  static _getConfig (callback) {
     fs.open(homedir() + '/.nofan/config.json', 'r', (e, fd) => {
       if (e) {
         if (e.code === 'ENOENT') {
@@ -231,89 +228,129 @@ class Nofan {
         }
         throw e;
       }
-      else callback(require(`${homedir()}/.nofan/config`));
+      else callback(null, require(`${homedir()}/.nofan/config`));
     });
   }
 
-  static _getAccount(callback) {
+  /**
+   * @param callback
+   * @private
+   */
+  static _getAccount (callback) {
     fs.open(homedir() + '/.nofan/account.json', 'r', (e, fd) => {
       if (e) {
         if (e.code === 'ENOENT') {
           Nofan._createJsonFile('account', {}, () => {
-            callback(require(`${homedir()}/.nofan/account`));
+            callback(null, require(`${homedir()}/.nofan/account`));
           });
         }
         else throw e;
       }
-      else callback(require(`${homedir()}/.nofan/account`));
+      else callback(null, require(`${homedir()}/.nofan/account`));
     });
   }
 
-  static _get(uri, params, callback) {
-    Nofan._getConfig((config) => {
-      Nofan._getAccount((account) => {
-        let user = account[config.USER];
-        if (!user) {
-          for (const name in account) {
-            if (account.hasOwnProperty(name)) {
-              user = account[name];
-              config.USER = name;
-              break;
-            }
-          }
-          if (!user) {
-            console.log('not logged in');
-            return;
+  /**
+   * @param uri {text}
+   * @param params {object}
+   * @param callback
+   * @private
+   */
+  static _get (uri, params, callback) {
+    Nofan._getFiles((e, config, account) => {
+      let user = account[config.USER];
+      if (!user) {
+        for (const name in account) {
+          if (account.hasOwnProperty(name)) {
+            user = account[name];
+            config.USER = name;
+            break;
           }
         }
-        Nofan._createJsonFile('config', config, () => {});
-        const ff = new Fanfou({
-          auth_type: 'oauth',
-          consumer_key: user.CONSUMER_KEY,
-          consumer_secret: user.CONSUMER_SECRET,
-          oauth_token: user.OAUTH_TOKEN,
-          oauth_token_secret: user.OAUTH_TOKEN_SECRET,
-        });
-        ff.get(uri, params, (e, res, obj) => {
-          callback(e, res, obj);
-        });
+        if (!user) {
+          console.log('not logged in');
+          return;
+        }
+      }
+      Nofan._createJsonFile('config', config, () => {
+      });
+      const ff = new Fanfou({
+        auth_type: 'oauth',
+        consumer_key: user.CONSUMER_KEY,
+        consumer_secret: user.CONSUMER_SECRET,
+        oauth_token: user.OAUTH_TOKEN,
+        oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+      });
+      ff.get(uri, params, (e, res, obj) => {
+        callback(e, res, obj);
       });
     });
   }
 
-  static _post(uri, params, callback) {
-    Nofan._getConfig((config) => {
-      Nofan._getAccount((account) => {
-        let user = account[config.USER];
-        if (!user) {
-          for (const name in account) {
-            if (account.hasOwnProperty(name)) {
-              user = account[name];
-              config.USER = name;
-              break;
-            }
-          }
-          if (!user) {
-            console.log('not logged in');
-            return;
+  /**
+   * @param uri {text}
+   * @param params {object}
+   * @param callback
+   * @private
+   */
+  static _post (uri, params, callback) {
+    Nofan._getFiles((e, config, account) => {
+      let user = account[config.USER];
+      if (!user) {
+        for (const name in account) {
+          if (account.hasOwnProperty(name)) {
+            user = account[name];
+            config.USER = name;
+            break;
           }
         }
-        Nofan._createJsonFile('config', config, () => {});
-        const ff = new Fanfou({
-          auth_type: 'oauth',
-          consumer_key: user.CONSUMER_KEY,
-          consumer_secret: user.CONSUMER_SECRET,
-          oauth_token: user.OAUTH_TOKEN,
-          oauth_token_secret: user.OAUTH_TOKEN_SECRET,
-        });
-        ff.post(uri, params, (e, res, obj) => {
-          callback(e, res, obj);
-        });
+        if (!user) {
+          console.log('not logged in');
+          return;
+        }
+      }
+      Nofan._createJsonFile('config', config, () => {
+      });
+      const ff = new Fanfou({
+        auth_type: 'oauth',
+        consumer_key: user.CONSUMER_KEY,
+        consumer_secret: user.CONSUMER_SECRET,
+        oauth_token: user.OAUTH_TOKEN,
+        oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+      });
+      ff.post(uri, params, (e, res, obj) => {
+        callback(e, res, obj);
       });
     });
   }
 
-  static _displayTimeline(timeline) {
+  /**
+   * @param callback
+   * @private
+   */
+  static _getFiles (callback) {
+    async.parallel({
+      config: (cb) => {
+        Nofan._getConfig(cb);
+      },
+      account: (cb) => {
+        Nofan._getAccount(cb);
+      }
+    }, (e, res) => {
+      if (e) callback(e);
+      else {
+        const config = res.config;
+        const account = res.account;
+        callback(null, config, account);
+      }
+    });
+  }
+
+  /**
+   * @param timeline {object}
+   * @private
+   */
+  static _displayTimeline (timeline) {
     for (let i = 0; i < timeline.length; i++) {
       const status = timeline[i];
       let text = status.text;
