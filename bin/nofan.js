@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 const program = require('commander');
 const Nofan = require('../lib/nofan');
 
@@ -53,6 +52,13 @@ program
   });
 
 program
+  .command('me [count]')
+  .description('show my statuses')
+  .action(function (count) {
+    Nofan.me(count);
+  });
+
+program
   .command('public [count]')
   .alias('p')
   .description('show public timeline')
@@ -68,10 +74,14 @@ program
   });
 
 program
-  .command('* [more...]')
-  .description('post')
-  .action(function (text) {
-    Nofan.update(text.join(' '));
+  .arguments('<status> [more...]')
+  .option('-p, --photo <path>', 'attach a photo')
+  .description('')
+  .action(function (pre, more, options) {
+    more.unshift(pre);
+    const text = more.join(' ');
+    if (!options.photo) Nofan.update(text);
+    else Nofan.upload(options.photo, text);
   });
 
 program.parse(process.argv);

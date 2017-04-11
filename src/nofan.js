@@ -31,17 +31,29 @@ class Nofan {
             if (e) console.log('Login failed!'.red);
             else {
               config.USER = res.username;
-              Nofan._createJsonFile('config', config, () => {
-                Nofan._getAccount((e, account) => {
-                  account[res.username] = {
-                    CONSUMER_KEY: config.CONSUMER_KEY,
-                    CONSUMER_SECRET: config.CONSUMER_SECRET,
-                    OAUTH_TOKEN: token.oauth_token,
-                    OAUTH_TOKEN_SECRET: token.oauth_token_secret
-                  };
-                  Nofan._createJsonFile('account', account, () => {
-                    console.log('Login succeed!'.green);
+              async.parallel({
+                config: (callback) => {
+                  Nofan._createJsonFile('config', config, () => {
+                    callback(null);
                   });
+                },
+                account: (callback) => {
+                  Nofan._getAccount((e, account) => {
+                    if (e) callback(e);
+                    else callback(null, account);
+                  });
+                }
+              }, (error, result) => {
+                const account = result.account;
+                account[res.username] = {
+                  CONSUMER_KEY: config.CONSUMER_KEY,
+                  CONSUMER_SECRET: config.CONSUMER_SECRET,
+                  OAUTH_TOKEN: token.oauth_token,
+                  OAUTH_TOKEN_SECRET: token.oauth_token_secret
+                };
+                Nofan._createJsonFile('account', account, (e) => {
+                  if (e) console.error(e);
+                  else console.log('Login succeed!'.green);
                 });
               });
             }
@@ -162,6 +174,17 @@ class Nofan {
   }
 
   /**
+   * Post new status with photo
+   * @param path
+   * @param text
+   */
+  static upload(path, text) {
+    Nofan._upload(path, text, (e) => {
+      if (e) console.log(e);
+    });
+  }
+
+  /**
    * command `nofan undo`
    */
   static undo () {
@@ -190,6 +213,20 @@ class Nofan {
   }
 
   /**
+   * command `nofan me`
+   * @param count
+   */
+  static me (count) {
+    count = count || 10;
+    Nofan._get('/statuses/user_timeline', {count: count}, (e, res, obj) => {
+      if (e) console.error(e);
+      else {
+        Nofan._displayTimeline(obj);
+      }
+    });
+  }
+
+  /**
    * @param callback
    * @private
    */
@@ -208,7 +245,7 @@ class Nofan {
   static _createJsonFile (filename, content, callback) {
     Nofan._createNofanDir(() => {
       fs.writeFile(`${homedir()}/.nofan/${filename}.json`, JSON.stringify(content, null, 2), 'utf8', (e) => {
-        if (e) console.error(e);
+        if (e) callback(e);
         else callback(null);
       });
     });
@@ -320,6 +357,59 @@ class Nofan {
       });
       ff.post(uri, params, (e, res, obj) => {
         callback(e, res, obj);
+      });
+    });
+  }
+
+  /**
+   *
+   * @param path {text}
+   * @param status {text}
+   * @param callback
+   * @private
+   */
+  static _upload(path, status, callback) {
+    Nofan._getFiles((e, config, account) => {
+      let user = account[config.USER];
+      if (!user) {
+        for (const name in account) {
+          if (account.hasOwnProperty(name)) {
+            user = account[name];
+            config.USER = name;
+            break;
+          }
+        }
+        if (!user) {
+          console.log('not logged in');
+          return;
+        }
+      }
+      Nofan._createJsonFile('config', config, () => {
+      });
+      const ff = new Fanfou({
+        auth_type: 'oauth',
+        consumer_key: user.CONSUMER_KEY,
+        consumer_secret: user.CONSUMER_SECRET,
+        oauth_token: user.OAUTH_TOKEN,
+        oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+      });
+      fs.open(path, 'r', (e, fd) => {
+        if (e) {
+          if (e.code === 'ENOENT') {
+            console.error(`file '${path}' does not exist`.red);
+          }
+          else throw e;
+        }
+        else {
+          ff.upload(
+            fs.createReadStream(path),
+            status,
+            (e) => {
+              if (e) callback(e);
+              else callback(null);
+            }
+          );
+        }
       });
     });
   }
