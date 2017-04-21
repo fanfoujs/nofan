@@ -1,6 +1,6 @@
 {
   "name": "nofan",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Fanfou Cli for Node.js",
   "main": "index.js",
   "bin": "bin/nofan.js",
@@ -21,7 +21,7 @@
     "async": "^2.2.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
-    "fanfou-sdk": "^2.0.8",
+    "fanfou-sdk": "^2.0.7",
     "homedir": "^0.6.0",
     "inquirer": "^3.0.6",
     "prompt": "^1.0.0",
