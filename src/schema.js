@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const schema = {
   login: {
@@ -26,6 +26,6 @@ const schema = {
       }
     }
   }
-};
+}
 
-module.exports = schema;
+module.exports = schema
