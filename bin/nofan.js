@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander')
-const Nofan = require('../src/nofan')
+const Nofan = require('../lib/nofan')
 
 program
   .option('-t, --time', 'show time ago tag')
