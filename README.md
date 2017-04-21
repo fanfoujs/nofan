@@ -39,4 +39,5 @@ $ nofan m                    # alias for `nofan mentions`
 $ nofan hi nofan.            # post status "hi nofan."
 $ nofan undo                 # delete last status
 $ nofan hi -p ~/hola.png     # post status "hi" with a photo
+$ nofan home -t              # show timeline with time ago tag
 ```
