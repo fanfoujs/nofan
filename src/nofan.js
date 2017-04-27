@@ -144,7 +144,7 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/home_timeline', {count: count}, (e, res, obj) => {
+    Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, res, obj) => {
       if (e) console.error(e)
       else {
         Nofan._displayTimeline(obj, time_ago)
@@ -160,7 +160,7 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/public_timeline', {count: count}, (e, res, obj) => {
+    Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, res, obj) => {
       if (e) console.error(e)
       else {
         Nofan._displayTimeline(obj, time_ago)
@@ -211,7 +211,7 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/mentions', {count: count}, (e, res, obj) => {
+    Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, res, obj) => {
       if (e) console.error(e)
       else {
         Nofan._displayTimeline(obj, time_ago)
@@ -227,7 +227,7 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/user_timeline', {count: count}, (e, res, obj) => {
+    Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, res, obj) => {
       if (e) console.error(e)
       else {
         Nofan._displayTimeline(obj, time_ago)
@@ -452,20 +452,26 @@ class Nofan {
    */
   static _displayTimeline (timeline, time_ago) {
     time_ago = time_ago || false
-    for (let i = 0; i < timeline.length; i++) {
-      const status = timeline[i]
-      let text = status.text
-      let ats = status.text.match(/@([\u4E00-\u9FA5\uF900-\uFA2D\w\.]+)/g)
-      if (ats === null) ats = []
-      ats.forEach((v) => {
-        text = text.replace(eval(`/${v}/g`), v.blue)
+    timeline.forEach(status => {
+      let text = ''
+      status.txt.forEach(item => {
+        switch (item.type) {
+          case 'at':
+          case 'tag':
+          case 'link':
+            text += item.text.blue
+            break
+          default:
+            text += item.text
+        }
       })
-      let photo_url = ''
-      const status_time_ago = `(${new timeago().format(status.created_at)})`.green
-      // if (status.hasOwnProperty('photo')) photo_url = ` ${status.photo.originurl}`.blue;
-      if (!time_ago) console.log(`[${status.user.name.green}] ${text}${photo_url}`)
-      else console.log(`[${status.user.name.green}] ${text}${photo_url} ` + status_time_ago)
-    }
+      if (!time_ago) {
+        console.log(`[${status.user.name.green}] ${text}`)
+      } else {
+        const status_time_ago = `(${new timeago().format(status.created_at)})`.green
+        console.log(`[${status.user.name.green}] ${text} ` + status_time_ago)
+      }
+    })
   }
 }
 
