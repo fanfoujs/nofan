@@ -144,10 +144,10 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, res, obj) => {
+    Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(obj, time_ago)
+        Nofan._displayTimeline(statuses, time_ago)
       }
     })
   }
@@ -160,10 +160,10 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, res, obj) => {
+    Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(obj, time_ago)
+        Nofan._displayTimeline(statuses, time_ago)
       }
     })
   }
@@ -173,7 +173,7 @@ class Nofan {
    * @param text {text}
    */
   static update (text) {
-    Nofan._post('/statuses/update', {status: text}, (e, res, obj) => {
+    Nofan._post('/statuses/update', {status: text}, (e) => {
       if (e) console.log(e)
     })
   }
@@ -193,10 +193,10 @@ class Nofan {
    * command `nofan undo`
    */
   static undo () {
-    Nofan._get('/statuses/user_timeline', {}, (e, res, obj) => {
+    Nofan._get('/statuses/user_timeline', {}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._post('/statuses/destroy', {id: obj[0].id}, (e, res, obj) => {
+        Nofan._post('/statuses/destroy', {id: statuses[0].id}, (e) => {
           if (e) console.error(e)
         })
       }
@@ -211,10 +211,10 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, res, obj) => {
+    Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(obj, time_ago)
+        Nofan._displayTimeline(statuses, time_ago)
       }
     })
   }
@@ -227,10 +227,10 @@ class Nofan {
     options = options || {}
     const count = options.count || 10
     const time_ago = options.time_ago || false
-    Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, res, obj) => {
+    Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(obj, time_ago)
+        Nofan._displayTimeline(statuses, time_ago)
       }
     })
   }
