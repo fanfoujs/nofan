@@ -26,7 +26,7 @@ class Nofan {
             consumer_key: config.CONSUMER_KEY,
             consumer_secret: config.CONSUMER_SECRET,
             username: res.username,
-            password: res.password,
+            password: res.password
           })
           ff.xauth((e, token) => {
             if (e) console.log('Login failed!'.red)
@@ -91,7 +91,7 @@ class Nofan {
       else {
         const config = {
           CONSUMER_KEY: res.consumer_key,
-          CONSUMER_SECRET: res.consumer_secret,
+          CONSUMER_SECRET: res.consumer_secret
         }
         Nofan._createJsonFile(
           'config',
@@ -123,7 +123,7 @@ class Nofan {
             type: 'list',
             name: 'username',
             message: 'Switch account to',
-            choices: choices,
+            choices: choices
           }
         ]).then((user) => {
           config.USER = user.username
@@ -143,11 +143,12 @@ class Nofan {
   static homeTimeline (options) {
     options = options || {}
     const count = options.count || 10
-    const time_ago = options.time_ago || false
+    const timeAgo = options.time_ago || false
+    const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(statuses, time_ago)
+        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
     })
   }
@@ -159,11 +160,12 @@ class Nofan {
   static publicTimeline (options) {
     options = options || {}
     const count = options.count || 10
-    const time_ago = options.time_ago || false
+    const timeAgo = options.time_ago || false
+    const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(statuses, time_ago)
+        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
     })
   }
@@ -210,11 +212,12 @@ class Nofan {
   static mentions (options) {
     options = options || {}
     const count = options.count || 10
-    const time_ago = options.time_ago || false
+    const timeAgo = options.time_ago || false
+    const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(statuses, time_ago)
+        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
     })
   }
@@ -226,11 +229,12 @@ class Nofan {
   static me (options) {
     options = options || {}
     const count = options.count || 10
-    const time_ago = options.time_ago || false
+    const timeAgo = options.time_ago || false
+    const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
       if (e) console.error(e)
       else {
-        Nofan._displayTimeline(statuses, time_ago)
+        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
     })
   }
@@ -273,8 +277,7 @@ class Nofan {
           return
         }
         throw e
-      }
-      else callback(null, require(`${homedir()}/.nofan/config`))
+      } else callback(null, require(`${homedir()}/.nofan/config`))
     })
   }
 
@@ -289,10 +292,8 @@ class Nofan {
           Nofan._createJsonFile('account', {}, () => {
             callback(null, require(`${homedir()}/.nofan/account`))
           })
-        }
-        else throw e
-      }
-      else callback(null, require(`${homedir()}/.nofan/account`))
+        } else throw e
+      } else callback(null, require(`${homedir()}/.nofan/account`))
     })
   }
 
@@ -325,7 +326,7 @@ class Nofan {
         consumer_key: user.CONSUMER_KEY,
         consumer_secret: user.CONSUMER_SECRET,
         oauth_token: user.OAUTH_TOKEN,
-        oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+        oauth_token_secret: user.OAUTH_TOKEN_SECRET
       })
       ff.get(uri, params, (e, res, obj) => {
         callback(e, res, obj)
@@ -362,7 +363,7 @@ class Nofan {
         consumer_key: user.CONSUMER_KEY,
         consumer_secret: user.CONSUMER_SECRET,
         oauth_token: user.OAUTH_TOKEN,
-        oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+        oauth_token_secret: user.OAUTH_TOKEN_SECRET
       })
       ff.post(uri, params, (e, res, obj) => {
         callback(e, res, obj)
@@ -400,16 +401,14 @@ class Nofan {
         consumer_key: user.CONSUMER_KEY,
         consumer_secret: user.CONSUMER_SECRET,
         oauth_token: user.OAUTH_TOKEN,
-        oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+        oauth_token_secret: user.OAUTH_TOKEN_SECRET
       })
       fs.open(path, 'r', (e, fd) => {
         if (e) {
           if (e.code === 'ENOENT') {
             console.error(`file '${path}' does not exist`.red)
-          }
-          else throw e
-        }
-        else {
+          } else throw e
+        } else {
           ff.upload(
             fs.createReadStream(path),
             status,
@@ -450,8 +449,9 @@ class Nofan {
    * @param time_ago {bool}
    * @private
    */
-  static _displayTimeline (timeline, time_ago) {
-    time_ago = time_ago || false
+  static _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
+    timeAgoTag = timeAgoTag || false
+    noPhotoTag = noPhotoTag || false
     timeline.forEach(status => {
       let text = ''
       status.txt.forEach(item => {
@@ -465,11 +465,15 @@ class Nofan {
             text += item.text
         }
       })
-      if (!time_ago) {
+      if (status.photo && !noPhotoTag) {
+        if (text.length) text += ' [图]'.blue
+        else text += '[图]'.blue
+      }
+      if (!timeAgoTag) {
         console.log(`[${status.user.name.green}] ${text}`)
       } else {
-        const status_time_ago = `(${new timeago().format(status.created_at)})`.green
-        console.log(`[${status.user.name.green}] ${text} ` + status_time_ago)
+        const statusTimeAgo = `(${new timeago().format(status.created_at)})`.green
+        console.log(`[${status.user.name.green}] ${text} ` + statusTimeAgo)
       }
     })
   }

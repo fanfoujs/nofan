@@ -5,6 +5,7 @@ const Nofan = require('../lib/nofan')
 
 program
   .option('-t, --time', 'show time ago tag')
+  .option('--no-photo-tag', 'hide photo tag')
   .version(require('../package').version)
 
 program
@@ -43,7 +44,8 @@ program
   .action(function (count, options) {
     Nofan.homeTimeline({
       count: count,
-      time_ago: options.parent.time
+      time_ago: options.parent.time,
+      no_photo_tag: !options.parent.photoTag
     })
   })
 
@@ -54,7 +56,8 @@ program
   .action(function (count, options) {
     Nofan.mentions({
       count: count,
-      time_ago: options.parent.time
+      time_ago: options.parent.time,
+      no_photo_tag: !options.parent.photoTag
     })
   })
 
@@ -64,7 +67,8 @@ program
   .action(function (count, options) {
     Nofan.me({
       count: count,
-      time_ago: options.parent.time
+      time_ago: options.parent.time,
+      no_photo_tag: !options.parent.photoTag
     })
   })
 
@@ -75,7 +79,8 @@ program
   .action(function (count, options) {
     Nofan.publicTimeline({
       count: count,
-      time_ago: options.parent.time
+      time_ago: options.parent.time,
+      no_photo_tag: !options.parent.photoTag
     })
   })
 
@@ -102,6 +107,7 @@ program.parse(process.argv)
 if (program.args.length === 0) {
   Nofan.homeTimeline({
     count: 10,
-    time_ago: program.time
+    time_ago: program.time,
+    no_photo_tag: !program.photoTag
   })
 }
