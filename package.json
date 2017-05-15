@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/LitoMore/nofan#readme",
   "dependencies": {
-    "async": "^2.2.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "fanfou-sdk": "^2.1.1",
