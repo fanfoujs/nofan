@@ -36,12 +36,8 @@ function readJsonFile (filename) {
   })
 }
 
-async function getConfig () {
-  try {
-    return await readJsonFile('config')
-  } catch (err) {
-    console.log(err)
-  }
+function getConfig () {
+  return readJsonFile('config')
 }
 
 async function getAccount () {
@@ -52,20 +48,12 @@ async function getAccount () {
   }
 }
 
-async function setConfig (config) {
-  try {
-    await createJsonFile('config', config)
-  } catch (err) {
-    console.log(err)
-  }
+function setConfig (config) {
+  createJsonFile('config', config)
 }
 
-async function setAccount (account) {
-  try {
-    await createJsonFile('account', account)
-  } catch (err) {
-    console.log(err)
-  }
+function setAccount (account) {
+  createJsonFile('account', account)
 }
 
 module.exports = {
