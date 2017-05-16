@@ -40,7 +40,7 @@ class Nofan {
               OAUTH_TOKEN_SECRET: token.oauth_token_secret
             }
             await util.setAccount(account)
-            console.log('Login succeed!'.green)
+            console.log(colors.green('Login succeed!'))
           }
         })
       }
@@ -179,7 +179,6 @@ class Nofan {
 
   /**
    * command `nofan mentions`
-   * @param options {number}
    */
   static mentions (options) {
     options = options || {}
@@ -196,7 +195,6 @@ class Nofan {
 
   /**
    * command `nofan me`
-   * @param options
    */
   static me (options) {
     options = options || {}
@@ -211,12 +209,6 @@ class Nofan {
     })
   }
 
-  /**
-   * @param uri {text}
-   * @param params {object}
-   * @param callback
-   * @private
-   */
   static async _get (uri, params, callback) {
     const config = await util.getConfig()
     const account = await util.getAccount()
@@ -247,12 +239,6 @@ class Nofan {
     })
   }
 
-  /**
-   * @param uri {text}
-   * @param params {object}
-   * @param callback
-   * @private
-   */
   static async _post (uri, params, callback) {
     const config = await util.getConfig()
     const account = await util.getAccount()
@@ -283,13 +269,6 @@ class Nofan {
     })
   }
 
-  /**
-   *
-   * @param path {text}
-   * @param status {text}
-   * @param callback
-   * @private
-   */
   static async _upload (path, status, callback) {
     const config = await util.getConfig()
     const account = await util.getAccount()
@@ -333,11 +312,6 @@ class Nofan {
     })
   }
 
-  /**
-   * @param timeline {object}
-   * @param time_ago {bool}
-   * @private
-   */
   static _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
     timeAgoTag = timeAgoTag || false
     noPhotoTag = noPhotoTag || false
