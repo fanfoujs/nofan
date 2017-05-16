@@ -1,0 +1,65 @@
+'use strict'
+
+const fs = require('fs')
+const homedir = require('homedir')
+const colors = require('colors/safe')
+
+function createNofanDir () {
+  return new Promise((resolve, reject) => {
+    fs.mkdir(`${homedir()}/.nofan/`, () => {
+      resolve()
+    })
+  })
+}
+
+function createJsonFile (filename, content) {
+  return new Promise((resolve, reject) => {
+    const filePath = `${homedir()}/.nofan/${filename}.json`
+    fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8', (e) => {
+      if (e) reject(colors.red(`create file '${filePath}' failed`))
+      else resolve()
+    })
+  })
+}
+
+function readJsonFile (filename) {
+  return new Promise((resolve, reject) => {
+    const filePath = `${homedir()}/.nofan/${filename}.json`
+    fs.open(filePath, 'r', (e, fd) => {
+      if (e) {
+        if (e.code === 'ENOENT') {
+          reject(colors.red(`file '${filePath}' does not exist`))
+        }
+        reject(colors.red(`read file '${filePath}' failed`))
+      } else resolve(require(filePath))
+    })
+  })
+}
+
+function getConfig () {
+  return readJsonFile('config')
+}
+
+async function getAccount () {
+  try {
+    return await readJsonFile('account')
+  } catch (err) {
+    return {}
+  }
+}
+
+function setConfig (config) {
+  createJsonFile('config', config)
+}
+
+function setAccount (account) {
+  createJsonFile('account', account)
+}
+
+module.exports = {
+  createNofanDir: createNofanDir,
+  getConfig: getConfig,
+  getAccount: getAccount,
+  setConfig: setConfig,
+  setAccount: setAccount
+}

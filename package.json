@@ -1,6 +1,6 @@
 {
   "name": "nofan",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Fanfou Cli for Node.js",
   "main": "index.js",
   "bin": "bin/nofan.js",
@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/LitoMore/nofan#readme",
   "dependencies": {
-    "async": "^2.2.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "fanfou-sdk": "^2.1.1",
@@ -29,6 +28,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",
-    "babel-preset-es2015": "^6.24.0"
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1"
   }
 }
