@@ -48,7 +48,7 @@ async function getAccount () {
   try {
     return await readJsonFile('account')
   } catch (err) {
-    console.log(err)
+    return {}
   }
 }
 
