@@ -4,9 +4,10 @@ const program = require('commander')
 const Nofan = require('../lib/nofan')
 
 program
+  .option('-v, --version', 'output the version info')
   .option('-t, --time', 'show time ago tag')
   .option('--no-photo-tag', 'hide photo tag')
-  .version(require('../package').version)
+  .version(Nofan.version())
 
 program
   .command('config')

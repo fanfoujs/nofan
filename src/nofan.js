@@ -340,6 +340,18 @@ class Nofan {
       }
     })
   }
+
+  static version () {
+    const sdkVersion = util.sdkVersion()
+    const banner = ' _   _        __\n' +
+      '| \\ | | ___  / _| __ _ _ __\n' +
+      '|  \\| |/ _ \\| |_ / _` | \'_ \\\n' +
+      '| |\\  | (_) |  _| (_| | | | |\n' +
+      '|_| \\_|\\___/|_|  \\__,_|_| |_|\n' +
+      '\nnofan ' + require('../package').version +
+    '\nfanfou-sdk ' + sdkVersion
+    return banner
+  }
 }
 
 module.exports = Nofan
