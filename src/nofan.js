@@ -8,6 +8,7 @@ const inquirer = require('inquirer')
 const schema = require('./schema')
 const TimeAgo = require('timeago.js')
 const util = require('./util')
+const figlet = require('figlet')
 
 class Nofan {
   /**
@@ -342,15 +343,13 @@ class Nofan {
   }
 
   static version () {
-    const sdkVersion = util.sdkVersion()
-    const banner = ' _   _        __\n' +
-      '| \\ | | ___  / _| __ _ _ __\n' +
-      '|  \\| |/ _ \\| |_ / _` | \'_ \\\n' +
-      '| |\\  | (_) |  _| (_| | | | |\n' +
-      '|_| \\_|\\___/|_|  \\__,_|_| |_|\n' +
-      '\nnofan ' + require('../package').version +
-    '\nfanfou-sdk ' + sdkVersion
-    return banner
+    const banner = colors.blue(figlet.textSync('Nofan', {
+      font: 'Slant'
+    }))
+    const nofanVersion = colors.green(`nofan: ${require('../package').version}`)
+    const sdkVersion = colors.green(`fanfou-sdk: ${util.sdkVersion()}`)
+    const version = `${banner}\n${nofanVersion}\n${sdkVersion}`
+    return version
   }
 }
 
