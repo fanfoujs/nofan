@@ -2,7 +2,6 @@
 
 const fs = require('fs')
 const colors = require('colors/safe')
-const prompt = require('prompt')
 const Fanfou = require('fanfou-sdk')
 const inquirer = require('inquirer')
 const schema = require('./schema')
@@ -16,25 +15,33 @@ class Nofan {
    */
   static async login () {
     const config = await util.getConfig()
-    prompt.message = '<nofan>'
-    prompt.start()
-    prompt.get(schema.login, async (e, res) => {
-      if (e) console.error(e)
-      else {
+    inquirer.prompt([
+        {
+          type: 'input',
+          name: 'username',
+          message: 'Enter your username'
+        }, {
+          type: 'password',
+          name: 'password',
+          message: 'Enter your password'
+        }
+      ]).then(async user => {
+        const username = user.username
+        const password = user.password
         const ff = new Fanfou({
           auth_type: 'xauth',
           consumer_key: config.CONSUMER_KEY,
           consumer_secret: config.CONSUMER_SECRET,
-          username: res.username,
-          password: res.password
+          username: user.username,
+          password: user.password
         })
         ff.xauth(async (e, token) => {
           if (e) console.log(colors.red('Login failed!'))
           else {
-            config.USER = res.username
+            config.USER = user.username
             await util.setConfig(config)
             const account = await util.getAccount()
-            account[res.username] = {
+            account[user.username] = {
               CONSUMER_KEY: config.CONSUMER_KEY,
               CONSUMER_SECRET: config.CONSUMER_SECRET,
               OAUTH_TOKEN: token.oauth_token,
@@ -44,8 +51,7 @@ class Nofan {
             console.log(colors.green('Login succeed!'))
           }
         })
-      }
-    })
+      })
   }
 
   /**
@@ -64,19 +70,40 @@ class Nofan {
   /**
    * command `nofan config`
    */
-  static config () {
-    prompt.message = '<nofan>'
-    prompt.start()
-    prompt.get(schema.config, async (e, res) => {
-      if (e) console.error(e)
-      else {
-        const config = {
-          CONSUMER_KEY: res.consumer_key,
-          CONSUMER_SECRET: res.consumer_secret
-        }
-        await util.createNofanDir()
-        await util.setConfig(config)
+  static async config () {
+    const config = await util.getConfig()
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'key',
+        message: 'Enter your consumer key',
+        default: config.CONSUMER_KEY
+      }, {
+        type: 'input',
+        name: 'secret',
+        message: 'Enter your consumer secret',
+        default: config.CONSUMER_SECRET
+      }, {
+        type: 'checkbox',
+        name: 'display',
+        message: 'Display settings',
+        choices: [
+          {
+            name: 'time_tag',
+            checked: config.TIME_TAG
+          }, {
+            name: 'photo_tag',
+            checked: config.PHOTO_TAG
+          }
+        ]
       }
+    ]).then(async settings => {
+      config.CONSUMER_KEY = settings.key,
+      config.CONSUMER_SECRET = settings.secret
+      config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
+      config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
+      await util.createNofanDir()
+      await util.setConfig(config)
     })
   }
 
@@ -313,9 +340,10 @@ class Nofan {
     })
   }
 
-  static _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
-    timeAgoTag = timeAgoTag || false
-    noPhotoTag = noPhotoTag || false
+  static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
+    const config = await util.getConfig()
+    timeAgoTag = timeAgoTag || config.TIME_TAG
+    noPhotoTag = noPhotoTag || !config.PHOTO_TAG
     timeline.forEach(status => {
       let text = ''
       status.txt.forEach(item => {

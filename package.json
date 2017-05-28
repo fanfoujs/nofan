@@ -24,7 +24,6 @@
     "figlet": "^1.2.0",
     "homedir": "^0.6.0",
     "inquirer": "^3.0.6",
-    "prompt": "^1.0.0",
     "timeago.js": "^3.0.1"
   },
   "devDependencies": {

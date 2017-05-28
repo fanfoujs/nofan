@@ -46,8 +46,15 @@ function readSDKVersion (callback) {
   return version
 }
 
-function getConfig () {
-  return readJsonFile('config')
+async function getConfig () {
+  try {
+    return await readJsonFile('config')
+  } catch (err) {
+    return {
+      TIME_TAG: false,
+      PHOTO_TAG: true
+    }
+  }
 }
 
 async function getAccount () {
