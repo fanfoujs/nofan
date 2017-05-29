@@ -107,7 +107,6 @@ program.parse(process.argv)
 
 if (program.args.length === 0) {
   Nofan.homeTimeline({
-    count: 10,
     time_ago: program.time,
     no_photo_tag: !program.photoTag
   })

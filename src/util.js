@@ -51,6 +51,7 @@ async function getConfig () {
     return await readJsonFile('config')
   } catch (err) {
     return {
+      DISPLAY_COUNT: 10,
       TIME_TAG: false,
       PHOTO_TAG: true
     }

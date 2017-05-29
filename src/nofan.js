@@ -4,7 +4,6 @@ const fs = require('fs')
 const colors = require('colors/safe')
 const Fanfou = require('fanfou-sdk')
 const inquirer = require('inquirer')
-const schema = require('./schema')
 const TimeAgo = require('timeago.js')
 const util = require('./util')
 const figlet = require('figlet')
@@ -16,42 +15,40 @@ class Nofan {
   static async login () {
     const config = await util.getConfig()
     inquirer.prompt([
-        {
-          type: 'input',
-          name: 'username',
-          message: 'Enter your username'
-        }, {
-          type: 'password',
-          name: 'password',
-          message: 'Enter your password'
-        }
-      ]).then(async user => {
-        const username = user.username
-        const password = user.password
-        const ff = new Fanfou({
-          auth_type: 'xauth',
-          consumer_key: config.CONSUMER_KEY,
-          consumer_secret: config.CONSUMER_SECRET,
-          username: user.username,
-          password: user.password
-        })
-        ff.xauth(async (e, token) => {
-          if (e) console.log(colors.red('Login failed!'))
-          else {
-            config.USER = user.username
-            await util.setConfig(config)
-            const account = await util.getAccount()
-            account[user.username] = {
-              CONSUMER_KEY: config.CONSUMER_KEY,
-              CONSUMER_SECRET: config.CONSUMER_SECRET,
-              OAUTH_TOKEN: token.oauth_token,
-              OAUTH_TOKEN_SECRET: token.oauth_token_secret
-            }
-            await util.setAccount(account)
-            console.log(colors.green('Login succeed!'))
-          }
-        })
+      {
+        type: 'input',
+        name: 'username',
+        message: 'Enter your username'
+      }, {
+        type: 'password',
+        name: 'password',
+        message: 'Enter your password'
+      }
+    ]).then(async user => {
+      const ff = new Fanfou({
+        auth_type: 'xauth',
+        consumer_key: config.CONSUMER_KEY,
+        consumer_secret: config.CONSUMER_SECRET,
+        username: user.username,
+        password: user.password
       })
+      ff.xauth(async (e, token) => {
+        if (e) console.log(colors.red('Login failed!'))
+        else {
+          config.USER = user.username
+          await util.setConfig(config)
+          const account = await util.getAccount()
+          account[user.username] = {
+            CONSUMER_KEY: config.CONSUMER_KEY,
+            CONSUMER_SECRET: config.CONSUMER_SECRET,
+            OAUTH_TOKEN: token.oauth_token,
+            OAUTH_TOKEN_SECRET: token.oauth_token_secret
+          }
+          await util.setAccount(account)
+          console.log(colors.green('Login succeed!'))
+        }
+      })
+    })
   }
 
   /**
@@ -84,6 +81,11 @@ class Nofan {
         message: 'Enter your consumer secret',
         default: config.CONSUMER_SECRET
       }, {
+        type: 'input',
+        name: 'display_count',
+        message: 'How many statuses would you like to display (1 - 60)',
+        default: config.DISPLAY_COUNT || 10
+      }, {
         type: 'checkbox',
         name: 'display',
         message: 'Display settings',
@@ -98,10 +100,12 @@ class Nofan {
         ]
       }
     ]).then(async settings => {
-      config.CONSUMER_KEY = settings.key,
+      config.CONSUMER_KEY = settings.key
       config.CONSUMER_SECRET = settings.secret
+      config.DISPLAY_COUNT = settings.display_count
       config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
       config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
+
       await util.createNofanDir()
       await util.setConfig(config)
     })
@@ -141,9 +145,10 @@ class Nofan {
   /**
    * Show home timeline
    */
-  static homeTimeline (options) {
+  static async homeTimeline (options) {
     options = options || {}
-    const count = options.count || 10
+    const config = await util.getConfig()
+    const count = options.count || config.DISPLAY_COUNT
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -157,9 +162,10 @@ class Nofan {
   /**
    * Show public timeline
    */
-  static publicTimeline (options) {
+  static async publicTimeline (options) {
     options = options || {}
-    const count = options.count || 10
+    const config = await util.getConfig()
+    const count = options.count || config.DISPLAY_COUNT
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -208,9 +214,10 @@ class Nofan {
   /**
    * command `nofan mentions`
    */
-  static mentions (options) {
+  static async mentions (options) {
     options = options || {}
-    const count = options.count || 10
+    const config = await util.getConfig()
+    const count = options.count || config.DISPLAY_COUNT
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
@@ -224,9 +231,10 @@ class Nofan {
   /**
    * command `nofan me`
    */
-  static me (options) {
+  static async me (options) {
     options = options || {}
-    const count = options.count || 10
+    const config = await util.getConfig()
+    const count = options.count || config.DISPLAY_COUNT
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
