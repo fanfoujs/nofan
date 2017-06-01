@@ -149,7 +149,7 @@ class Nofan {
   static async homeTimeline (options) {
     options = options || {}
     const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT
+    const count = options.count || config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -166,7 +166,7 @@ class Nofan {
   static async publicTimeline (options) {
     options = options || {}
     const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT
+    const count = options.count || config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -218,7 +218,7 @@ class Nofan {
   static async mentions (options) {
     options = options || {}
     const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT
+    const count = options.count || config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
@@ -235,7 +235,7 @@ class Nofan {
   static async me (options) {
     options = options || {}
     const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT
+    const count = options.count || config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
