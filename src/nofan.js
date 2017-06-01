@@ -60,7 +60,7 @@ class Nofan {
       const account = await util.getAccount()
       delete account[config.USER]
       await util.setAccount(account)
-      console.log('Logout succeed!')
+      console.log(colors.green('Logout succeed!'))
     }
   }
 
@@ -131,7 +131,8 @@ class Nofan {
           type: 'list',
           name: 'username',
           message: 'Switch account to',
-          choices: choices
+          choices: choices,
+          pageSize: 20
         }
       ]).then(async user => {
         config.USER = user.username
