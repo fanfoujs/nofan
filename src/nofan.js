@@ -33,7 +33,7 @@ class Nofan {
         password: user.password
       })
       ff.xauth(async (e, token) => {
-        if (e) console.log(colors.red('Login failed!'))
+        if (e) console.log(colors.red(e.message))
         else {
           config.USER = user.username
           await util.setConfig(config)
@@ -153,7 +153,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e)
+      if (e) console.error(e.message)
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
@@ -170,7 +170,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e)
+      if (e) console.error(e.message)
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
@@ -183,7 +183,7 @@ class Nofan {
    */
   static update (text) {
     Nofan._post('/statuses/update', {status: text}, (e) => {
-      if (e) console.log(e)
+      if (e) console.log(e.message)
     })
   }
 
@@ -194,7 +194,7 @@ class Nofan {
    */
   static upload (path, text) {
     Nofan._upload(path, text, (e) => {
-      if (e) console.log(e)
+      if (e) console.log(e.message)
     })
   }
 
@@ -203,10 +203,10 @@ class Nofan {
    */
   static undo () {
     Nofan._get('/statuses/user_timeline', {}, (e, statuses) => {
-      if (e) console.error(e)
+      if (e) console.error(e.message)
       else {
         Nofan._post('/statuses/destroy', {id: statuses[0].id}, (e) => {
-          if (e) console.error(e)
+          if (e) console.error(e.message)
         })
       }
     })
@@ -222,7 +222,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e)
+      if (e) console.error(e.message)
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
@@ -239,7 +239,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e)
+      if (e) console.error(e.message)
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
