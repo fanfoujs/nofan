@@ -10,17 +10,17 @@ program
   .version(Nofan.version())
 
 program
-  .command('config')
+  .command('config [consumer_key] [consumer_secret]')
   .description('config consumer key and consumer secret')
-  .action(function () {
-    Nofan.config()
+  .action(function (key, secret) {
+    Nofan.config(key, secret)
   })
 
 program
-  .command('login')
+  .command('login [username] [password]')
   .description('login nofan')
-  .action(function () {
-    Nofan.login()
+  .action(function (username, password) {
+    Nofan.login(username, password)
   })
 
 program
@@ -31,11 +31,11 @@ program
   })
 
 program
-  .command('switch')
+  .command('switch [id]')
   .alias('s')
   .description('switch account')
-  .action(function () {
-    Nofan.switchUser()
+  .action(function (id) {
+    Nofan.switchUser(id)
   })
 
 program

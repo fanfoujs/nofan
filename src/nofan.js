@@ -12,33 +12,23 @@ class Nofan {
   /**
    * command `nofan login`
    */
-  static async login () {
+  static async login (username, password) {
     const config = await util.getConfig()
-    inquirer.prompt([
-      {
-        type: 'input',
-        name: 'username',
-        message: 'Enter your username'
-      }, {
-        type: 'password',
-        name: 'password',
-        message: 'Enter your password'
-      }
-    ]).then(async user => {
+    const login = (username, password) => {
       const ff = new Fanfou({
         auth_type: 'xauth',
         consumer_key: config.CONSUMER_KEY,
         consumer_secret: config.CONSUMER_SECRET,
-        username: user.username,
-        password: user.password
+        username: username,
+        password: password
       })
       ff.xauth(async (e, token) => {
         if (e) console.log(colors.red(e.message))
         else {
-          config.USER = user.username
+          config.USER = username
           await util.setConfig(config)
           const account = await util.getAccount()
-          account[user.username] = {
+          account[username] = {
             CONSUMER_KEY: config.CONSUMER_KEY,
             CONSUMER_SECRET: config.CONSUMER_SECRET,
             OAUTH_TOKEN: token.oauth_token,
@@ -48,7 +38,24 @@ class Nofan {
           console.log(colors.green('Login succeed!'))
         }
       })
-    })
+    }
+    if (username && password) {
+      login(username, password)
+    } else {
+      inquirer.prompt([
+        {
+          type: 'input',
+          name: 'username',
+          message: 'Enter your username'
+        }, {
+          type: 'password',
+          name: 'password',
+          message: 'Enter your password'
+        }
+      ]).then(async user => {
+        login(user.username, user.password)
+      })
+    }
   }
 
   /**
@@ -67,79 +74,97 @@ class Nofan {
   /**
    * command `nofan config`
    */
-  static async config () {
+  static async config (key, secret) {
     const config = await util.getConfig()
-    inquirer.prompt([
-      {
-        type: 'input',
-        name: 'key',
-        message: 'Enter your consumer key',
-        default: config.CONSUMER_KEY
-      }, {
-        type: 'input',
-        name: 'secret',
-        message: 'Enter your consumer secret',
-        default: config.CONSUMER_SECRET
-      }, {
-        type: 'input',
-        name: 'display_count',
-        message: 'How many statuses would you like to display (1 - 60)',
-        default: config.DISPLAY_COUNT || 10
-      }, {
-        type: 'checkbox',
-        name: 'display',
-        message: 'Display settings',
-        choices: [
-          {
-            name: 'time_tag',
-            checked: config.TIME_TAG
-          }, {
-            name: 'photo_tag',
-            checked: config.PHOTO_TAG
-          }
-        ]
-      }
-    ]).then(async settings => {
-      config.CONSUMER_KEY = settings.key
-      config.CONSUMER_SECRET = settings.secret
-      config.DISPLAY_COUNT = settings.display_count
-      config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
-      config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
+    if (key && secret) {
+      config.CONSUMER_KEY = key
+      config.CONSUMER_SECRET = secret
 
       await util.createNofanDir()
       await util.setConfig(config)
-    })
+    } else {
+      inquirer.prompt([
+        {
+          type: 'input',
+          name: 'key',
+          message: 'Enter your consumer key',
+          default: config.CONSUMER_KEY
+        }, {
+          type: 'input',
+          name: 'secret',
+          message: 'Enter your consumer secret',
+          default: config.CONSUMER_SECRET
+        }, {
+          type: 'input',
+          name: 'display_count',
+          message: 'How many statuses would you like to display (1 - 60)',
+          default: config.DISPLAY_COUNT || 10
+        }, {
+          type: 'checkbox',
+          name: 'display',
+          message: 'Display settings',
+          choices: [
+            {
+              name: 'time_tag',
+              checked: config.TIME_TAG
+            }, {
+              name: 'photo_tag',
+              checked: config.PHOTO_TAG
+            }
+          ]
+        }
+      ]).then(async settings => {
+        config.CONSUMER_KEY = settings.key
+        config.CONSUMER_SECRET = settings.secret
+        config.DISPLAY_COUNT = settings.display_count
+        config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
+        config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
+
+        await util.createNofanDir()
+        await util.setConfig(config)
+      })
+    }
   }
 
   /**
    * command `nofan switch`
    */
-  static async switchUser () {
+  static async switchUser (id) {
     const config = await util.getConfig()
     const account = await util.getAccount()
-    const choices = []
-    const currentName = config.USER
-    for (const name in account) {
-      if (account.hasOwnProperty(name)) {
-        if (currentName === name) choices.push({name: name, disabled: colors.green('current')})
-        else choices.push(name)
-      }
-    }
-    if (choices.length > 1) {
-      inquirer.prompt([
-        {
-          type: 'list',
-          name: 'username',
-          message: 'Switch account to',
-          choices: choices,
-          pageSize: 20
-        }
-      ]).then(async user => {
-        config.USER = user.username
+    if (id) {
+      if (account.hasOwnProperty(id)) {
+        config.USER = id
         await util.setConfig(config)
-      })
+        console.log(colors.green('Switch account to', id))
+      } else {
+        console.log(colors.red(id, 'needs login'))
+      }
     } else {
-      console.log('no more account')
+      const choices = []
+      const currentName = config.USER
+      for (const name in account) {
+        if (account.hasOwnProperty(name)) {
+          if (currentName === name) choices.push({name: name, disabled: colors.green('current')})
+          else choices.push(name)
+        }
+      }
+      if (choices.length > 1) {
+        inquirer.prompt([
+          {
+            type: 'list',
+            name: 'username',
+            message: 'Switch account to',
+            choices: choices,
+            pageSize: 20
+          }
+        ]).then(async user => {
+          config.USER = user.username
+          await util.setConfig(config)
+        })
+      } else {
+        console.log('no more account')
+      }
     }
   }
 
