@@ -14,7 +14,6 @@ program
   .option('-a, --all', 'show all config')
   .description('config consumer key and consumer secret')
   .action(function (key, secret, options) {
-    console.log(options.all)
     const showAll = options.all
     Nofan.config(key, secret, showAll)
   })
