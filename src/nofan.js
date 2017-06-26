@@ -415,12 +415,15 @@ class Nofan {
       status.txt.forEach(item => {
         switch (item.type) {
           case 'at':
-          case 'tag':
           case 'link':
             text += colors.blue(item.text)
             break
+          case 'tag':
+            text += colors.blue(item._text)
+            break
           default:
-            text += item.text
+            text += item._text
+            break
         }
       })
       if (status.photo && !noPhotoTag) {
