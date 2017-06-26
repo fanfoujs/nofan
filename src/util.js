@@ -53,7 +53,10 @@ async function getConfig () {
     return {
       DISPLAY_COUNT: 10,
       TIME_TAG: false,
-      PHOTO_TAG: true
+      PHOTO_TAG: true,
+      SSL: false,
+      API_DOMAIN: 'api.fanfou.com',
+      OAUTH_DOMAIN: 'fanfou.com'
     }
   }
 }

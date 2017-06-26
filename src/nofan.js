@@ -20,7 +20,10 @@ class Nofan {
         consumer_key: config.CONSUMER_KEY,
         consumer_secret: config.CONSUMER_SECRET,
         username: username,
-        password: password
+        password: password,
+        protocol: config.SSL ? 'https:' : 'http:',
+        api_domain: config.API_DOMAIN,
+        oauth_domain: config.OAUTH_DOMAIN
       })
       ff.xauth(async (e, token) => {
         if (e) console.log(colors.red(e.message))
@@ -74,7 +77,7 @@ class Nofan {
   /**
    * command `nofan config`
    */
-  static async config (key, secret) {
+  static async config (key, secret, showAll) {
     const config = await util.getConfig()
     if (key && secret) {
       config.CONSUMER_KEY = key
@@ -83,7 +86,7 @@ class Nofan {
       await util.createNofanDir()
       await util.setConfig(config)
     } else {
-      inquirer.prompt([
+      let promptList = [
         {
           type: 'input',
           name: 'key',
@@ -102,7 +105,7 @@ class Nofan {
         }, {
           type: 'checkbox',
           name: 'display',
-          message: 'Display settings',
+          message: 'Global Settings',
           choices: [
             {
               name: 'time_tag',
@@ -110,15 +113,35 @@ class Nofan {
             }, {
               name: 'photo_tag',
               checked: config.PHOTO_TAG
+            }, {
+              name: 'use_https',
+              checked: config.SSL || false
             }
           ]
         }
-      ]).then(async settings => {
+      ]
+      if (showAll) {
+        promptList = promptList.concat([{
+          type: 'input',
+          name: 'api_domain',
+          message: 'Config your api domain',
+          default: config.API_DOMAIN || 'api.fanfou.com'
+        }, {
+          type: 'input',
+          name: 'oauth_domain',
+          message: 'Config your oauth domain',
+          default: config.OAUTH_DOMAIN || 'fanfou.com'
+        }])
+      }
+      inquirer.prompt(promptList).then(async settings => {
         config.CONSUMER_KEY = settings.key
         config.CONSUMER_SECRET = settings.secret
         config.DISPLAY_COUNT = settings.display_count
         config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
         config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
+        config.SSL = settings.display.indexOf('use_https') !== -1
+        if (settings.api_domain) config.API_DOMAIN = settings.api_domain
+        if (settings.oauth_domain) config.OAUTH_DOMAIN = settings.oauth_domain
 
         await util.createNofanDir()
         await util.setConfig(config)
@@ -294,7 +317,10 @@ class Nofan {
       consumer_key: user.CONSUMER_KEY,
       consumer_secret: user.CONSUMER_SECRET,
       oauth_token: user.OAUTH_TOKEN,
-      oauth_token_secret: user.OAUTH_TOKEN_SECRET
+      oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+      protocol: config.SSL ? 'https:' : 'http:',
+      api_domain: config.API_DOMAIN,
+      oauth_domain: config.OAUTH_DOMAIN
     })
     ff.get(uri, params, (e, res, obj) => {
       callback(e, res, obj)
@@ -324,7 +350,10 @@ class Nofan {
       consumer_key: user.CONSUMER_KEY,
       consumer_secret: user.CONSUMER_SECRET,
       oauth_token: user.OAUTH_TOKEN,
-      oauth_token_secret: user.OAUTH_TOKEN_SECRET
+      oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+      protocol: config.SSL ? 'https:' : 'http:',
+      api_domain: config.API_DOMAIN,
+      oauth_domain: config.OAUTH_DOMAIN
     })
     ff.post(uri, params, (e, res, obj) => {
       callback(e, res, obj)
@@ -354,7 +383,10 @@ class Nofan {
       consumer_key: user.CONSUMER_KEY,
       consumer_secret: user.CONSUMER_SECRET,
       oauth_token: user.OAUTH_TOKEN,
-      oauth_token_secret: user.OAUTH_TOKEN_SECRET
+      oauth_token_secret: user.OAUTH_TOKEN_SECRET,
+      protocol: config.SSL ? 'https:' : 'http:',
+      api_domain: config.API_DOMAIN,
+      oauth_domain: config.OAUTH_DOMAIN
     })
     fs.open(path, 'r', (e, fd) => {
       if (e) {
