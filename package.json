@@ -5,7 +5,8 @@
   "main": "index.js",
   "bin": "bin/nofan.js",
   "scripts": {
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "test": "npm run build && standard && ava test.js -s -v"
   },
   "repository": {
     "type": "git",
@@ -27,8 +28,11 @@
     "timeago.js": "^3.0.1"
   },
   "devDependencies": {
+    "ava": "^0.19.1",
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-preset-es2016": "^6.24.1"
+    "babel-preset-es2016": "^6.24.1",
+    "execa": "^0.7.0",
+    "standard": "^10.0.2"
   }
 }

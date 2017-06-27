@@ -2,6 +2,10 @@
 
 FanFou Cli for Node.js
 
+[![](https://img.shields.io/travis/LitoMore/nofan/master.svg)](https://travis-ci.org/LitoMore/nofan)
+[![](https://img.shields.io/npm/v/nofan.svg)](https://www.npmjs.com/package/nofan)
+[![](https://img.shields.io/npm/l/nofan.svg)](https://github.com/LitoMore/nofan/blob/master/LICENSE)
+
 ## Installation
 
 ```bash
@@ -11,6 +15,7 @@ $ npm install -g nofan
 ## Config & Login
 
 ```bash
+
 # config consumer key and consumer secret
 $ nofan config
 

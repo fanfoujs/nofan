@@ -1,12 +1,17 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
 const homedir = require('homedir')
 const colors = require('colors/safe')
+const isProduction = !fs.existsSync(path.join(__dirname, '../src'))
+
+let configPath = ''
+isProduction ? configPath = '/.nofan/' : configPath = '/.nofan-dev/'
 
 function createNofanDir () {
   return new Promise((resolve, reject) => {
-    fs.mkdir(`${homedir()}/.nofan/`, () => {
+    fs.mkdir(`${homedir()}${configPath}`, () => {
       resolve()
     })
   })
@@ -14,7 +19,7 @@ function createNofanDir () {
 
 function createJsonFile (filename, content) {
   return new Promise((resolve, reject) => {
-    const filePath = `${homedir()}/.nofan/${filename}.json`
+    const filePath = `${homedir()}${configPath}${filename}.json`
     fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8', (e) => {
       if (e) reject(colors.red(`create file '${filePath}' failed`))
       else resolve()
@@ -24,7 +29,7 @@ function createJsonFile (filename, content) {
 
 function readJsonFile (filename) {
   return new Promise((resolve, reject) => {
-    const filePath = `${homedir()}/.nofan/${filename}.json`
+    const filePath = `${homedir()}${configPath}${filename}.json`
     fs.open(filePath, 'r', (e, fd) => {
       if (e) {
         if (e.code === 'ENOENT') {
