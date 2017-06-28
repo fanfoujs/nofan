@@ -5,6 +5,7 @@ FanFou Cli for Node.js
 [![](https://img.shields.io/travis/LitoMore/nofan/master.svg)](https://travis-ci.org/LitoMore/nofan)
 [![](https://img.shields.io/npm/v/nofan.svg)](https://www.npmjs.com/package/nofan)
 [![](https://img.shields.io/npm/l/nofan.svg)](https://github.com/LitoMore/nofan/blob/master/LICENSE)
+[![](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Installation
 
