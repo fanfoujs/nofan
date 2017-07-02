@@ -1,5 +1,7 @@
 # nofan
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/LitoMore/nofan.svg)](https://greenkeeper.io/)
+
 FanFou Cli for Node.js
 
 [![](https://img.shields.io/travis/LitoMore/nofan/master.svg)](https://travis-ci.org/LitoMore/nofan)
