@@ -20,6 +20,8 @@ $ npm install -g nofan
 ```bash
 
 # config consumer key and consumer secret
+# if you don't have any, please go to https://fanfou.com/apps
+# to create one.
 $ nofan config
 
 # login fanfou account
