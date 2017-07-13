@@ -61,7 +61,8 @@ async function getConfig () {
       PHOTO_TAG: true,
       SSL: false,
       API_DOMAIN: 'api.fanfou.com',
-      OAUTH_DOMAIN: 'fanfou.com'
+      OAUTH_DOMAIN: 'fanfou.com',
+      FAKE_HTTPS: false
     }
   }
 }
