@@ -21,7 +21,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "commander": "^2.9.0",
-    "fanfou-sdk": "^2.1.5",
+    "fanfou-sdk": "^2.1.6",
     "figlet": "^1.2.0",
     "homedir": "^0.6.0",
     "inquirer": "^3.0.6",
