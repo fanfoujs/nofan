@@ -23,7 +23,8 @@ class Nofan {
         password: password,
         protocol: config.SSL ? 'https:' : 'http:',
         api_domain: config.API_DOMAIN,
-        oauth_domain: config.OAUTH_DOMAIN
+        oauth_domain: config.OAUTH_DOMAIN,
+        fakeHttps: config.FAKE_HTTPS || false
       })
       ff.xauth(async (e, token) => {
         if (e) console.log(colors.red(e.message))
@@ -131,6 +132,14 @@ class Nofan {
           name: 'oauth_domain',
           message: 'Config your oauth domain',
           default: config.OAUTH_DOMAIN || 'fanfou.com'
+        }, {
+          type: 'checkbox',
+          name: 'https',
+          message: `Replace 'https' with 'http' in OAuth base string`,
+          choices: [{
+            name: 'fake_https',
+            checked: config.FAKE_HTTPS || false
+          }]
         }])
       }
       inquirer.prompt(promptList).then(async settings => {
@@ -142,6 +151,7 @@ class Nofan {
         config.SSL = settings.display.indexOf('use_https') !== -1
         if (settings.api_domain) config.API_DOMAIN = settings.api_domain
         if (settings.oauth_domain) config.OAUTH_DOMAIN = settings.oauth_domain
+        if (settings.https) config.FAKE_HTTPS = settings.https.indexOf('fake_https') !== -1
 
         await util.createNofanDir()
         await util.setConfig(config)
@@ -320,7 +330,8 @@ class Nofan {
       oauth_token_secret: user.OAUTH_TOKEN_SECRET,
       protocol: config.SSL ? 'https:' : 'http:',
       api_domain: config.API_DOMAIN,
-      oauth_domain: config.OAUTH_DOMAIN
+      oauth_domain: config.OAUTH_DOMAIN,
+      fakeHttps: config.FAKE_HTTPS
     })
     ff.get(uri, params, (e, res, obj) => {
       callback(e, res, obj)
@@ -353,7 +364,8 @@ class Nofan {
       oauth_token_secret: user.OAUTH_TOKEN_SECRET,
       protocol: config.SSL ? 'https:' : 'http:',
       api_domain: config.API_DOMAIN,
-      oauth_domain: config.OAUTH_DOMAIN
+      oauth_domain: config.OAUTH_DOMAIN,
+      fakeHttps: config.FAKE_HTTPS || false
     })
     ff.post(uri, params, (e, res, obj) => {
       callback(e, res, obj)
@@ -386,7 +398,8 @@ class Nofan {
       oauth_token_secret: user.OAUTH_TOKEN_SECRET,
       protocol: config.SSL ? 'https:' : 'http:',
       api_domain: config.API_DOMAIN,
-      oauth_domain: config.OAUTH_DOMAIN
+      oauth_domain: config.OAUTH_DOMAIN,
+      fakeHttps: config.FAKE_HTTPS || false
     })
     fs.open(path, 'r', (e, fd) => {
       if (e) {
