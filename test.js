@@ -29,5 +29,5 @@ test('nofan switch', async t => {
 
 test('nofan logout', async t => {
   const {stdout} = await execa('./bin/nofan.js', ['logout'])
-  t.is(stdout, 'Logout succeed!')
+  PULL_REQUEST_FROM_FORKED ? t.is(stdout, '') : t.is(stdout, 'Logout succeed!')
 })
