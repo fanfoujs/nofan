@@ -1,7 +1,7 @@
 'use strict'
 
 const fs = require('fs')
-const colors = require('colors/safe')
+const chalk = require('chalk')
 const Fanfou = require('fanfou-sdk')
 const inquirer = require('inquirer')
 const TimeAgo = require('timeago.js')
@@ -27,7 +27,7 @@ class Nofan {
         fakeHttps: config.FAKE_HTTPS || false
       })
       ff.xauth(async (e, token) => {
-        if (e) console.log(colors.red(e.message))
+        if (e) console.log(chalk.red(e.message))
         else {
           config.USER = username
           await util.setConfig(config)
@@ -39,7 +39,7 @@ class Nofan {
             OAUTH_TOKEN_SECRET: token.oauth_token_secret
           }
           await util.setAccount(account)
-          console.log(colors.green('Login succeed!'))
+          console.log(chalk.green('Login succeed!'))
         }
       })
     }
@@ -71,7 +71,7 @@ class Nofan {
       const account = await util.getAccount()
       delete account[config.USER]
       await util.setAccount(account)
-      console.log(colors.green('Logout succeed!'))
+      console.log(chalk.green('Logout succeed!'))
     }
   }
 
@@ -143,8 +143,8 @@ class Nofan {
         }])
       }
       inquirer.prompt(promptList).then(async settings => {
-        config.CONSUMER_KEY = settings.key
-        config.CONSUMER_SECRET = settings.secret
+        config.CONSUMER_KEY = settings.key || ''
+        config.CONSUMER_SECRET = settings.secret || ''
         config.DISPLAY_COUNT = settings.display_count
         config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
         config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
@@ -160,6 +160,65 @@ class Nofan {
   }
 
   /**
+   * command `nofan colors`
+   */
+  static async colors () {
+    const config = await util.getConfig()
+    config.COLORS = config.COLORS || {}
+    const promptList = [
+      {
+        type: 'input',
+        name: 'text',
+        message: 'Text color',
+        default: config.COLORS.text || ''
+      }, {
+        type: 'input',
+        name: 'name',
+        message: 'Name color',
+        default: config.COLORS.name || 'green'
+      }, {
+        type: 'input',
+        name: 'at',
+        message: 'ATs color',
+        default: config.COLORS.at || 'blue'
+      }, {
+        type: 'input',
+        name: 'link',
+        message: 'Link color',
+        default: config.COLORS.link || 'blue'
+      }, {
+        type: 'input',
+        name: 'tag',
+        message: 'Tag color',
+        default: config.COLORS.tag || 'blue'
+      }, {
+        type: 'input',
+        name: 'photo',
+        message: 'Photo color',
+        default: config.COLORS.photo || 'blue'
+      }, {
+        type: 'input',
+        name: 'timeago',
+        message: 'Timeago color',
+        default: config.COLORS.timeago || 'green'
+      }
+    ]
+    inquirer.prompt(promptList).then(async paints => {
+      const colors = {}
+      colors.text = paints.text
+      colors.name = paints.name
+      colors.at = paints.at
+      colors.link = paints.link
+      colors.tag = paints.tag
+      colors.photo = paints.photo
+      colors.timeago = paints.timeago
+      config.COLORS = colors
+      await util.createNofanDir()
+      await util.setConfig(config)
+    })
+  }
+
+  /**
    * command `nofan switch`
    */
   static async switchUser (id) {
@@ -169,16 +228,16 @@ class Nofan {
       if (account.hasOwnProperty(id)) {
         config.USER = id
         await util.setConfig(config)
-        console.log(colors.green('Switch account to', id))
+        console.log(chalk.green('Switch account to', id))
       } else {
-        console.log(colors.red(id, 'needs login'))
+        console.log(chalk.blue(id, 'needs login'))
       }
     } else {
       const choices = []
       const currentName = config.USER
       for (const name in account) {
         if (account.hasOwnProperty(name)) {
-          if (currentName === name) choices.push({name: name, disabled: colors.green('current')})
+          if (currentName === name) choices.push({name: name, disabled: chalk.green('current')})
           else choices.push(name)
         }
       }
@@ -404,7 +463,7 @@ class Nofan {
     fs.open(path, 'r', (e, fd) => {
       if (e) {
         if (e.code === 'ENOENT') {
-          console.error(colors.red(`file '${path}' does not exist`))
+          console.error(chalk.red(`file '${path}' does not exist`))
         } else throw e
       } else {
         ff.upload(
@@ -423,41 +482,58 @@ class Nofan {
     const config = await util.getConfig()
     timeAgoTag = timeAgoTag || config.TIME_TAG
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
+
+    const colors = config.COLORS || {}
+    const nameColor = util.validStyle(colors.name) ? colors.name : 'green'
+    const textColor = util.validStyle(colors.text) ? colors.text : ''
+    const atColor = util.validStyle(colors.at) ? colors.at : 'blue'
+    const linkColor = util.validStyle(colors.link) ? colors.link : 'blue'
+    const tagColor = util.validStyle(colors.tag) ? colors.tag : 'blue'
+    const photoColor = util.validStyle(colors.photo) ? colors.photo : 'blue'
+    const timeagoColor = util.validStyle(colors.timeago) ? colors.timeago : 'green'
+
     timeline.forEach(status => {
       let text = ''
       status.txt.forEach(item => {
         switch (item.type) {
           case 'at':
+            text += util.parseStyle(item.text, atColor)
+            break
           case 'link':
-            text += colors.blue(item.text)
+            text += util.parseStyle(item.text, linkColor)
             break
           case 'tag':
-            text += colors.blue(item._text)
+            text += util.parseStyle(item._text, tagColor)
             break
           default:
-            text += item._text
+            text += util.parseStyle(item._text, textColor)
             break
         }
       })
+
+      const name = util.parseStyle('[', textColor) + util.parseStyle(status.user.name, nameColor) + util.parseStyle(']', textColor)
+
       if (status.photo && !noPhotoTag) {
-        if (text.length) text += colors.blue(' [图]')
-        else text += colors.blue('[图]')
+        const photoTag = util.parseStyle('[图]', photoColor)
+        if (text.length) text += ` ${photoTag}`
+        else text += photoTag
       }
+
       if (!timeAgoTag) {
-        console.log(`[${colors.green(status.user.name)}] ${text}`)
+        console.log(`${name} ${text}`)
       } else {
-        const statusTimeAgo = colors.green(`(${new TimeAgo().format(status.created_at)})`)
-        console.log(`[${colors.green(status.user.name)}] ${text} ` + statusTimeAgo)
+        const statusTimeAgo = util.parseStyle(`(${new TimeAgo().format(status.created_at)})`, timeagoColor)
+        console.log(`${name} ${text} ${statusTimeAgo}`)
       }
     })
   }
 
   static version () {
-    const banner = colors.blue(figlet.textSync('Nofan', {
-      font: 'Slant'
+    const banner = chalk.yellow(figlet.textSync('Nofan', {
+      font: 'Small Slant'
     }))
-    const nofanVersion = colors.green(`nofan: ${require('../package').version}`)
-    const sdkVersion = colors.green(`fanfou-sdk: ${util.sdkVersion()}`)
+    const nofanVersion = chalk.cyanBright(`nofan: ${require('../package').version}`)
+    const sdkVersion = chalk.green(`fanfou-sdk: ${util.sdkVersion()}`)
     const version = `${banner}\n${nofanVersion}\n${sdkVersion}`
     return version
   }
