@@ -19,6 +19,13 @@ program
   })
 
 program
+  .command('colors')
+  .description('')
+  .action(function () {
+    Nofan.colors()
+  })
+
+program
   .command('login [username] [password]')
   .description('login nofan')
   .action(function (username, password) {

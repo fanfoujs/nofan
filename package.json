@@ -1,12 +1,12 @@
 {
   "name": "nofan",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Fanfou Cli for Node.js",
   "main": "index.js",
   "bin": "bin/nofan.js",
   "scripts": {
-    "build": "babel src -d lib",
-    "test": "npm run build && standard && ava test.js -s -v"
+    "build": "standard && babel src -d lib",
+    "test": "npm run build && ava test.js -s -v"
   },
   "repository": {
     "type": "git",
@@ -19,12 +19,13 @@
   },
   "homepage": "https://github.com/LitoMore/nofan#readme",
   "dependencies": {
-    "colors": "^1.1.2",
+    "chalk": "^2.0.1",
     "commander": "^2.9.0",
+    "css-color-names": "0.0.4",
     "fanfou-sdk": "^2.1.8",
     "figlet": "^1.2.0",
     "homedir": "^0.6.0",
-    "inquirer": "^3.0.6",
+    "inquirer": "^3.2.1",
     "timeago.js": "^3.0.1"
   },
   "devDependencies": {
