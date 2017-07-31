@@ -113,6 +113,10 @@ Use dot (`.`) to separeate multiple styles.
 
 [CSS keyword](https://www.w3.org/wiki/CSS/Properties/color/keywords) is valid.
 
+## Related
+
+- [fanfou-sdk](https://github.com/LitoMore/fanfou-sdk-node) - Fanfou SDK for Node.js
+
 ## License
 
 MIT @ [LitoMore](https://github.com/LitoMore)
