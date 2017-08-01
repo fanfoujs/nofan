@@ -1,4 +1,4 @@
-# nofan
+# Nofan
 
 [![](https://badges.greenkeeper.io/LitoMore/nofan.svg)](https://greenkeeper.io/)
 [![](https://img.shields.io/travis/LitoMore/nofan/master.svg)](https://travis-ci.org/LitoMore/nofan)
@@ -19,7 +19,6 @@ $ npm install -g nofan
 ## Config & Login
 
 ```bash
-
 # config consumer key and consumer secret
 $ nofan config
 
