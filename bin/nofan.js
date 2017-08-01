@@ -20,7 +20,7 @@ program
 
 program
   .command('colors')
-  .description('')
+  .description('customize color style')
   .action(function () {
     Nofan.colors()
   })
