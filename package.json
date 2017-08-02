@@ -1,6 +1,6 @@
 {
   "name": "nofan",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Fanfou Cli for Node.js",
   "main": "index.js",
   "bin": "bin/nofan.js",
