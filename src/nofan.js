@@ -280,7 +280,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e.message)
+      if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
@@ -297,7 +297,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e.message)
+      if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
@@ -352,7 +352,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e.message)
+      if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
@@ -369,7 +369,7 @@ class Nofan {
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
-      if (e) console.error(e.message)
+      if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
       }
