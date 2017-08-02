@@ -292,7 +292,7 @@ class Nofan {
    */
   static async publicTimeline (options) {
     options = options || {}
-    process.NOFAN_CONIFG = await util.getConfig()
+    process.NOFAN_CONFIG = await util.getConfig()
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
