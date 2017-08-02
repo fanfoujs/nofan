@@ -275,8 +275,8 @@ class Nofan {
    */
   static async homeTimeline (options) {
     options = options || {}
-    process.config = await util.getConfig()
-    const count = options.count || process.config.DISPLAY_COUNT || 10
+    process.NOFAN_CONFIG = await util.getConfig()
+    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -292,8 +292,8 @@ class Nofan {
    */
   static async publicTimeline (options) {
     options = options || {}
-    process.config = await util.getConfig()
-    const count = options.count || process.config.DISPLAY_COUNT || 10
+    process.NOFAN_CONIFG = await util.getConfig()
+    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -347,8 +347,8 @@ class Nofan {
    */
   static async mentions (options) {
     options = options || {}
-    process.config = await util.getConfig()
-    const count = options.count || process.config.DISPLAY_COUNT || 10
+    process.NOFAN_CONFIG = await util.getConfig()
+    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
@@ -364,8 +364,8 @@ class Nofan {
    */
   static async me (options) {
     options = options || {}
-    process.config = await util.getConfig()
-    const count = options.count || process.config.DISPLAY_COUNT || 10
+    process.NOFAN_CONFIG = await util.getConfig()
+    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -377,7 +377,7 @@ class Nofan {
   }
 
   static async _get (uri, params, callback) {
-    const config = process.config
+    const config = process.NOFAN_CONFIG
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
@@ -411,7 +411,7 @@ class Nofan {
   }
 
   static async _post (uri, params, callback) {
-    const config = process.config
+    const config = process.NOFAN_CONFIG
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
@@ -445,7 +445,7 @@ class Nofan {
   }
 
   static async _upload (path, status, callback) {
-    const config = process.config
+    const config = process.NOFAN_CONFIG
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
@@ -492,7 +492,7 @@ class Nofan {
   }
 
   static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
-    const config = process.config
+    const config = process.NOFAN_CONFIG
 
     if (process.spinner) process.spinner.stop()
     timeAgoTag = timeAgoTag || config.TIME_TAG
