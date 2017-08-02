@@ -1,12 +1,14 @@
 'use strict'
 
-const fs = require('fs')
-const chalk = require('chalk')
+const TimeAgo = require('timeago.js')
 const Fanfou = require('fanfou-sdk')
 const inquirer = require('inquirer')
-const TimeAgo = require('timeago.js')
-const util = require('./util')
 const figlet = require('figlet')
+const util = require('./util')
+const chalk = require('chalk')
+const pangu = require('pangu')
+const ora = require('ora')
+const fs = require('fs')
 
 class Nofan {
   /**
@@ -27,7 +29,8 @@ class Nofan {
         fakeHttps: config.FAKE_HTTPS || false
       })
       ff.xauth(async (e, token) => {
-        if (e) console.log(chalk.red(e.message))
+        // if (e) console.log(chalk.red(e.message))
+        if (e) process.spinner.fail(pangu.spacing(e.message))
         else {
           config.USER = username
           await util.setConfig(config)
@@ -39,11 +42,13 @@ class Nofan {
             OAUTH_TOKEN_SECRET: token.oauth_token_secret
           }
           await util.setAccount(account)
-          console.log(chalk.green('Login succeed!'))
+          // console.log(chalk.green('Login succeed!'))
+          process.spinner.succeed('Login succeed!')
         }
       })
     }
     if (username && password) {
+      process.spinner = ora('Logging in...').start()
       login(username, password)
     } else {
       inquirer.prompt([
@@ -56,7 +61,10 @@ class Nofan {
           name: 'password',
           message: 'Enter your password'
         }
-      ]).then(async user => {
+      ]).then(user => {
+        username = user.username
+        password = user.password
+        process.spinner = ora('Logging in').start()
         login(user.username, user.password)
       })
     }
@@ -66,12 +74,13 @@ class Nofan {
    * command `nofan logout`
    */
   static async logout () {
+    process.spinner = ora('Logging out').start()
     const config = await util.getConfig()
     if (config.hasOwnProperty('USER')) {
       const account = await util.getAccount()
       delete account[config.USER]
       await util.setAccount(account)
-      console.log(chalk.green('Logout succeed!'))
+      process.spinner.succeed('Logout succeed!')
     }
   }
 
@@ -228,9 +237,9 @@ class Nofan {
       if (account.hasOwnProperty(id)) {
         config.USER = id
         await util.setConfig(config)
-        console.log(chalk.green('Switch account to', id))
+        process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(id)}`)
       } else {
-        console.log(chalk.blue(id, 'needs login'))
+        process.spinner = ora().info(`${chalk.blue.bold(id)} needs login`)
       }
     } else {
       const choices = []
@@ -255,7 +264,8 @@ class Nofan {
           await util.setConfig(config)
         })
       } else {
-        console.log('no more account')
+        // console.log('no more account')
+        process.spinner = ora().info('no more account')
       }
     }
   }
@@ -265,8 +275,8 @@ class Nofan {
    */
   static async homeTimeline (options) {
     options = options || {}
-    const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT || 10
+    process.config = await util.getConfig()
+    const count = options.count || process.config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -282,8 +292,8 @@ class Nofan {
    */
   static async publicTimeline (options) {
     options = options || {}
-    const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT || 10
+    process.config = await util.getConfig()
+    const count = options.count || process.config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -300,7 +310,8 @@ class Nofan {
    */
   static update (text) {
     Nofan._post('/statuses/update', {status: text}, (e) => {
-      if (e) console.log(e.message)
+      if (e) process.spinner.fail(pangu.spacing(e.message))
+      else process.spinner.succeed('Sent!')
     })
   }
 
@@ -311,7 +322,8 @@ class Nofan {
    */
   static upload (path, text) {
     Nofan._upload(path, text, (e) => {
-      if (e) console.log(e.message)
+      if (e) process.spinner.fail(pangu.spacing(e.message))
+      else process.spinner.succeed('Sent!')
     })
   }
 
@@ -320,10 +332,11 @@ class Nofan {
    */
   static undo () {
     Nofan._get('/statuses/user_timeline', {}, (e, statuses) => {
-      if (e) console.error(e.message)
+      if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._post('/statuses/destroy', {id: statuses[0].id}, (e) => {
-          if (e) console.error(e.message)
+          if (e) process.spinner.fail(pangu.spacing(e.message))
+          else process.spinner.succeed('Deleted!')
         })
       }
     })
@@ -334,8 +347,8 @@ class Nofan {
    */
   static async mentions (options) {
     options = options || {}
-    const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT || 10
+    process.config = await util.getConfig()
+    const count = options.count || process.config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
@@ -351,8 +364,8 @@ class Nofan {
    */
   static async me (options) {
     options = options || {}
-    const config = await util.getConfig()
-    const count = options.count || config.DISPLAY_COUNT || 10
+    process.config = await util.getConfig()
+    const count = options.count || process.config.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
     Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
@@ -364,7 +377,7 @@ class Nofan {
   }
 
   static async _get (uri, params, callback) {
-    const config = await util.getConfig()
+    const config = process.config
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
@@ -398,7 +411,7 @@ class Nofan {
   }
 
   static async _post (uri, params, callback) {
-    const config = await util.getConfig()
+    const config = process.config
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
@@ -432,7 +445,7 @@ class Nofan {
   }
 
   static async _upload (path, status, callback) {
-    const config = await util.getConfig()
+    const config = process.config
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
@@ -479,7 +492,9 @@ class Nofan {
   }
 
   static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
-    const config = await util.getConfig()
+    const config = process.config
+
+    if (process.spinner) process.spinner.stop()
     timeAgoTag = timeAgoTag || config.TIME_TAG
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
 

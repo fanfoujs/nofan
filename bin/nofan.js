@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-const program = require('commander')
 const Nofan = require('../lib/nofan')
+const program = require('commander')
+const ora = require('ora')
 
 program
   .option('-v, --version', 'output the version info')
@@ -52,6 +53,7 @@ program
   .alias('h')
   .description('show home timeline')
   .action(function (count, options) {
+    process.spinner = ora('Fetching').start()
     Nofan.homeTimeline({
       count: count,
       time_ago: options.parent.time,
@@ -64,6 +66,7 @@ program
   .alias('m')
   .description('show mentions')
   .action(function (count, options) {
+    process.spinner = ora('Fetching').start()
     Nofan.mentions({
       count: count,
       time_ago: options.parent.time,
@@ -75,6 +78,7 @@ program
   .command('me [count]')
   .description('show my statuses')
   .action(function (count, options) {
+    process.spinner = ora('Fetching').start()
     Nofan.me({
       count: count,
       time_ago: options.parent.time,
@@ -87,6 +91,7 @@ program
   .alias('p')
   .description('show public timeline')
   .action(function (count, options) {
+    process.spinner = ora('Fetching').start()
     Nofan.publicTimeline({
       count: count,
       time_ago: options.parent.time,
@@ -98,6 +103,7 @@ program
   .command('undo')
   .description('delete last status')
   .action(function () {
+    process.spinner = ora('Deleting').start()
     Nofan.undo()
   })
 
@@ -106,6 +112,7 @@ program
   .option('-p, --photo <path>', 'attach a photo')
   .description('')
   .action(function (pre, more, options) {
+    process.spinner = ora('Sending').start()
     more.unshift(pre)
     const text = more.join(' ')
     if (!options.photo) Nofan.update(text)
@@ -115,6 +122,7 @@ program
 program.parse(process.argv)
 
 if (program.args.length === 0) {
+  process.spinner = ora('Fetching').start()
   Nofan.homeTimeline({
     time_ago: program.time,
     no_photo_tag: !program.photoTag
