@@ -411,7 +411,7 @@ class Nofan {
   }
 
   static async _post (uri, params, callback) {
-    const config = process.NOFAN_CONFIG
+    const config = await util.getConfig()
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
