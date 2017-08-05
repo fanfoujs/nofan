@@ -35,7 +35,7 @@
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-es2016": "^6.24.1",
-    "execa": "^0.7.0",
+    "execa": "^0.8.0",
     "standard": "^10.0.2"
   }
 }
