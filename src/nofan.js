@@ -445,7 +445,7 @@ class Nofan {
   }
 
   static async _upload (path, status, callback) {
-    const config = process.NOFAN_CONFIG
+    const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig()
     const account = await util.getAccount()
     let user = account[config.USER]
     if (!user) {
