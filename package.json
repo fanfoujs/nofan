@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/LitoMore/nofan#readme",
   "dependencies": {
-    "chalk": "^2.0.1",
+    "chalk": "^2.1.0",
     "commander": "^2.9.0",
     "css-color-names": "0.0.4",
     "fanfou-sdk": "^2.1.9",
@@ -36,6 +36,6 @@
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-es2016": "^6.24.1",
     "execa": "^0.8.0",
-    "standard": "^10.0.2"
+    "standard": "^10.0.3"
   }
 }
