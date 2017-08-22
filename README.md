@@ -10,6 +10,19 @@
 
 FanFou Cli for Node.js
 
+## Features
+
+- Fetch home-timeline
+- Fetch public-timeline
+- Fetch mentions-timeline
+- Fetch self-timeline
+- Post statuses
+- Post photos
+- Multiple account login
+- HTTPS secure connection
+- Customizable timeline
+- Customizable color themes
+
 ## Installation
 
 ```bash
