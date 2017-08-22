@@ -10,6 +10,8 @@ const pangu = require('pangu')
 const ora = require('ora')
 const fs = require('fs')
 
+inquirer.registerPrompt('color-input', require('./plugins/color-input'))
+
 class Nofan {
   /**
    * command `nofan login`
@@ -176,37 +178,37 @@ class Nofan {
     config.COLORS = config.COLORS || {}
     const promptList = [
       {
-        type: 'input',
+        type: 'color-input',
         name: 'text',
         message: 'Text color',
         default: config.COLORS.text || ''
       }, {
-        type: 'input',
+        type: 'color-input',
         name: 'name',
         message: 'Name color',
         default: config.COLORS.name || 'green'
       }, {
-        type: 'input',
+        type: 'color-input',
         name: 'at',
         message: 'ATs color',
         default: config.COLORS.at || 'blue'
       }, {
-        type: 'input',
+        type: 'color-input',
         name: 'link',
         message: 'Link color',
         default: config.COLORS.link || 'blue'
       }, {
-        type: 'input',
+        type: 'color-input',
         name: 'tag',
         message: 'Tag color',
         default: config.COLORS.tag || 'blue'
       }, {
-        type: 'input',
+        type: 'color-input',
         name: 'photo',
         message: 'Photo color',
         default: config.COLORS.photo || 'blue'
       }, {
-        type: 'input',
+        type: 'color-input',
         name: 'timeago',
         message: 'Timeago color',
         default: config.COLORS.timeago || 'green'
