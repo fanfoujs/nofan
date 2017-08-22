@@ -59,7 +59,7 @@ Prompt.prototype.render = function (error) {
   if (this.status === 'answered') {
     message += u.parseStyle(this.answer, this.answer)
   } else {
-    message += u.parseStyle(this.rl.line, this.rl.line)
+    message += this.rl.line
   }
 
   if (error) {
