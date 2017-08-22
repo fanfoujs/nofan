@@ -8,6 +8,8 @@
 [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://www.youtube.com/watch?v=9auOCbH5Ns4)
 [![](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+<div style="text-align: center;"><img src="https://raw.githubusercontent.com/LitoMore/nofan/master/screenshot.png" alt="Nofan" /></div>
+
 FanFou Cli for Node.js
 
 ## Features
