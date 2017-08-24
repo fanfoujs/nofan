@@ -1,5 +1,6 @@
 'use strict'
 
+const chalkPipe = require('chalk-pipe')
 const TimeAgo = require('timeago.js')
 const Fanfou = require('fanfou-sdk')
 const inquirer = require('inquirer')
@@ -501,37 +502,37 @@ class Nofan {
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
 
     const colors = config.COLORS || {}
-    const nameColor = util.validStyle(colors.name) ? colors.name : 'green'
-    const textColor = util.validStyle(colors.text) ? colors.text : ''
-    const atColor = util.validStyle(colors.at) ? colors.at : 'blue'
-    const linkColor = util.validStyle(colors.link) ? colors.link : 'blue'
-    const tagColor = util.validStyle(colors.tag) ? colors.tag : 'blue'
-    const photoColor = util.validStyle(colors.photo) ? colors.photo : 'blue'
-    const timeagoColor = util.validStyle(colors.timeago) ? colors.timeago : 'green'
+    const nameColor = chalkPipe(`green.${colors.name}`)
+    const textColor = chalkPipe(colors.text)
+    const atColor = chalkPipe(`blue.${colors.at}`)
+    const linkColor = chalkPipe(`blue.${colors.link}`)
+    const tagColor = chalkPipe(`blue.${colors.tag}`)
+    const photoColor = chalkPipe(`blue.${colors.photo}`)
+    const timeagoColor = chalkPipe(`green.${colors.timeago}`)
 
     timeline.forEach(status => {
       let text = ''
       status.txt.forEach(item => {
         switch (item.type) {
           case 'at':
-            text += util.parseStyle(item.text, atColor)
+            text += atColor(item.text)
             break
           case 'link':
-            text += util.parseStyle(item.text, linkColor)
+            text += linkColor(item.text)
             break
           case 'tag':
-            text += util.parseStyle(item._text, tagColor)
+            text += tagColor(item._text)
             break
           default:
-            text += util.parseStyle(item._text, textColor)
+            text += textColor(item._text)
             break
         }
       })
 
-      const name = util.parseStyle('[', textColor) + util.parseStyle(status.user.name, nameColor) + util.parseStyle(']', textColor)
+      const name = textColor('[') + nameColor(status.user.name) + textColor(']')
 
       if (status.photo && !noPhotoTag) {
-        const photoTag = util.parseStyle('[图]', photoColor)
+        const photoTag = photoColor('[图]')
         if (text.length) text += ` ${photoTag}`
         else text += photoTag
       }
@@ -539,7 +540,7 @@ class Nofan {
       if (!timeAgoTag) {
         console.log(`${name} ${text}`)
       } else {
-        const statusTimeAgo = util.parseStyle(`(${new TimeAgo().format(status.created_at)})`, timeagoColor)
+        const statusTimeAgo = timeagoColor(`(${new TimeAgo().format(status.created_at)})`)
         console.log(`${name} ${text} ${statusTimeAgo}`)
       }
     })
