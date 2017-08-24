@@ -3,9 +3,8 @@
 const util = require('util')
 const chalk = require('chalk')
 const Base = require('./base')
+const chalkPipe = require('chalk-pipe')
 const observe = require('inquirer/lib/utils/events')
-
-const u = require('../util')
 
 /**
  * Module exports
@@ -57,7 +56,7 @@ Prompt.prototype.render = function (error) {
   var message = this.getQuestion()
 
   if (this.status === 'answered') {
-    message += u.parseStyle(this.answer, this.answer)
+    message += chalkPipe(this.answer)(this.answer)
   } else {
     message += this.rl.line
   }
