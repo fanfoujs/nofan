@@ -11,7 +11,7 @@ const pangu = require('pangu')
 const ora = require('ora')
 const fs = require('fs')
 
-inquirer.registerPrompt('color-input', require('./plugins/color-input'))
+inquirer.registerPrompt('color-input', require('inquirer-chalk-pipe'))
 
 class Nofan {
   /**
