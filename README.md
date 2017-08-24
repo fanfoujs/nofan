@@ -69,13 +69,15 @@ $ nofan home -t              # show timeline with time ago tag
 $ nofan --no-photo-tag       # show timeline whihout photo tag
 ```
 
-### Styles
+### Color scheme
 
-Use `nofan colors` to customize your color style.
+Use `nofan colors` to customize your color scheme.
 
 **Format**
 
-Use dot (`.`) to separeate multiple styles.
+Use dot `.` to separeate multiple styles.
+
+Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-stylese).
 
 **Example**
 
@@ -86,46 +88,6 @@ Use dot (`.`) to separeate multiple styles.
 > cyanBright
 > orange.inverse.underline
 ```
-
-#### Valid Styles
-
-**Modifiers**
-
-- reset
-- bold
-- dim
-- italic (Not widely supported)
-- underline
-- inverse
-- hidden
-- strikethrough (Not widely supported)
-
-**Colors**
-
-- black
-- red
-- green
-- yellow
-- blue (On Windows the bright version is used since normal blue is illegible)
-- magenta
-- cyan
-- white
-- gray ("bright black")
-- redBright
-- greenBright
-- yellowBright
-- blueBright
-- magentaBright
-- cyanBright
-- whiteBright
-
-**Hex triplet**
-
-[Hex_triplet](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet) is valid.
-
-**CSS Keywords**
-
-[CSS keyword](https://www.w3.org/wiki/CSS/Properties/color/keywords) is valid.
 
 ## Related
 
