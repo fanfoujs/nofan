@@ -3,6 +3,10 @@
 const Nofan = require('../lib/nofan')
 const program = require('commander')
 const ora = require('ora')
+const updateNotifier = require('update-notifier')
+const pkg = require('../package')
+
+updateNotifier({pkg}).notify()
 
 program
   .option('-v, --version', 'output the version info')
