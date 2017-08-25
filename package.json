@@ -29,7 +29,8 @@
     "inquirer-chalk-pipe": "^1.0.0",
     "ora": "^1.3.0",
     "pangu": "^3.3.0",
-    "timeago.js": "^3.0.1"
+    "timeago.js": "^3.0.1",
+    "update-notifier": "^2.2.0"
   },
   "devDependencies": {
     "ava": "^0.22.0",
