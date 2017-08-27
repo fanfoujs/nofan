@@ -6,7 +6,7 @@
   "bin": "bin/nofan.js",
   "scripts": {
     "build": "standard && babel src -d lib",
-    "test": "npm run build && ava test.js -s -v"
+    "test": "npm run build && cross-env NODE_ENV=test ava test.js -s -v"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-es2016": "^6.24.1",
+    "cross-env": "^5.0.5",
     "execa": "^0.8.0",
     "standard": "^10.0.3"
   }
