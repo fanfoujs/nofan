@@ -4,7 +4,7 @@ const fs = require('fs')
 const chalk = require('chalk')
 const homedir = require('homedir')
 
-const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan'
+const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/'
 
 function createNofanDir () {
   return new Promise((resolve, reject) => {
