@@ -34,44 +34,48 @@ $ npm install -g nofan
 ## Config & Login
 
 ```bash
-# config consumer key and consumer secret
+# Config consumer key and consumer secret
 $ nofan config
 
-# login fanfou account
+# Login fanfou account
 $ nofan login
 ```
+
+> If you don't have consumer key, come [here] to create one
 
 ## Usage
 
 ### Commands
 
 ```bash
-$ nofan --help               # show help
-$ nofan config               # config consumer key and consumer secret
-$ nofan colors               # customize color style
-$ nofan login                # login fanfou account
-$ nofan logout               # logout current account
-$ nofan switch               # switch fanfou account
-$ nofan                      # get the latest 10 statuses from home timeline
-$ nofan home                 # get the latest 10 statuses from home timeline
-$ nofan mentions             # get the latest 10 statuses from mentions
-$ nofan me                   # get the latest 10 statuses from yourself
-$ nofan public               # get the latest 10 statuses from public timeline
-$ nofan home 20              # get the latest 20 statuses from public timeline
-$ nofan s                    # alias for `nofan switch`
-$ nofan h                    # alias for `nofan home`
-$ nofan p                    # alias for `nofan public`
-$ nofan m                    # alias for `nofan mentions`
-$ nofan hi nofan.            # post status "hi nofan."
-$ nofan undo                 # delete last status
-$ nofan hi -p ~/hola.png     # post status "hi" with a photo
-$ nofan home -t              # show timeline with time ago tag
-$ nofan --no-photo-tag       # show timeline whihout photo tag
+$ nofan --help               # Show help
+$ nofan config               # Config consumer key and consumer secret
+$ nofan colors               # Customize color style
+$ nofan login                # Login fanfou account
+$ nofan logout               # Logout current account
+$ nofan switch               # Switch fanfou account
+$ nofan                      # Fetch the latest 10 statuses from home timeline
+$ nofan home                 # Fetch the latest 10 statuses from home timeline
+$ nofan mentions             # Fetch the latest 10 statuses from mentions
+$ nofan me                   # Fetch the latest 10 statuses from yourself
+$ nofan public               # Fetch the latest 10 statuses from public timeline
+$ nofan home 20              # Fetch the latest 20 statuses from public timeline
+$ nofan s                    # Alias for `nofan switch`
+$ nofan h                    # Alias for `nofan home`
+$ nofan p                    # Alias for `nofan public`
+$ nofan m                    # Alias for `nofan mentions`
+$ nofan hi nofan.            # Post status "hi nofan."
+$ nofan undo                 # Delete last status
+$ nofan hi -p ~/hola.png     # Post status "hi" with a photo
+$ nofan home -t              # Display timeline with time ago tag
+$ nofan --no-photo-tag       # Display timeline whihout photo tag
 ```
 
 ### Color scheme
 
 Use `nofan colors` to customize your color scheme.
+
+![nofan-colors](https://raw.githubusercontent.com/LitoMore/nofan/master/media/nofan-colors.png)
 
 **Format**
 
