@@ -1,14 +1,10 @@
 'use strict'
 
 const fs = require('fs')
-const path = require('path')
 const chalk = require('chalk')
 const homedir = require('homedir')
 
-const isProduction = !fs.existsSync(path.join(__dirname, '../src'))
-
-let configPath = ''
-isProduction ? configPath = '/.nofan/' : configPath = '/.nofan-dev/'
+const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan'
 
 function createNofanDir () {
   return new Promise((resolve, reject) => {
