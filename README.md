@@ -41,7 +41,7 @@ $ nofan config
 $ nofan login
 ```
 
-> If you don't have consumer key, come [here](https://fanfou.com/apps) to create one
+> If you don't have consumer key, come [here](https://fanfou.com/apps) to create one.
 
 ## Usage
 
