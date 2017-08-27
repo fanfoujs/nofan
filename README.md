@@ -81,7 +81,7 @@ Use `nofan colors` to customize your color scheme.
 
 Use dot `.` to separeate multiple styles.
 
-Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-stylese).
+Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles).
 
 **Example**
 
