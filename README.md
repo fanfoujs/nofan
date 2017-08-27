@@ -96,6 +96,7 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 ## Related
 
 - [fanfou-sdk](https://github.com/LitoMore/fanfou-sdk-node) - Fanfou SDK for Node.js
+- [inquirer-chalk-pipe](https://github.com/LitoMore/chalk-pipe) - Prompt for input chalk-pipe style strings
 
 ## License
 
