@@ -32,7 +32,6 @@ class Nofan {
         fakeHttps: config.FAKE_HTTPS || false
       })
       ff.xauth(async (e, token) => {
-        // if (e) console.log(chalk.red(e.message))
         if (e) process.spinner.fail(pangu.spacing(e.message))
         else {
           config.USER = username
@@ -45,7 +44,6 @@ class Nofan {
             OAUTH_TOKEN_SECRET: token.oauth_token_secret
           }
           await util.setAccount(account)
-          // console.log(chalk.green('Login succeed!'))
           process.spinner.succeed('Login succeed!')
         }
       })
@@ -267,8 +265,7 @@ class Nofan {
           await util.setConfig(config)
         })
       } else {
-        // console.log('no more account')
-        process.spinner = ora().info('no more account')
+        process.spinner = ora().info('No more account')
       }
     }
   }
@@ -392,7 +389,7 @@ class Nofan {
         }
       }
       if (!user) {
-        console.log('not logged in')
+        process.spinner.fail('Not logged in')
         return
       }
     }
@@ -426,7 +423,7 @@ class Nofan {
         }
       }
       if (!user) {
-        console.log('not logged in')
+        process.spinner.fail('Not logged in')
         return
       }
     }
@@ -460,7 +457,7 @@ class Nofan {
         }
       }
       if (!user) {
-        console.log('not logged in')
+        process.spinner.fail('Not logged in')
         return
       }
     }
