@@ -5,6 +5,7 @@ const TimeAgo = require('timeago.js')
 const Fanfou = require('fanfou-sdk')
 const inquirer = require('inquirer')
 const figlet = require('figlet')
+const boxen = require('boxen')
 const util = require('./util')
 const chalk = require('chalk')
 const pangu = require('pangu')
@@ -406,6 +407,17 @@ class Nofan {
       fakeHttps: config.FAKE_HTTPS
     })
     ff.get(uri, params, (e, res, obj) => {
+      const expectHttpsError = /Invalid signature\. Expected basestring is GET&http%3A%2F%2F/
+      if (
+        config.SSL &&
+        !config.FAKE_HTTS &&
+        e &&
+        typeof e.message === 'string' &&
+        e.message.match(expectHttpsError)
+      ) {
+        const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+        e.message += `\n\n${boxen(tip, {padding: 1})}`
+      }
       callback(e, res, obj)
     })
   }
@@ -440,6 +452,17 @@ class Nofan {
       fakeHttps: config.FAKE_HTTPS || false
     })
     ff.post(uri, params, (e, res, obj) => {
+      const expectHttpsError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+      if (
+        config.SSL &&
+        !config.FAKE_HTTS &&
+        e &&
+        typeof e.message === 'string' &&
+        e.message.match(expectHttpsError)
+      ) {
+        const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+        e.message += `\n\n${boxen(tip, {padding: 1})}`
+      }
       callback(e, res, obj)
     })
   }
@@ -483,8 +506,20 @@ class Nofan {
           fs.createReadStream(path),
           status,
           (e) => {
-            if (e) callback(e)
-            else callback(null)
+            if (e) {
+              const expectHttpsError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+              if (
+                config.SSL &&
+                !config.FAKE_HTTS &&
+                e &&
+                typeof e.message === 'string' &&
+                e.message.match(expectHttpsError)
+              ) {
+                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+                e.message += `\n\n${boxen(tip, {padding: 1})}`
+              }
+              callback(e)
+            } else callback(null)
           }
         )
       }
