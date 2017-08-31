@@ -75,7 +75,7 @@ $ nofan --no-photo-tag       # Display timeline whihout photo tag
 
 Use `nofan colors` to customize your color scheme.
 
-![nofan-colors](https://raw.githubusercontent.com/LitoMore/nofan/master/media/nofan-colors.png)
+![nofan-colors](https://raw.githubusercontent.com/LitoMore/nofan/master/media/nofan-colors.gif)
 
 **Format**
 
