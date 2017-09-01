@@ -499,7 +499,7 @@ class Nofan {
     fs.open(path, 'r', (e, fd) => {
       if (e) {
         if (e.code === 'ENOENT') {
-          console.error(chalk.red(`file '${path}' does not exist`))
+          process.spinner.fail(`file '${path}' does not exist`)
         } else throw e
       } else {
         ff.upload(
