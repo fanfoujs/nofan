@@ -6,7 +6,8 @@
   "bin": "bin/nofan.js",
   "scripts": {
     "build": "standard && babel src -d lib",
-    "test": "npm run build && cross-env NODE_ENV=test ava test.js -s -v"
+    "test": "npm run build",
+    "ava": "cross-env NODE_ENV=test ava test.js -s -v"
   },
   "repository": {
     "type": "git",
