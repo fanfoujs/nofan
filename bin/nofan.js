@@ -9,15 +9,15 @@ const pkg = require('../package')
 updateNotifier({pkg}).notify()
 
 program
-  .option('-v, --version', 'output the version info')
-  .option('-t, --time', 'show time ago tag')
-  .option('--no-photo-tag', 'hide photo tag')
+  .option('-v, --version', 'Output the version info')
+  .option('-t, --time', 'Show time ago tag')
+  .option('--no-photo-tag', 'Hide photo tag')
   .version(Nofan.version())
 
 program
   .command('config [consumer_key] [consumer_secret]')
-  .option('-a, --all', 'show all config')
-  .description('config consumer key and consumer secret')
+  .option('-a, --all', 'Show all config')
+  .description('Config consumer key and consumer secret')
   .action(function (key, secret, options) {
     const showAll = options.all
     Nofan.config(key, secret, showAll)
@@ -25,21 +25,22 @@ program
 
 program
   .command('colors')
-  .description('customize color style')
+  .alias('color')
+  .description('Customize color style')
   .action(function () {
     Nofan.colors()
   })
 
 program
   .command('login [username] [password]')
-  .description('login nofan')
+  .description('Login nofan')
   .action(function (username, password) {
     Nofan.login(username, password)
   })
 
 program
   .command('logout')
-  .description('logout nofan')
+  .description('Logout nofan')
   .action(function () {
     Nofan.logout()
   })
@@ -47,7 +48,7 @@ program
 program
   .command('switch [id]')
   .alias('s')
-  .description('switch account')
+  .description('Switch account')
   .action(function (id) {
     Nofan.switchUser(id)
   })
@@ -55,7 +56,7 @@ program
 program
   .command('home [count]')
   .alias('h')
-  .description('show home timeline')
+  .description('Show home timeline')
   .action(function (count, options) {
     process.spinner = ora('Fetching').start()
     Nofan.homeTimeline({
@@ -67,8 +68,9 @@ program
 
 program
   .command('mentions [count]')
+  .alias('mention')
   .alias('m')
-  .description('show mentions')
+  .description('Show mentions')
   .action(function (count, options) {
     process.spinner = ora('Fetching').start()
     Nofan.mentions({
@@ -80,7 +82,7 @@ program
 
 program
   .command('me [count]')
-  .description('show my statuses')
+  .description('Show my statuses')
   .action(function (count, options) {
     process.spinner = ora('Fetching').start()
     Nofan.me({
@@ -93,7 +95,7 @@ program
 program
   .command('public [count]')
   .alias('p')
-  .description('show public timeline')
+  .description('Show public timeline')
   .action(function (count, options) {
     process.spinner = ora('Fetching').start()
     Nofan.publicTimeline({
@@ -105,7 +107,7 @@ program
 
 program
   .command('undo')
-  .description('delete last status')
+  .description('Delete last status')
   .action(function () {
     process.spinner = ora('Deleting').start()
     Nofan.undo()
@@ -113,7 +115,7 @@ program
 
 program
   .arguments('<status> [more...]')
-  .option('-p, --photo <path>', 'attach a photo')
+  .option('-p, --photo <path>', 'Attach a photo')
   .description('')
   .action(function (pre, more, options) {
     process.spinner = ora('Sending').start()
