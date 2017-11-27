@@ -35,7 +35,7 @@
     "update-notifier": "^2.3.0"
   },
   "devDependencies": {
-    "ava": "^0.23.0",
+    "ava": "^0.24.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-es2016": "^6.24.1",
