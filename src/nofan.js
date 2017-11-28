@@ -507,15 +507,25 @@ class Nofan {
           status,
           (e) => {
             if (e) {
-              const expectHttpsError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+              const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+              const expectHttpsError = /Invalid signature\. Expected basestring is POST&https%3A%2F%2F/
               if (
                 config.SSL &&
                 !config.FAKE_HTTS &&
                 e &&
                 typeof e.message === 'string' &&
-                e.message.match(expectHttpsError)
+                e.message.match(expectHttpError)
               ) {
                 const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+                e.message += `\n\n${boxen(tip, {padding: 1})}`
+              } else if (
+                config.SSL &&
+                config.FAKE_HTTPS &&
+                e &&
+                typeof e.message === 'string' &&
+                e.message.match(expectHttpsError)
+               ) {
+                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
                 e.message += `\n\n${boxen(tip, {padding: 1})}`
               }
               callback(e)
