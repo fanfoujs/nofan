@@ -39,13 +39,7 @@ function readJsonFile (filename) {
 }
 
 function readSDKVersion (callback) {
-  let version = ''
-  try {
-    version = require('../node_modules/fanfou-sdk/package').version
-  } catch (err) {
-    version = require('../package').dependencies['fanfou-sdk']
-  }
-  return version
+  return require('fanfou-sdk/package').version
 }
 
 async function getConfig () {
