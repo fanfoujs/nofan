@@ -68,7 +68,6 @@ program
 
 program
   .command('mentions [count]')
-  .alias('mention')
   .alias('m')
   .description('Show mentions')
   .action(function (count, options) {
