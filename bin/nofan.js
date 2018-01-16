@@ -5,6 +5,7 @@ const program = require('commander')
 const ora = require('ora')
 const updateNotifier = require('update-notifier')
 const pkg = require('../package')
+const pm2 = require('../lib/pm2')
 
 updateNotifier({pkg}).notify()
 
@@ -110,6 +111,32 @@ program
   .action(function () {
     process.spinner = ora('Deleting').start()
     Nofan.undo()
+  })
+
+program
+  .command('notifier [operate]')
+  .alias('n')
+  .description('Nofan Notifier')
+  .action(function (operate) {
+    process.spinner = ora('Setting Notifier').start()
+    switch (operate) {
+      case undefined:
+      case 'start':
+        pm2.start()
+        break
+      case 'stop':
+        pm2.stop()
+        break
+      case 'restart':
+        pm2.restart()
+        break
+      case 'delete':
+        pm2.deleting()
+        break
+      default:
+        process.spinner.fail('Invalid Notifier command')
+        break
+    }
   })
 
 program

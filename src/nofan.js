@@ -594,7 +594,8 @@ class Nofan {
     }))
     const nofanVersion = chalk.cyanBright(`nofan: ${require('../package').version}`)
     const sdkVersion = chalk.green(`fanfou-sdk: ${util.sdkVersion()}`)
-    const version = `${banner}\n${nofanVersion}\n${sdkVersion}`
+    const streamerVersion = chalk.blueBright(`fanfou-streamer: ${require('fanfou-streamer/package').version}`)
+    const version = `${banner}\n${nofanVersion}\n${sdkVersion}\n${streamerVersion}`
     return version
   }
 }

@@ -24,6 +24,7 @@ CLI for Fanfou
 - HTTPS secure connection
 - Customizable timeline
 - Customizable color themes
+- Desktop notifier support
 
 ## Installation
 
@@ -68,7 +69,10 @@ $ nofan hi nofan.            # Post status "hi nofan."
 $ nofan undo                 # Delete last status
 $ nofan hi -p ~/hola.png     # Post status "hi" with a photo
 $ nofan home -t              # Display timeline with time ago tag
-$ nofan --no-photo-tag       # Display timeline whihout photo tag
+$ nofan notifier start       # Start Nofan Notifier process
+$ nofan notifier stop        # Stop Nofan Notifier process
+$ nofan notifier restart     # Restart Nofan Notifier process
+$ nofan notifier delete      # Delete Nofan Notifier process
 ```
 
 ### Color scheme
@@ -96,6 +100,8 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 ## Related
 
 - [fanfou-sdk](https://github.com/LitoMore/fanfou-sdk-node) - Fanfou SDK for Node.js
+- [fanfou-streamer](https://github.com/LitoMore/fanfou-streamer) - Fanfou Streaming SDK for Node.js
+- [fanfou-desktop-notifier](https://github.com/LitoMore/fanfou-desktop-notifier) - Fanfou Desktop Notifier
 - [inquirer-chalk-pipe](https://github.com/LitoMore/inquirer-chalk-pipe) - Prompt for input chalk-pipe style strings
 
 ## License
