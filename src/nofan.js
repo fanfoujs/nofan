@@ -1,5 +1,6 @@
 'use strict'
 
+const gradient = require('gradient-string')
 const chalkPipe = require('chalk-pipe')
 const TimeAgo = require('timeago.js')
 const Fanfou = require('fanfou-sdk')
@@ -589,7 +590,7 @@ class Nofan {
   }
 
   static version () {
-    const banner = chalk.yellow(figlet.textSync('Nofan', {
+    const banner = gradient.rainbow(figlet.textSync('Nofan', {
       font: 'Small Slant'
     }))
     const nofanVersion = chalk.cyanBright(`nofan: ${require('../package').version}`)
