@@ -32,7 +32,7 @@ const run = async () => {
     notifier.notify({
       title: 'Nofan',
       message,
-      reply: true
+      reply: `Reply to @${res.source.screen_name}`
     }, (error, response, metadata) => {
       if (!error && metadata && metadata.activationType === 'replied') {
         ff.post('/statuses/update', {
