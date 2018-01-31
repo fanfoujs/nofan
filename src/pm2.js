@@ -17,7 +17,8 @@ const start = async () => {
 
   pm2.start({
     script: path.join(__dirname, 'notifier.js'),
-    name: 'nofan-notifier'
+    name: 'nofan-notifier',
+    watch: true
   }, err => {
     if (err) process.spinner.fail(err.message)
     else process.spinner.succeed('Nofan Notifier started!')
