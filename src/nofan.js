@@ -525,7 +525,7 @@ class Nofan {
                 e &&
                 typeof e.message === 'string' &&
                 e.message.match(expectHttpsError)
-               ) {
+              ) {
                 const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
                 e.message += `\n\n${boxen(tip, {padding: 1})}`
               }
