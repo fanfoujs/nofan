@@ -61,7 +61,8 @@ async function getConfig () {
         link: 'blue',
         tag: 'blue',
         photo: 'blue',
-        timeago: 'green'
+        timeago: 'green',
+        highlight: 'bold'
       }
     }
   }

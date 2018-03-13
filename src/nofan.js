@@ -213,6 +213,11 @@ class Nofan {
         name: 'timeago',
         message: 'Timeago color',
         default: config.COLORS.timeago || 'green'
+      }, {
+        type: 'color-input',
+        name: 'highlight',
+        message: 'Highlight color',
+        default: config.COLORS.highlight || 'bold'
       }
     ]
     inquirer.prompt(promptList).then(async paints => {
@@ -224,6 +229,7 @@ class Nofan {
       colors.tag = paints.tag
       colors.photo = paints.photo
       colors.timeago = paints.timeago
+      colors.highlight = paints.highlight
       config.COLORS = colors
       await util.createNofanDir()
       await util.setConfig(config)
@@ -558,29 +564,40 @@ class Nofan {
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
 
     const colors = config.COLORS || {}
-    const nameColor = chalkPipe(`green.${colors.name}`)
-    const textColor = chalkPipe(colors.text)
-    const atColor = chalkPipe(`blue.${colors.at}`)
-    const linkColor = chalkPipe(`blue.${colors.link}`)
-    const tagColor = chalkPipe(`blue.${colors.tag}`)
-    const photoColor = chalkPipe(`blue.${colors.photo}`)
-    const timeagoColor = chalkPipe(`green.${colors.timeago}`)
+    const nameColor = chalkPipe(colors.name || 'green')
+    const textColor = chalkPipe(colors.text || '')
+    const atColor = chalkPipe(colors.at || 'blue')
+    const linkColor = chalkPipe(colors.link || 'blue')
+    const tagColor = chalkPipe(colors.tag || 'blue')
+    const photoColor = chalkPipe(colors.photo || 'blue')
+    const timeagoColor = chalkPipe(colors.timeago || 'green')
+    const highlightColor = chalkPipe(colors.highlight || 'bold')
+
+    const parseHighlight = item => {
+      if (item.bold_arr) {
+        return item.bold_arr.map(keyword => {
+          if (keyword.bold) return highlightColor(keyword.text)
+          return keyword.text
+        }).join('')
+      }
+      return false
+    }
 
     timeline.forEach(status => {
       let text = ''
       status.txt.forEach(item => {
         switch (item.type) {
           case 'at':
-            text += atColor(Nofan.parseBold(item) || item.text)
+            text += atColor(parseHighlight(item) || item.text)
             break
           case 'link':
-            text += linkColor(Nofan.parseBold(item) || item.text)
+            text += linkColor(parseHighlight(item) || item.text)
             break
           case 'tag':
-            text += tagColor(Nofan.parseBold(item) || item._text)
+            text += tagColor(parseHighlight(item) || item._text)
             break
           default:
-            text += textColor(Nofan.parseBold(item) || item._text)
+            text += textColor(parseHighlight(item) || item._text)
             break
         }
       })
@@ -600,16 +617,6 @@ class Nofan {
         console.log(`${name} ${text} ${statusTimeAgo}`)
       }
     })
-  }
-
-  static parseBold (item) {
-    if (item.bold_arr) {
-      return item.bold_arr.map(keyword => {
-        if (keyword.bold) return chalk.bold(keyword.text)
-        return keyword.text
-      }).join('')
-    }
-    return false
   }
 
   static version () {
