@@ -503,36 +503,32 @@ class Nofan {
           process.spinner.fail(`file '${path}' does not exist`)
         } else throw e
       } else {
-        ff.upload(
-          fs.createReadStream(path),
-          status,
-          (e) => {
-            if (e) {
-              const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
-              const expectHttpsError = /Invalid signature\. Expected basestring is POST&https%3A%2F%2F/
-              if (
-                config.SSL &&
-                !config.FAKE_HTTS &&
-                e &&
-                typeof e.message === 'string' &&
-                e.message.match(expectHttpError)
-              ) {
-                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-                e.message += `\n\n${boxen(tip, {padding: 1})}`
-              } else if (
-                config.SSL &&
-                config.FAKE_HTTPS &&
-                e &&
-                typeof e.message === 'string' &&
-                e.message.match(expectHttpsError)
-              ) {
-                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
-                e.message += `\n\n${boxen(tip, {padding: 1})}`
-              }
-              callback(e)
-            } else callback(null)
-          }
-        )
+        ff.up('/photos/upload', {photo: fs.createReadStream(path), status}, err => {
+          if (err) {
+            const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+            const expectHttpsError = /Invalid signature\. Expected basestring is POST&https%3A%2F%2F/
+            if (
+              config.SSL &&
+              !config.FAKE_HTTS &&
+              err &&
+              typeof err.message === 'string' &&
+              err.message.match(expectHttpError)
+            ) {
+              const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+              err.message += `\n\n${boxen(tip, {padding: 1})}`
+            } else if (
+              config.SSL &&
+              config.FAKE_HTTPS &&
+              err &&
+              typeof err.message === 'string' &&
+              err.message.match(expectHttpsError)
+            ) {
+              const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
+              err.message += `\n\n${boxen(tip, {padding: 1})}`
+            }
+            callback(err)
+          } else callback(null)
+        })
       }
     })
   }
