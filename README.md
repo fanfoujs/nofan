@@ -60,10 +60,12 @@ $ nofan home                 # Fetch the latest 10 statuses from home timeline
 $ nofan mentions             # Fetch the latest 10 statuses from mentions
 $ nofan me                   # Fetch the latest 10 statuses from yourself
 $ nofan public               # Fetch the latest 10 statuses from public timeline
+$ nofan search <query>       # Search status from public timeline
 $ nofan home 20              # Fetch the latest 20 statuses from public timeline
 $ nofan s                    # Alias for `nofan switch`
 $ nofan h                    # Alias for `nofan home`
 $ nofan p                    # Alias for `nofan public`
+$ nofan se                   # Alias for `nofan search`
 $ nofan m                    # Alias for `nofan mentions`
 $ nofan hi nofan.            # Post status "hi nofan."
 $ nofan undo                 # Delete last status

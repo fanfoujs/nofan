@@ -307,6 +307,23 @@ class Nofan {
   }
 
   /**
+   * Search public timeline
+   */
+  static async searchTimeline (q, options) {
+    options = options || {}
+    process.NOFAN_CONFIG = await util.getConfig()
+    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
+    const timeAgo = options.time_ago || false
+    const noPhotoTag = options.no_photo_tag || false
+    Nofan._get('/search/public_timeline', {q, count, format: 'html'}, (e, statuses) => {
+      if (e) process.spinner.fail(pangu.spacing(e.message))
+      else {
+        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
+      }
+    })
+  }
+
+  /**
    * Post new status
    * @param text {text}
    */

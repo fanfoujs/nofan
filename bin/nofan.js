@@ -106,6 +106,19 @@ program
   })
 
 program
+  .command('search <query> [count]')
+  .alias('se')
+  .description('Search public timeline')
+  .action(function (query, count, options) {
+    process.spinner = ora('Fetching').start()
+    Nofan.searchTimeline(query, {
+      count: count,
+      time_ago: options.parent.time,
+      no_photo_tag: !options.parent.photoTag
+    })
+  })
+
+program
   .command('undo')
   .description('Delete last status')
   .action(function () {
