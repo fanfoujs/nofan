@@ -249,7 +249,7 @@ class Nofan {
       const currentName = config.USER
       for (const name in account) {
         if (account.hasOwnProperty(name)) {
-          if (currentName === name) choices.push({name: name, disabled: chalk.green('current')})
+          if (currentName === name) choices.push({name, disabled: chalk.green('current')})
           else choices.push(name)
         }
       }
@@ -281,7 +281,7 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/home_timeline', {count: count, format: 'html'}, (e, statuses) => {
+    Nofan._get('/statuses/home_timeline', {count, format: 'html'}, (e, statuses) => {
       if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
@@ -298,7 +298,7 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/public_timeline', {count: count, format: 'html'}, (e, statuses) => {
+    Nofan._get('/statuses/public_timeline', {count, format: 'html'}, (e, statuses) => {
       if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
@@ -370,7 +370,7 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/mentions', {count: count, format: 'html'}, (e, statuses) => {
+    Nofan._get('/statuses/mentions', {count, format: 'html'}, (e, statuses) => {
       if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
@@ -387,7 +387,7 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/user_timeline', {count: count, format: 'html'}, (e, statuses) => {
+    Nofan._get('/statuses/user_timeline', {count, format: 'html'}, (e, statuses) => {
       if (e) process.spinner.fail(pangu.spacing(e.message))
       else {
         Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
