@@ -571,16 +571,16 @@ class Nofan {
       status.txt.forEach(item => {
         switch (item.type) {
           case 'at':
-            text += atColor(item.text)
+            text += atColor(Nofan.parseBold(item) || item.text)
             break
           case 'link':
-            text += linkColor(item.text)
+            text += linkColor(Nofan.parseBold(item) || item.text)
             break
           case 'tag':
-            text += tagColor(item._text)
+            text += tagColor(Nofan.parseBold(item) || item._text)
             break
           default:
-            text += textColor(item._text)
+            text += textColor(Nofan.parseBold(item) || item._text)
             break
         }
       })
@@ -600,6 +600,16 @@ class Nofan {
         console.log(`${name} ${text} ${statusTimeAgo}`)
       }
     })
+  }
+
+  static parseBold (item) {
+    if (item.bold_arr) {
+      return item.bold_arr.map(keyword => {
+        if (keyword.bold) return chalk.bold(keyword.text)
+        return keyword.text
+      }).join('')
+    }
+    return false
   }
 
   static version () {
