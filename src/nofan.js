@@ -577,7 +577,7 @@ class Nofan {
       if (item.bold_arr) {
         return item.bold_arr.map(keyword => {
           if (keyword.bold) return chalkPipe(`${style}.${highlightColor}`)(keyword.text)
-          return keyword.text
+          return chalkPipe(style)(keyword.text)
         }).join('')
       }
       return false
