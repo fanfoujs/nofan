@@ -24,7 +24,7 @@
     "chalk": "^2.3.0",
     "chalk-pipe": "^1.2.0",
     "commander": "^2.9.0",
-    "fanfou-sdk": "^2.7.1",
+    "fanfou-sdk": "^2.7.2",
     "fanfou-streamer": "^0.2.1",
     "figlet": "^1.2.0",
     "gradient-string": "^1.0.0",
