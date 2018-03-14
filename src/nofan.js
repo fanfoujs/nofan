@@ -564,19 +564,19 @@ class Nofan {
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
 
     const colors = config.COLORS || {}
-    const nameColor = chalkPipe(colors.name || 'green')
-    const textColor = chalkPipe(colors.text || '')
-    const atColor = chalkPipe(colors.at || 'blue')
-    const linkColor = chalkPipe(colors.link || 'blue')
-    const tagColor = chalkPipe(colors.tag || 'blue')
-    const photoColor = chalkPipe(colors.photo || 'blue')
-    const timeagoColor = chalkPipe(colors.timeago || 'green')
-    const highlightColor = chalkPipe(colors.highlight || 'bold')
+    const nameColor = colors.name || 'green'
+    const textColor = colors.text
+    const atColor = colors.at || 'blue'
+    const linkColor = colors.link || 'blue'
+    const tagColor = colors.tag || 'blue'
+    const photoColor = colors.photo || 'blue'
+    const timeagoColor = colors.timeago || 'green'
+    const highlightColor = colors.highlight || 'bold'
 
-    const parseHighlight = item => {
+    const parseHighlight = (style, item) => {
       if (item.bold_arr) {
         return item.bold_arr.map(keyword => {
-          if (keyword.bold) return highlightColor(keyword.text)
+          if (keyword.bold) return chalkPipe(`${style}.${highlightColor}`)(keyword.text)
           return keyword.text
         }).join('')
       }
@@ -588,24 +588,24 @@ class Nofan {
       status.txt.forEach(item => {
         switch (item.type) {
           case 'at':
-            text += atColor(parseHighlight(item) || item.text)
+            text += parseHighlight(atColor, item) || chalkPipe(atColor)(item.text)
             break
           case 'link':
-            text += linkColor(parseHighlight(item) || item.text)
+            text += parseHighlight(linkColor, item) || chalkPipe(linkColor)(item.text)
             break
           case 'tag':
-            text += tagColor(parseHighlight(item) || item._text)
+            text += parseHighlight(tagColor, item) || chalkPipe(tagColor)(item._text)
             break
           default:
-            text += textColor(parseHighlight(item) || item._text)
+            text += parseHighlight(textColor, item) || chalkPipe(textColor)(item._text)
             break
         }
       })
 
-      const name = textColor('[') + nameColor(status.user.name) + textColor(']')
+      const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(status.user.name) + chalkPipe(textColor)(']')
 
       if (status.photo && !noPhotoTag) {
-        const photoTag = photoColor('[图]')
+        const photoTag = chalkPipe(photoColor)('[图]')
         if (text.length) text += ` ${photoTag}`
         else text += photoTag
       }
@@ -613,7 +613,7 @@ class Nofan {
       if (!timeAgoTag) {
         console.log(`${name} ${text}`)
       } else {
-        const statusTimeAgo = timeagoColor(`(${new TimeAgo().format(status.created_at)})`)
+        const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`)
         console.log(`${name} ${text} ${statusTimeAgo}`)
       }
     })
