@@ -7,11 +7,13 @@ const Fanfou = require('fanfou-sdk')
 const inquirer = require('inquirer')
 const figlet = require('figlet')
 const boxen = require('boxen')
-const util = require('./util')
 const chalk = require('chalk')
 const pangu = require('pangu')
 const ora = require('ora')
 const fs = require('fs')
+
+const util = require('./util')
+const prompts = require('./prompts')
 
 inquirer.registerPrompt('color-input', require('inquirer-chalk-pipe'))
 
@@ -23,14 +25,14 @@ class Nofan {
     const config = await util.getConfig()
     const login = (username, password) => {
       const ff = new Fanfou({
-        auth_type: 'xauth',
-        consumer_key: config.CONSUMER_KEY,
-        consumer_secret: config.CONSUMER_SECRET,
-        username: username,
-        password: password,
+        authType: 'xauth',
+        consumerKey: config.CONSUMER_KEY,
+        cosnumerSecret: config.CONSUMER_SECRET,
+        username,
+        password,
         protocol: config.SSL ? 'https:' : 'http:',
-        api_domain: config.API_DOMAIN,
-        oauth_domain: config.OAUTH_DOMAIN,
+        apiDomain: config.API_DOMAIN,
+        oauthDomain: config.OAUTH_DOMAIN,
         fakeHttps: config.FAKE_HTTPS || false
       })
       ff.xauth(async (e, token) => {
@@ -54,22 +56,9 @@ class Nofan {
       process.spinner = ora('Logging in...').start()
       login(username, password)
     } else {
-      inquirer.prompt([
-        {
-          type: 'input',
-          name: 'username',
-          message: 'Enter your username'
-        }, {
-          type: 'password',
-          name: 'password',
-          message: 'Enter your password'
-        }
-      ]).then(user => {
-        username = user.username
-        password = user.password
-        process.spinner = ora('Logging in').start()
-        login(user.username, user.password)
-      })
+      const user = await inquirer.prompt(prompts.login)
+      process.spinner = ora('Logging in').start()
+      login(user.username, user.password)
     }
   }
 
@@ -99,75 +88,18 @@ class Nofan {
       await util.createNofanDir()
       await util.setConfig(config)
     } else {
-      let promptList = [
-        {
-          type: 'input',
-          name: 'key',
-          message: 'Enter your consumer key',
-          default: config.CONSUMER_KEY
-        }, {
-          type: 'input',
-          name: 'secret',
-          message: 'Enter your consumer secret',
-          default: config.CONSUMER_SECRET
-        }, {
-          type: 'input',
-          name: 'display_count',
-          message: 'How many statuses would you like to display (1 - 60)',
-          default: config.DISPLAY_COUNT || 10
-        }, {
-          type: 'checkbox',
-          name: 'display',
-          message: 'Global Settings',
-          choices: [
-            {
-              name: 'time_tag',
-              checked: config.TIME_TAG
-            }, {
-              name: 'photo_tag',
-              checked: config.PHOTO_TAG
-            }, {
-              name: 'use_https',
-              checked: config.SSL || false
-            }
-          ]
-        }
-      ]
-      if (showAll) {
-        promptList = promptList.concat([{
-          type: 'input',
-          name: 'api_domain',
-          message: 'Config your api domain',
-          default: config.API_DOMAIN || 'api.fanfou.com'
-        }, {
-          type: 'input',
-          name: 'oauth_domain',
-          message: 'Config your oauth domain',
-          default: config.OAUTH_DOMAIN || 'fanfou.com'
-        }, {
-          type: 'checkbox',
-          name: 'https',
-          message: `Replace 'https' with 'http' in OAuth base string`,
-          choices: [{
-            name: 'fake_https',
-            checked: config.FAKE_HTTPS || false
-          }]
-        }])
-      }
-      inquirer.prompt(promptList).then(async settings => {
-        config.CONSUMER_KEY = settings.key || ''
-        config.CONSUMER_SECRET = settings.secret || ''
-        config.DISPLAY_COUNT = settings.display_count
-        config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
-        config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
-        config.SSL = settings.display.indexOf('use_https') !== -1
-        if (settings.api_domain) config.API_DOMAIN = settings.api_domain
-        if (settings.oauth_domain) config.OAUTH_DOMAIN = settings.oauth_domain
-        if (settings.https) config.FAKE_HTTPS = settings.https.indexOf('fake_https') !== -1
-
-        await util.createNofanDir()
-        await util.setConfig(config)
-      })
+      const settings = await inquirer.prompt(prompts.config(config, showAll))
+      config.CONSUMER_KEY = settings.key || ''
+      config.CONSUMER_SECRET = settings.secret || ''
+      config.DISPLAY_COUNT = settings.display_count
+      config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
+      config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
+      config.SSL = settings.display.indexOf('use_https') !== -1
+      if (settings.api_domain) config.API_DOMAIN = settings.api_domain
+      if (settings.oauth_domain) config.OAUTH_DOMAIN = settings.oauth_domain
+      if (settings.https) config.FAKE_HTTPS = settings.https.indexOf('fake_https') !== -1
+      await util.createNofanDir()
+      await util.setConfig(config)
     }
   }
 
@@ -177,63 +109,11 @@ class Nofan {
   static async colors () {
     const config = await util.getConfig()
     config.COLORS = config.COLORS || {}
-    const promptList = [
-      {
-        type: 'color-input',
-        name: 'text',
-        message: 'Text color',
-        default: config.COLORS.text || ''
-      }, {
-        type: 'color-input',
-        name: 'name',
-        message: 'Name color',
-        default: config.COLORS.name || 'green'
-      }, {
-        type: 'color-input',
-        name: 'at',
-        message: 'ATs color',
-        default: config.COLORS.at || 'blue'
-      }, {
-        type: 'color-input',
-        name: 'link',
-        message: 'Link color',
-        default: config.COLORS.link || 'blue'
-      }, {
-        type: 'color-input',
-        name: 'tag',
-        message: 'Tag color',
-        default: config.COLORS.tag || 'blue'
-      }, {
-        type: 'color-input',
-        name: 'photo',
-        message: 'Photo color',
-        default: config.COLORS.photo || 'blue'
-      }, {
-        type: 'color-input',
-        name: 'timeago',
-        message: 'Timeago color',
-        default: config.COLORS.timeago || 'green'
-      }, {
-        type: 'color-input',
-        name: 'highlight',
-        message: 'Highlight color',
-        default: config.COLORS.highlight || 'bold'
-      }
-    ]
-    inquirer.prompt(promptList).then(async paints => {
-      const colors = {}
-      colors.text = paints.text
-      colors.name = paints.name
-      colors.at = paints.at
-      colors.link = paints.link
-      colors.tag = paints.tag
-      colors.photo = paints.photo
-      colors.timeago = paints.timeago
-      colors.highlight = paints.highlight
-      config.COLORS = colors
-      await util.createNofanDir()
-      await util.setConfig(config)
-    })
+    const paints = await inquirer.prompt(prompts.colors(config))
+    const colors = {...paints}
+    config.COLORS = colors
+    await util.createNofanDir()
+    await util.setConfig(config)
   }
 
   /**
@@ -260,18 +140,9 @@ class Nofan {
         }
       }
       if (choices.length > 1) {
-        inquirer.prompt([
-          {
-            type: 'list',
-            name: 'username',
-            message: 'Switch account to',
-            choices: choices,
-            pageSize: 20
-          }
-        ]).then(async user => {
-          config.USER = user.username
-          await util.setConfig(config)
-        })
+        const user = await inquirer.prompt(prompts.switchy(choices))
+        config.USER = user.username
+        await util.setConfig(config)
       } else {
         process.spinner = ora().info('No more account')
       }
@@ -419,17 +290,9 @@ class Nofan {
       }
     }
     util.setConfig(config)
-    const ff = new Fanfou({
-      auth_type: 'oauth',
-      consumer_key: user.CONSUMER_KEY,
-      consumer_secret: user.CONSUMER_SECRET,
-      oauth_token: user.OAUTH_TOKEN,
-      oauth_token_secret: user.OAUTH_TOKEN_SECRET,
-      protocol: config.SSL ? 'https:' : 'http:',
-      api_domain: config.API_DOMAIN,
-      oauth_domain: config.OAUTH_DOMAIN,
-      fakeHttps: config.FAKE_HTTPS
-    })
+
+    const ff = Nofan.initFanfou(user, config)
+
     ff.get(uri, params, (e, res, obj) => {
       const expectHttpsError = /Invalid signature\. Expected basestring is GET&http%3A%2F%2F/
       if (
@@ -464,17 +327,9 @@ class Nofan {
       }
     }
     util.setConfig(config)
-    const ff = new Fanfou({
-      auth_type: 'oauth',
-      consumer_key: user.CONSUMER_KEY,
-      consumer_secret: user.CONSUMER_SECRET,
-      oauth_token: user.OAUTH_TOKEN,
-      oauth_token_secret: user.OAUTH_TOKEN_SECRET,
-      protocol: config.SSL ? 'https:' : 'http:',
-      api_domain: config.API_DOMAIN,
-      oauth_domain: config.OAUTH_DOMAIN,
-      fakeHttps: config.FAKE_HTTPS || false
-    })
+
+    const ff = Nofan.initFanfou(user, config)
+
     ff.post(uri, params, (e, res, obj) => {
       const expectHttpsError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
       if (
@@ -509,17 +364,9 @@ class Nofan {
       }
     }
     util.setConfig(config)
-    const ff = new Fanfou({
-      auth_type: 'oauth',
-      consumer_key: user.CONSUMER_KEY,
-      consumer_secret: user.CONSUMER_SECRET,
-      oauth_token: user.OAUTH_TOKEN,
-      oauth_token_secret: user.OAUTH_TOKEN_SECRET,
-      protocol: config.SSL ? 'https:' : 'http:',
-      api_domain: config.API_DOMAIN,
-      oauth_domain: config.OAUTH_DOMAIN,
-      fakeHttps: config.FAKE_HTTPS || false
-    })
+
+    const ff = Nofan.initFanfou(user, config)
+
     fs.open(path, 'r', (e, fd) => {
       if (e) {
         if (e.code === 'ENOENT') {
@@ -558,11 +405,9 @@ class Nofan {
 
   static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
     const config = process.NOFAN_CONFIG
-
     if (process.spinner) process.spinner.stop()
     timeAgoTag = timeAgoTag || config.TIME_TAG
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
-
     const colors = config.COLORS || {}
     const nameColor = colors.name || 'green'
     const textColor = colors.text
@@ -572,7 +417,6 @@ class Nofan {
     const photoColor = colors.photo || 'blue'
     const timeagoColor = colors.timeago || 'green'
     const highlightColor = colors.highlight || 'bold'
-
     const parseHighlight = (style, item) => {
       if (item.bold_arr) {
         return item.bold_arr.map(keyword => {
@@ -582,7 +426,6 @@ class Nofan {
       }
       return false
     }
-
     timeline.forEach(status => {
       let text = ''
       status.txt.forEach(item => {
@@ -601,21 +444,32 @@ class Nofan {
             break
         }
       })
-
       const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(status.user.name) + chalkPipe(textColor)(']')
-
       if (status.photo && !noPhotoTag) {
         const photoTag = chalkPipe(photoColor)('[图]')
         if (text.length) text += ` ${photoTag}`
         else text += photoTag
       }
-
       if (!timeAgoTag) {
         console.log(`${name} ${text}`)
       } else {
         const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`)
         console.log(`${name} ${text} ${statusTimeAgo}`)
       }
+    })
+  }
+
+  static initFanfou (user, config) {
+    return new Fanfou({
+      authType: 'oauth',
+      consumerKey: user.CONSUMER_KEY,
+      consumerSecret: user.CONSUMER_SECRET,
+      oauthToken: user.OAUTH_TOKEN,
+      oauthTokenSecret: user.OAUTH_TOKEN_SECRET,
+      protocol: config.SSL ? 'https:' : 'http:',
+      apiDomain: config.API_DOMAIN,
+      oauthDomain: config.OAUTH_DOMAIN,
+      fakeHttps: config.FAKE_HTTPS || false
     })
   }
 
