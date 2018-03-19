@@ -36,8 +36,10 @@ class Nofan {
         fakeHttps: config.FAKE_HTTPS || false
       })
       ff.xauth(async (e, token) => {
-        if (e) process.spinner.fail(pangu.spacing(e.message))
-        else {
+        if (e) {
+          process.spinner.fail(pangu.spacing(e.message))
+          process.exit(1)
+        } else {
           config.USER = username
           await util.setConfig(config)
           const account = await util.getAccount()
@@ -84,7 +86,6 @@ class Nofan {
     if (key && secret) {
       config.CONSUMER_KEY = key
       config.CONSUMER_SECRET = secret
-
       await util.createNofanDir()
       await util.setConfig(config)
     } else {
@@ -129,6 +130,7 @@ class Nofan {
         process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(id)}`)
       } else {
         process.spinner = ora().info(`${chalk.blue.bold(id)} needs login`)
+        process.exit(1)
       }
     } else {
       const choices = []
@@ -145,6 +147,7 @@ class Nofan {
         await util.setConfig(config)
       } else {
         process.spinner = ora().info('No more account')
+        process.exit(1)
       }
     }
   }
@@ -158,12 +161,8 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/home_timeline', {count, format: 'html'}, (e, statuses) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else {
-        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
-      }
-    })
+    const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'})
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
   /**
@@ -175,12 +174,8 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/public_timeline', {count, format: 'html'}, (e, statuses) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else {
-        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
-      }
-    })
+    const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'})
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
   /**
@@ -192,23 +187,17 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/search/public_timeline', {q, count, format: 'html'}, (e, statuses) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else {
-        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
-      }
-    })
+    const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'})
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
   /**
    * Post new status
    * @param text {text}
    */
-  static update (text) {
-    Nofan._post('/statuses/update', {status: text}, (e) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else process.spinner.succeed('Sent!')
-    })
+  static async update (text) {
+    await Nofan._post('/statuses/update', {status: text})
+    process.spinner.succeed('Sent!')
   }
 
   /**
@@ -216,26 +205,18 @@ class Nofan {
    * @param path
    * @param text
    */
-  static upload (path, text) {
-    Nofan._upload(path, text, (e) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else process.spinner.succeed('Sent!')
-    })
+  static async upload (path, text) {
+    await Nofan._upload(path, text)
+    process.spinner.succeed('Sent!')
   }
 
   /**
    * command `nofan undo`
    */
-  static undo () {
-    Nofan._get('/statuses/user_timeline', {}, (e, statuses) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else {
-        Nofan._post('/statuses/destroy', {id: statuses[0].id}, (e) => {
-          if (e) process.spinner.fail(pangu.spacing(e.message))
-          else process.spinner.succeed('Deleted!')
-        })
-      }
-    })
+  static async undo () {
+    const statuses = await Nofan._get('/statuses/user_timeline', {})
+    await Nofan._post('/statuses/destroy', {id: statuses[0].id})
+    process.spinner.succeed('Deleted!')
   }
 
   /**
@@ -247,12 +228,8 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/mentions', {count, format: 'html'}, (e, statuses) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else {
-        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
-      }
-    })
+    const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'})
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
   /**
@@ -264,15 +241,11 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
-    Nofan._get('/statuses/user_timeline', {count, format: 'html'}, (e, statuses) => {
-      if (e) process.spinner.fail(pangu.spacing(e.message))
-      else {
-        Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
-      }
-    })
+    const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'})
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
-  static async _get (uri, params, callback) {
+  static async _get (uri, params) {
     const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig()
     const account = await util.getAccount()
     let user = account[config.USER]
@@ -286,30 +259,35 @@ class Nofan {
       }
       if (!user) {
         process.spinner.fail('Not logged in')
-        return
+        process.exit(1)
       }
     }
     util.setConfig(config)
-
     const ff = Nofan.initFanfou(user, config)
 
-    ff.get(uri, params, (e, res, obj) => {
-      const expectHttpsError = /Invalid signature\. Expected basestring is GET&http%3A%2F%2F/
-      if (
-        config.SSL &&
-        !config.FAKE_HTTS &&
-        e &&
-        typeof e.message === 'string' &&
-        e.message.match(expectHttpsError)
-      ) {
-        const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-        e.message += `\n\n${boxen(tip, {padding: 1})}`
-      }
-      callback(e, res, obj)
+    return new Promise(resolve => {
+      ff.get(uri, params, (err, res) => {
+        const expectHttpsError = /Invalid signature\. Expected basestring is GET&http%3A%2F%2F/
+        if (
+          config.SSL &&
+          !config.FAKE_HTTS &&
+          err &&
+          typeof err.message === 'string' &&
+          err.message.match(expectHttpsError)
+        ) {
+          const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+          err.message += `\n\n${boxen(tip, {padding: 1})}`
+        }
+        if (err) {
+          process.spinner.fail(pangu.spacing(err.message))
+          process.exit(1)
+        }
+        resolve(res)
+      })
     })
   }
 
-  static async _post (uri, params, callback) {
+  static async _post (uri, params) {
     const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig()
     const account = await util.getAccount()
     let user = account[config.USER]
@@ -323,30 +301,34 @@ class Nofan {
       }
       if (!user) {
         process.spinner.fail('Not logged in')
-        return
+        process.exit(1)
       }
     }
     util.setConfig(config)
-
     const ff = Nofan.initFanfou(user, config)
-
-    ff.post(uri, params, (e, res, obj) => {
-      const expectHttpsError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
-      if (
-        config.SSL &&
-        !config.FAKE_HTTS &&
-        e &&
-        typeof e.message === 'string' &&
-        e.message.match(expectHttpsError)
-      ) {
-        const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-        e.message += `\n\n${boxen(tip, {padding: 1})}`
-      }
-      callback(e, res, obj)
+    return new Promise(resolve => {
+      ff.post(uri, params, (err, res) => {
+        const expectHttpsError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+        if (
+          config.SSL &&
+          !config.FAKE_HTTS &&
+          err &&
+          typeof err.message === 'string' &&
+          err.message.match(expectHttpsError)
+        ) {
+          const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+          err.message += `\n\n${boxen(tip, {padding: 1})}`
+        }
+        if (err) {
+          process.spinner.fail(pangu.spacing(err.message))
+          process.exit(1)
+        }
+        resolve(res)
+      })
     })
   }
 
-  static async _upload (path, status, callback) {
+  static async _upload (path, status) {
     const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig()
     const account = await util.getAccount()
     let user = account[config.USER]
@@ -360,46 +342,52 @@ class Nofan {
       }
       if (!user) {
         process.spinner.fail('Not logged in')
-        return
+        process.exit(1)
       }
     }
     util.setConfig(config)
-
     const ff = Nofan.initFanfou(user, config)
-
-    fs.open(path, 'r', (e, fd) => {
-      if (e) {
-        if (e.code === 'ENOENT') {
-          process.spinner.fail(`file '${path}' does not exist`)
-        } else throw e
-      } else {
-        ff.up('/photos/upload', {photo: fs.createReadStream(path), status}, err => {
-          if (err) {
-            const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
-            const expectHttpsError = /Invalid signature\. Expected basestring is POST&https%3A%2F%2F/
-            if (
-              config.SSL &&
-              !config.FAKE_HTTS &&
-              err &&
-              typeof err.message === 'string' &&
-              err.message.match(expectHttpError)
-            ) {
-              const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-              err.message += `\n\n${boxen(tip, {padding: 1})}`
-            } else if (
-              config.SSL &&
-              config.FAKE_HTTPS &&
-              err &&
-              typeof err.message === 'string' &&
-              err.message.match(expectHttpsError)
-            ) {
-              const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
-              err.message += `\n\n${boxen(tip, {padding: 1})}`
+    return new Promise(resolve => {
+      fs.open(path, 'r', (err, fd) => {
+        if (err) {
+          if (err.code === 'ENOENT') {
+            process.spinner.fail(`file '${path}' does not exist`)
+          } else {
+            process.spinner.fail(err.message)
+          }
+          process.exit(1)
+        } else {
+          ff.up('/photos/upload', {photo: fs.createReadStream(path), status}, (err, res) => {
+            if (err) {
+              const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+              const expectHttpsError = /Invalid signature\. Expected basestring is POST&https%3A%2F%2F/
+              if (
+                config.SSL &&
+                !config.FAKE_HTTS &&
+                err &&
+                typeof err.message === 'string' &&
+                err.message.match(expectHttpError)
+              ) {
+                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+                err.message += `\n\n${boxen(tip, {padding: 1})}`
+              } else if (
+                config.SSL &&
+                config.FAKE_HTTPS &&
+                err &&
+                typeof err.message === 'string' &&
+                err.message.match(expectHttpsError)
+              ) {
+                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
+                err.message += `\n\n${boxen(tip, {padding: 1})}`
+              }
+              process.spinner.fail(pangu.spacing(err.message))
+              process.exit(1)
+            } else {
+              resolve(res)
             }
-            callback(err)
-          } else callback(null)
-        })
-      }
+          })
+        }
+      })
     })
   }
 
