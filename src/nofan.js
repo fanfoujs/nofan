@@ -1,21 +1,22 @@
 'use strict'
 
-const gradient = require('gradient-string')
-const chalkPipe = require('chalk-pipe')
-const TimeAgo = require('timeago.js')
-const Fanfou = require('fanfou-sdk')
-const inquirer = require('inquirer')
-const figlet = require('figlet')
-const boxen = require('boxen')
-const chalk = require('chalk')
-const pangu = require('pangu')
-const ora = require('ora')
 const fs = require('fs')
+const importLazy = require('import-lazy')(require)
 
-const util = require('./util')
-const prompts = require('./prompts')
+const gradient = importLazy('gradient-string')
+const chalkPipe = importLazy('chalk-pipe')
+const TimeAgo = importLazy('timeago.js')
+const Fanfou = importLazy('fanfou-sdk')
+const inquirer = importLazy('inquirer')
+const figlet = importLazy('figlet')
+const boxen = importLazy('boxen')
+const chalk = importLazy('chalk')
+const pangu = importLazy('pangu')
+const ora = importLazy('ora')
+const util = importLazy('./util')
+const prompts = importLazy('./prompts')
 
-inquirer.registerPrompt('color-input', require('inquirer-chalk-pipe'))
+inquirer().registerPrompt('color-input', require('inquirer-chalk-pipe'))
 
 class Nofan {
   /**
@@ -24,7 +25,7 @@ class Nofan {
   static async login (username, password) {
     const config = await util.getConfig()
     const login = (username, password) => {
-      const ff = new Fanfou({
+      const ff = new Fanfou()({
         authType: 'xauth',
         consumerKey: config.CONSUMER_KEY,
         cosnumerSecret: config.CONSUMER_SECRET,
@@ -37,7 +38,7 @@ class Nofan {
       })
       ff.xauth(async (e, token) => {
         if (e) {
-          process.spinner.fail(pangu.spacing(e.message))
+          process.spinner.fail(pangu().spacing(e.message))
           process.exit(1)
         } else {
           config.USER = username
@@ -55,11 +56,11 @@ class Nofan {
       })
     }
     if (username && password) {
-      process.spinner = ora('Logging in...').start()
+      process.spinner = ora()('Logging in...').start()
       login(username, password)
     } else {
-      const user = await inquirer.prompt(prompts.login)
-      process.spinner = ora('Logging in').start()
+      const user = await inquirer().prompt(prompts.login)
+      process.spinner = ora()('Logging in').start()
       login(user.username, user.password)
     }
   }
@@ -68,7 +69,7 @@ class Nofan {
    * command `nofan logout`
    */
   static async logout () {
-    process.spinner = ora('Logging out').start()
+    process.spinner = ora()('Logging out').start()
     const config = await util.getConfig()
     if (config.hasOwnProperty('USER')) {
       const account = await util.getAccount()
@@ -89,7 +90,7 @@ class Nofan {
       await util.createNofanDir()
       await util.setConfig(config)
     } else {
-      const settings = await inquirer.prompt(prompts.config(config, showAll))
+      const settings = await inquirer().prompt(prompts.config(config, showAll))
       config.CONSUMER_KEY = settings.key || ''
       config.CONSUMER_SECRET = settings.secret || ''
       config.DISPLAY_COUNT = settings.display_count
@@ -110,7 +111,7 @@ class Nofan {
   static async colors () {
     const config = await util.getConfig()
     config.COLORS = config.COLORS || {}
-    const paints = await inquirer.prompt(prompts.colors(config))
+    const paints = await inquirer().prompt(prompts.colors(config))
     const colors = {...paints}
     config.COLORS = colors
     await util.createNofanDir()
@@ -127,9 +128,9 @@ class Nofan {
       if (account.hasOwnProperty(id)) {
         config.USER = id
         await util.setConfig(config)
-        process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(id)}`)
+        process.spinner = ora()().succeed(`Switch account to ${chalk().blue.bold(id)}`)
       } else {
-        process.spinner = ora().info(`${chalk.blue.bold(id)} needs login`)
+        process.spinner = ora()().info(`${chalk().blue.bold(id)} needs login`)
         process.exit(1)
       }
     } else {
@@ -137,16 +138,16 @@ class Nofan {
       const currentName = config.USER
       for (const name in account) {
         if (account.hasOwnProperty(name)) {
-          if (currentName === name) choices.push({name, disabled: chalk.green('current')})
+          if (currentName === name) choices.push({name, disabled: chalk().green('current')})
           else choices.push(name)
         }
       }
       if (choices.length > 1) {
-        const user = await inquirer.prompt(prompts.switchy(choices))
+        const user = await inquirer().prompt(prompts.switchy(choices))
         config.USER = user.username
         await util.setConfig(config)
       } else {
-        process.spinner = ora().info('No more account')
+        process.spinner = ora()().info('No more account')
         process.exit(1)
       }
     }
@@ -275,11 +276,11 @@ class Nofan {
           typeof err.message === 'string' &&
           err.message.match(expectHttpsError)
         ) {
-          const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-          err.message += `\n\n${boxen(tip, {padding: 1})}`
+          const tip = `Please try ${chalk().green('`nofan config -a`')} to switch ${chalk().green('`fake_https`')} on`
+          err.message += `\n\n${boxen()(tip, {padding: 1})}`
         }
         if (err) {
-          process.spinner.fail(pangu.spacing(err.message))
+          process.spinner.fail(pangu().spacing(err.message))
           process.exit(1)
         }
         resolve(res)
@@ -316,11 +317,11 @@ class Nofan {
           typeof err.message === 'string' &&
           err.message.match(expectHttpsError)
         ) {
-          const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-          err.message += `\n\n${boxen(tip, {padding: 1})}`
+          const tip = `Please try ${chalk().green('`nofan config -a`')} to switch ${chalk().green('`fake_https`')} on`
+          err.message += `\n\n${boxen()(tip, {padding: 1})}`
         }
         if (err) {
-          process.spinner.fail(pangu.spacing(err.message))
+          process.spinner.fail(pangu().spacing(err.message))
           process.exit(1)
         }
         resolve(res)
@@ -368,8 +369,8 @@ class Nofan {
                 typeof err.message === 'string' &&
                 err.message.match(expectHttpError)
               ) {
-                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-                err.message += `\n\n${boxen(tip, {padding: 1})}`
+                const tip = `Please try ${chalk().green('`nofan config -a`')} to switch ${chalk().green('`fake_https`')} on`
+                err.message += `\n\n${boxen()(tip, {padding: 1})}`
               } else if (
                 config.SSL &&
                 config.FAKE_HTTPS &&
@@ -377,10 +378,10 @@ class Nofan {
                 typeof err.message === 'string' &&
                 err.message.match(expectHttpsError)
               ) {
-                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
-                err.message += `\n\n${boxen(tip, {padding: 1})}`
+                const tip = `Please try ${chalk().green('`nofan config -a`')} to switch ${chalk().green('`fake_https`')} off`
+                err.message += `\n\n${boxen()(tip, {padding: 1})}`
               }
-              process.spinner.fail(pangu.spacing(err.message))
+              process.spinner.fail(pangu().spacing(err.message))
               process.exit(1)
             } else {
               resolve(res)
@@ -408,8 +409,8 @@ class Nofan {
     const parseHighlight = (style, item) => {
       if (item.bold_arr) {
         return item.bold_arr.map(keyword => {
-          if (keyword.bold) return chalkPipe(`${style}.${highlightColor}`)(keyword.text)
-          return chalkPipe(style)(keyword.text)
+          if (keyword.bold) return chalkPipe()(`${style}.${highlightColor}`)(keyword.text)
+          return chalkPipe()(style)(keyword.text)
         }).join('')
       }
       return false
@@ -419,36 +420,36 @@ class Nofan {
       status.txt.forEach(item => {
         switch (item.type) {
           case 'at':
-            text += parseHighlight(atColor, item) || chalkPipe(atColor)(item.text)
+            text += parseHighlight(atColor, item) || chalkPipe()(atColor)(item.text)
             break
           case 'link':
-            text += parseHighlight(linkColor, item) || chalkPipe(linkColor)(item.text)
+            text += parseHighlight(linkColor, item) || chalkPipe()(linkColor)(item.text)
             break
           case 'tag':
-            text += parseHighlight(tagColor, item) || chalkPipe(tagColor)(item._text)
+            text += parseHighlight(tagColor, item) || chalkPipe()(tagColor)(item._text)
             break
           default:
-            text += parseHighlight(textColor, item) || chalkPipe(textColor)(item._text)
+            text += parseHighlight(textColor, item) || chalkPipe()(textColor)(item._text)
             break
         }
       })
-      const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(status.user.name) + chalkPipe(textColor)(']')
+      const name = chalkPipe()(textColor)('[') + chalkPipe()(nameColor)(status.user.name) + chalkPipe()(textColor)(']')
       if (status.photo && !noPhotoTag) {
-        const photoTag = chalkPipe(photoColor)('[图]')
+        const photoTag = chalkPipe()(photoColor)('[图]')
         if (text.length) text += ` ${photoTag}`
         else text += photoTag
       }
       if (!timeAgoTag) {
         console.log(`${name} ${text}`)
       } else {
-        const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`)
+        const statusTimeAgo = chalkPipe()(timeagoColor)(`(${new TimeAgo()().format(status.created_at)})`)
         console.log(`${name} ${text} ${statusTimeAgo}`)
       }
     })
   }
 
   static initFanfou (user, config) {
-    return new Fanfou({
+    return new Fanfou()({
       authType: 'oauth',
       consumerKey: user.CONSUMER_KEY,
       consumerSecret: user.CONSUMER_SECRET,
@@ -462,12 +463,12 @@ class Nofan {
   }
 
   static version () {
-    const banner = gradient.rainbow(figlet.textSync('Nofan', {
+    const banner = gradient().rainbow(figlet().textSync('Nofan', {
       font: 'Small Slant'
     }))
-    const nofanVersion = chalk.cyanBright(`nofan: ${require('../package').version}`)
-    const sdkVersion = chalk.green(`fanfou-sdk: ${util.sdkVersion()}`)
-    const streamerVersion = chalk.blueBright(`fanfou-streamer: ${require('fanfou-streamer/package').version}`)
+    const nofanVersion = chalk().cyanBright(`nofan: ${require('../package').version}`)
+    const sdkVersion = chalk().green(`fanfou-sdk: ${util.sdkVersion()}`)
+    const streamerVersion = chalk().blueBright(`fanfou-streamer: ${require('fanfou-streamer/package').version}`)
     const version = `${banner}\n${nofanVersion}\n${sdkVersion}\n${streamerVersion}`
     return version
   }
