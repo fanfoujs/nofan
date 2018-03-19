@@ -23,7 +23,7 @@ program()
   .description('Config consumer key and consumer secret')
   .action(function (key, secret, options) {
     const showAll = options.all
-    Nofan.config(key, secret, showAll)
+    Nofan().config(key, secret, showAll)
   })
 
 program()
@@ -162,7 +162,7 @@ program()
     process.spinner = ora()('Sending').start()
     more.unshift(pre)
     const text = more.join(' ')
-    if (!options.photo) Nofan.update(text)
+    if (!options.photo) Nofan().update(text)
     else Nofan().upload(options.photo, text)
   })
 
