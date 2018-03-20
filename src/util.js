@@ -1,8 +1,10 @@
 'use strict'
 
 const fs = require('fs')
-const chalk = require('chalk')
-const homedir = require('homedir')
+const importLazy = require('import-lazy')(require)
+
+const chalk = importLazy('chalk')
+const homedir = importLazy('homedir')
 
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/'
 

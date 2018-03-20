@@ -14,7 +14,10 @@ const chalk = importLazy('chalk')
 const pangu = importLazy('pangu')
 const ora = importLazy('ora')
 const util = importLazy('./util')
-const prompts = importLazy('./prompts')
+const colorsPrompt = importLazy('./prompts/colors')
+const configPrompt = importLazy('./prompts/config')
+const loginPrompt = importLazy('./prompts/login')
+const switchPrompt = importLazy('./prompts/switch')
 
 inquirer.registerPrompt('color-input', require('inquirer-chalk-pipe'))
 
@@ -59,7 +62,7 @@ class Nofan {
       process.spinner = ora('Logging in...').start()
       login(username, password)
     } else {
-      const user = await inquirer.prompt(prompts.login)
+      const user = await inquirer.prompt(loginPrompt())
       process.spinner = ora('Logging in').start()
       login(user.username, user.password)
     }
@@ -90,7 +93,7 @@ class Nofan {
       await util.createNofanDir()
       await util.setConfig(config)
     } else {
-      const settings = await inquirer.prompt(prompts.config(config, showAll))
+      const settings = await inquirer.prompt(configPrompt(config, showAll))
       config.CONSUMER_KEY = settings.key || ''
       config.CONSUMER_SECRET = settings.secret || ''
       config.DISPLAY_COUNT = settings.display_count
@@ -111,7 +114,7 @@ class Nofan {
   static async colors () {
     const config = await util.getConfig()
     config.COLORS = config.COLORS || {}
-    const paints = await inquirer.prompt(prompts.colors(config))
+    const paints = await inquirer.prompt(colorsPrompt(config))
     const colors = {...paints}
     config.COLORS = colors
     await util.createNofanDir()
@@ -143,7 +146,7 @@ class Nofan {
         }
       }
       if (choices.length > 1) {
-        const user = await inquirer.prompt(prompts.switchy(choices))
+        const user = await inquirer.prompt(switchPrompt(choices))
         config.USER = user.username
         await util.setConfig(config)
       } else {
