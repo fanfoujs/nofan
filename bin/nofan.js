@@ -1,139 +1,139 @@
 #!/usr/bin/env node
 
+const program = require('commander')
 const importLazy = require('import-lazy')(require)
 
 const ora = importLazy('ora')
-const program = importLazy('commander')
 const updateNotifier = importLazy('update-notifier')
 const pkg = importLazy('../package')
 const Nofan = importLazy('../lib/nofan')
 const pm2 = importLazy('../lib/pm2')
 
-updateNotifier()({pkg: pkg()}).notify()
+updateNotifier({pkg}).notify()
 
-program()
+program
   .option('-v, --version', 'Output the version info')
   .option('-t, --time', 'Show time ago tag')
   .option('--no-photo-tag', 'Hide photo tag')
-  .version(Nofan().version())
+  .version(Nofan.version())
 
-program()
+program
   .command('config [consumer_key] [consumer_secret]')
   .option('-a, --all', 'Show all config')
   .description('Config consumer key and consumer secret')
   .action(function (key, secret, options) {
     const showAll = options.all
-    Nofan().config(key, secret, showAll)
+    Nofan.config(key, secret, showAll)
   })
 
-program()
+program
   .command('colors')
   .alias('color')
   .description('Customize color style')
   .action(function () {
-    Nofan().colors()
+    Nofan.colors()
   })
 
-program()
+program
   .command('login [username] [password]')
   .description('Login nofan')
   .action(function (username, password) {
-    Nofan().login(username, password)
+    Nofan.login(username, password)
   })
 
-program()
+program
   .command('logout')
   .description('Logout nofan')
   .action(function () {
-    Nofan().logout()
+    Nofan.logout()
   })
 
-program()
+program
   .command('switch [id]')
   .alias('s')
   .description('Switch account')
   .action(function (id) {
-    Nofan().switchUser(id)
+    Nofan.switchUser(id)
   })
 
-program()
+program
   .command('home [count]')
   .alias('h')
   .description('Show home timeline')
   .action(function (count, options) {
-    process.spinner = ora()('Fetching').start()
-    Nofan().homeTimeline({
+    process.spinner = ora('Fetching').start()
+    Nofan.homeTimeline({
       count: count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
   })
 
-program()
+program
   .command('mentions [count]')
   .alias('m')
   .description('Show mentions')
   .action(function (count, options) {
-    process.spinner = ora()('Fetching').start()
-    Nofan().mentions({
+    process.spinner = ora('Fetching').start()
+    Nofan.mentions({
       count: count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
   })
 
-program()
+program
   .command('me [count]')
   .description('Show my statuses')
   .action(function (count, options) {
-    process.spinner = ora()('Fetching').start()
-    Nofan().me({
+    process.spinner = ora('Fetching').start()
+    Nofan.me({
       count: count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
   })
 
-program()
+program
   .command('public [count]')
   .alias('p')
   .description('Show public timeline')
   .action(function (count, options) {
-    process.spinner = ora()('Fetching').start()
-    Nofan().publicTimeline({
+    process.spinner = ora('Fetching').start()
+    Nofan.publicTimeline({
       count: count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
   })
 
-program()
+program
   .command('search <query> [count]')
   .alias('se')
   .description('Search public timeline')
   .action(function (query, count, options) {
-    process.spinner = ora()('Fetching').start()
-    Nofan().searchTimeline(query, {
+    process.spinner = ora('Fetching').start()
+    Nofan.searchTimeline(query, {
       count: count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
   })
 
-program()
+program
   .command('undo')
   .description('Delete last status')
   .action(function () {
-    process.spinner = ora()('Deleting').start()
-    Nofan().undo()
+    process.spinner = ora('Deleting').start()
+    Nofan.undo()
   })
 
-program()
+program
   .command('notifier [operate]')
   .alias('n')
   .description('Nofan Notifier')
   .action(function (operate) {
-    process.spinner = ora()('Setting Notifier').start()
+    process.spinner = ora('Setting Notifier').start()
     switch (operate) {
       case undefined:
       case 'start':
@@ -154,23 +154,23 @@ program()
     }
   })
 
-program()
+program
   .arguments('<status> [more...]')
   .option('-p, --photo <path>', 'Attach a photo')
   .description('')
   .action(function (pre, more, options) {
-    process.spinner = ora()('Sending').start()
+    process.spinner = ora('Sending').start()
     more.unshift(pre)
     const text = more.join(' ')
-    if (!options.photo) Nofan().update(text)
-    else Nofan().upload(options.photo, text)
+    if (!options.photo) Nofan.update(text)
+    else Nofan.upload(options.photo, text)
   })
 
-program().parse(process.argv)
+program.parse(process.argv)
 
-if (program().args.length === 0) {
-  process.spinner = ora()('Fetching').start()
-  Nofan().homeTimeline({
+if (program.args.length === 0) {
+  process.spinner = ora('Fetching').start()
+  Nofan.homeTimeline({
     time_ago: program.time,
     no_photo_tag: !program.photoTag
   })
