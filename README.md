@@ -18,6 +18,7 @@ CLI for Fanfou
 - Fetch public-timeline
 - Fetch mentions-timeline
 - Fetch self-timeline
+- Search statuses
 - Post statuses
 - Post photos
 - Multiple account login
