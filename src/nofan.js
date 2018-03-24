@@ -18,6 +18,7 @@ const colorsPrompt = importLazy('./prompts/colors')
 const configPrompt = importLazy('./prompts/config')
 const loginPrompt = importLazy('./prompts/login')
 const switchPrompt = importLazy('./prompts/switch')
+const trendsPrompt = importLazy('./prompts/trends')
 
 inquirer.registerPrompt('color-input', require('inquirer-chalk-pipe'))
 
@@ -193,6 +194,24 @@ class Nofan {
     const noPhotoTag = options.no_photo_tag || false
     const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
+  }
+
+  /**
+   * Trends timeline
+   */
+  static async trendsTimeline (options) {
+    options = options || {}
+    const {trends: hotTrends} = await Nofan._get('/trends/list')
+    const savedTrends = await Nofan._get('/saved_searches/list')
+    if (hotTrends.length + savedTrends.length > 0) {
+      process.spinner.stop()
+      const {trends: trend} = await inquirer.prompt(trendsPrompt(hotTrends, savedTrends))
+      process.spinner.start('Fetching')
+      await Nofan.searchTimeline(trend, options)
+    } else {
+      process.spinner.fail('No trends exist')
+      process.exit(1)
+    }
   }
 
   /**

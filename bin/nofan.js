@@ -121,6 +121,15 @@ program
   })
 
 program
+  .command('trends [count]')
+  .alias('tr')
+  .description('Fetch trends')
+  .action(function (count) {
+    process.spinner = ora('Fetching').start()
+    Nofan.trendsTimeline({count: count})
+  })
+
+program
   .command('undo')
   .description('Delete last status')
   .action(function () {
