@@ -201,8 +201,10 @@ class Nofan {
    */
   static async trendsTimeline (options) {
     options = options || {}
-    const {trends: hotTrends} = await Nofan._get('/trends/list')
-    const savedTrends = await Nofan._get('/saved_searches/list')
+    const [{trends: hotTrends}, savedTrends] = [
+      await Nofan._get('/trends/list'),
+      await Nofan._get('/saved_searches/list')
+    ]
     if (hotTrends.length + savedTrends.length > 0) {
       process.spinner.stop()
       const {trends: trend} = await inquirer.prompt(trendsPrompt(hotTrends, savedTrends))
