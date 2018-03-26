@@ -2,7 +2,6 @@
   "name": "nofan",
   "version": "0.9.1",
   "description": "CLI for Fanfou",
-  "main": "index.js",
   "bin": "bin/nofan.js",
   "scripts": {
     "build": "standard && babel src -d lib",
