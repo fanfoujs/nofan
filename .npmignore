@@ -2,3 +2,9 @@
 src/
 media/
 screenshot.png
+.travis.yml
+appveyor.yml
+.babelrc
+yarn.lock
+yarn-error.log*
+package-lock.json
