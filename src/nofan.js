@@ -126,8 +126,10 @@ class Nofan {
    * command `nofan switch`
    */
   static async switchUser (id) {
-    const config = await util.getConfig()
-    const account = await util.getAccount()
+    const [config, account] = [
+      await util.getConfig(),
+      await util.getAccount()
+    ]
     if (id) {
       if (account.hasOwnProperty(id)) {
         config.USER = id
@@ -161,11 +163,7 @@ class Nofan {
    * Show home timeline
    */
   static async homeTimeline (options) {
-    options = options || {}
-    process.NOFAN_CONFIG = await util.getConfig()
-    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
-    const timeAgo = options.time_ago || false
-    const noPhotoTag = options.no_photo_tag || false
+    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
@@ -174,11 +172,7 @@ class Nofan {
    * Show public timeline
    */
   static async publicTimeline (options) {
-    options = options || {}
-    process.NOFAN_CONFIG = await util.getConfig()
-    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
-    const timeAgo = options.time_ago || false
-    const noPhotoTag = options.no_photo_tag || false
+    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
@@ -187,11 +181,7 @@ class Nofan {
    * Search public timeline
    */
   static async searchTimeline (q, options) {
-    options = options || {}
-    process.NOFAN_CONFIG = await util.getConfig()
-    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
-    const timeAgo = options.time_ago || false
-    const noPhotoTag = options.no_photo_tag || false
+    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
@@ -213,6 +203,19 @@ class Nofan {
     } else {
       process.spinner.fail('No trends exist')
       process.exit(1)
+    }
+  }
+
+  static async getConfig (options) {
+    options = options || {}
+    process.NOFAN_CONFIG = await util.getConfig()
+    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
+    const timeAgo = options.time_ago || false
+    const noPhotoTag = options.no_photo_tag || false
+    return {
+      count,
+      timeAgo,
+      noPhotoTag
     }
   }
 
@@ -248,11 +251,7 @@ class Nofan {
    * command `nofan mentions`
    */
   static async mentions (options) {
-    options = options || {}
-    process.NOFAN_CONFIG = await util.getConfig()
-    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
-    const timeAgo = options.time_ago || false
-    const noPhotoTag = options.no_photo_tag || false
+    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
@@ -261,11 +260,7 @@ class Nofan {
    * command `nofan me`
    */
   static async me (options) {
-    options = options || {}
-    process.NOFAN_CONFIG = await util.getConfig()
-    const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
-    const timeAgo = options.time_ago || false
-    const noPhotoTag = options.no_photo_tag || false
+    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
