@@ -20,8 +20,6 @@ const loginPrompt = importLazy('./prompts/login')
 const switchPrompt = importLazy('./prompts/switch')
 const trendsPrompt = importLazy('./prompts/trends')
 
-inquirer.registerPrompt('color-input', require('inquirer-chalk-pipe'))
-
 class Nofan {
   /**
    * command `nofan login`
