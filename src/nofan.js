@@ -61,7 +61,8 @@ class Nofan {
       process.spinner = ora('Logging in...').start()
       login(username, password)
     } else {
-      const user = await inquirer.prompt(loginPrompt())
+      const user = await inquirer.prompt(loginPrompt({hasName: !!username}))
+      if (username) user.username = username
       process.spinner = ora('Logging in').start()
       login(user.username, user.password)
     }
