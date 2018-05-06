@@ -19,15 +19,27 @@ test('nofan config', async t => {
 
 test('nofan login', async t => {
   const {stdout} = await execa('./bin/nofan.js', ['login', FANFOU_USERNAME, FANFOU_PASSWORD])
-  PULL_REQUEST_FROM_FORKED ? t.is(stdout, '') : t.is(stdout, '')
+  if (PULL_REQUEST_FROM_FORKED) {
+    t.is(stdout, '')
+  } else {
+    t.is(stdout, '')
+  }
 })
 
 test('nofan switch', async t => {
   const {stdout} = await execa('./bin/nofan.js', ['switch', FANFOU_USERNAME])
-  PULL_REQUEST_FROM_FORKED ? t.is(stdout, '') : t.is(stdout, '')
+  if (PULL_REQUEST_FROM_FORKED) {
+    t.is(stdout, '')
+  } else {
+    t.is(stdout, '')
+  }
 })
 
 test('nofan logout', async t => {
   const {stdout} = await execa('./bin/nofan.js', ['logout'])
-  PULL_REQUEST_FROM_FORKED ? t.is(stdout, '') : t.is(stdout, '')
+  if (PULL_REQUEST_FROM_FORKED) {
+    t.is(stdout, '')
+  } else {
+    t.is(stdout, '')
+  }
 })

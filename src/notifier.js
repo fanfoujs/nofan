@@ -22,7 +22,7 @@ const run = async () => {
     oauthToken,
     oauthTokenSecret,
     protocol: config.SSL ? 'https:' : 'http:',
-    fakeHttps: !!config.FAKE_HTTPS
+    fakeHttps: Boolean(config.FAKE_HTTPS)
   }
 
   const streamer = new Streamer(options)
@@ -43,7 +43,7 @@ const run = async () => {
     })
   }
 
-  const messageBox = (message, res) => {
+  const messageBox = message => {
     notifier.notify({
       title: 'Nofan',
       message

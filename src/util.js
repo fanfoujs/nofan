@@ -9,7 +9,7 @@ const homedir = importLazy('homedir')
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/'
 
 function createNofanDir () {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     fs.mkdir(`${homedir()}${configPath}`, () => {
       resolve()
     })
@@ -19,9 +19,12 @@ function createNofanDir () {
 function createJsonFile (filename, content) {
   return new Promise((resolve, reject) => {
     const filePath = `${homedir()}${configPath}${filename}.json`
-    fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8', (e) => {
-      if (e) reject(chalk.red(`create file '${filePath}' failed`))
-      else resolve()
+    fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8', e => {
+      if (e) {
+        reject(chalk.red(`create file '${filePath}' failed`))
+      } else {
+        resolve()
+      }
     })
   })
 }
@@ -29,18 +32,20 @@ function createJsonFile (filename, content) {
 function readJsonFile (filename) {
   return new Promise((resolve, reject) => {
     const filePath = `${homedir()}${configPath}${filename}.json`
-    fs.open(filePath, 'r', (e, fd) => {
-      if (e) {
-        if (e.code === 'ENOENT') {
+    fs.open(filePath, 'r', err => {
+      if (err) {
+        if (err.code === 'ENOENT') {
           reject(chalk.red(`file '${filePath}' does not exist`))
         }
         reject(chalk.red(`read file '${filePath}' failed`))
-      } else resolve(require(filePath))
+      } else {
+        resolve(require(filePath))
+      }
     })
   })
 }
 
-function readSDKVersion (callback) {
+function readSDKVersion () {
   return require('fanfou-sdk/package').version
 }
 
@@ -87,10 +92,10 @@ function setAccount (account) {
 }
 
 module.exports = {
-  createNofanDir: createNofanDir,
-  getConfig: getConfig,
-  getAccount: getAccount,
-  setConfig: setConfig,
-  setAccount: setAccount,
+  createNofanDir,
+  getConfig,
+  getAccount,
+  setConfig,
+  setAccount,
   sdkVersion: readSDKVersion
 }

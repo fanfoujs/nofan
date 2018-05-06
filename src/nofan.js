@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict'
 
 const fs = require('fs')
@@ -21,9 +22,6 @@ const switchPrompt = importLazy('./prompts/switch')
 const trendsPrompt = importLazy('./prompts/trends')
 
 class Nofan {
-  /**
-   * command `nofan login`
-   */
   static async login (username, password) {
     const config = await util.getConfig()
     const login = (username, password) => {
@@ -61,20 +59,19 @@ class Nofan {
       process.spinner = ora('Logging in...').start()
       login(username, password)
     } else {
-      const user = await inquirer.prompt(loginPrompt({hasName: !!username}))
-      if (username) user.username = username
+      const user = await inquirer.prompt(loginPrompt({hasName: Boolean(username)}))
+      if (username) {
+        user.username = username
+      }
       process.spinner = ora('Logging in').start()
       login(user.username, user.password)
     }
   }
 
-  /**
-   * command `nofan logout`
-   */
   static async logout () {
     process.spinner = ora('Logging out').start()
     const config = await util.getConfig()
-    if (config.hasOwnProperty('USER')) {
+    if (config.USER) {
       const account = await util.getAccount()
       delete account[config.USER]
       await util.setAccount(account)
@@ -82,9 +79,6 @@ class Nofan {
     }
   }
 
-  /**
-   * command `nofan config`
-   */
   static async config (key, secret, showAll) {
     const config = await util.getConfig()
     if (key && secret) {
@@ -100,17 +94,20 @@ class Nofan {
       config.TIME_TAG = settings.display.indexOf('time_tag') !== -1
       config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1
       config.SSL = settings.display.indexOf('use_https') !== -1
-      if (settings.api_domain) config.API_DOMAIN = settings.api_domain
-      if (settings.oauth_domain) config.OAUTH_DOMAIN = settings.oauth_domain
-      if (settings.https) config.FAKE_HTTPS = settings.https.indexOf('fake_https') !== -1
+      if (settings.api_domain) {
+        config.API_DOMAIN = settings.api_domain
+      }
+      if (settings.oauth_domain) {
+        config.OAUTH_DOMAIN = settings.oauth_domain
+      }
+      if (settings.https) {
+        config.FAKE_HTTPS = settings.https.indexOf('fake_https') !== -1
+      }
       await util.createNofanDir()
       await util.setConfig(config)
     }
   }
 
-  /**
-   * command `nofan colors`
-   */
   static async colors () {
     const config = await util.getConfig()
     config.COLORS = config.COLORS || {}
@@ -121,16 +118,13 @@ class Nofan {
     await util.setConfig(config)
   }
 
-  /**
-   * command `nofan switch`
-   */
   static async switchUser (id) {
     const [config, account] = [
       await util.getConfig(),
       await util.getAccount()
     ]
     if (id) {
-      if (account.hasOwnProperty(id)) {
+      if (account.id) {
         config.USER = id
         await util.setConfig(config)
         process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(id)}`)
@@ -142,9 +136,12 @@ class Nofan {
       const choices = []
       const currentName = config.USER
       for (const name in account) {
-        if (account.hasOwnProperty(name)) {
-          if (currentName === name) choices.push({name, disabled: chalk.green('current')})
-          else choices.push(name)
+        if (account.name) {
+          if (currentName === name) {
+            choices.push({name, disabled: chalk.green('current')})
+          } else {
+            choices.push(name)
+          }
         }
       }
       if (choices.length > 1) {
@@ -158,36 +155,24 @@ class Nofan {
     }
   }
 
-  /**
-   * Show home timeline
-   */
   static async homeTimeline (options) {
     const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
-  /**
-   * Show public timeline
-   */
   static async publicTimeline (options) {
     const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
-  /**
-   * Search public timeline
-   */
   static async searchTimeline (q, options) {
     const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
-  /**
-   * Trends timeline
-   */
   static async trendsTimeline (options) {
     options = options || {}
     const [{trends: hotTrends}, savedTrends] = [
@@ -218,46 +203,28 @@ class Nofan {
     }
   }
 
-  /**
-   * Post new status
-   * @param text {text}
-   */
   static async update (text) {
     await Nofan._post('/statuses/update', {status: text})
     process.spinner.succeed('Sent!')
   }
 
-  /**
-   * Post new status with photo
-   * @param path
-   * @param text
-   */
   static async upload (path, text) {
     await Nofan._upload(path, text)
     process.spinner.succeed('Sent!')
   }
 
-  /**
-   * command `nofan undo`
-   */
   static async undo () {
     const statuses = await Nofan._get('/statuses/user_timeline', {})
     await Nofan._post('/statuses/destroy', {id: statuses[0].id})
     process.spinner.succeed('Deleted!')
   }
 
-  /**
-   * command `nofan mentions`
-   */
   static async mentions (options) {
     const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'})
     Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
   }
 
-  /**
-   * command `nofan me`
-   */
   static async me (options) {
     const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'})
@@ -270,7 +237,7 @@ class Nofan {
     let user = account[config.USER]
     if (!user) {
       for (const name in account) {
-        if (account.hasOwnProperty(name)) {
+        if (account.name) {
           user = account[name]
           config.USER = name
           break
@@ -312,7 +279,7 @@ class Nofan {
     let user = account[config.USER]
     if (!user) {
       for (const name in account) {
-        if (account.hasOwnProperty(name)) {
+        if (account.name) {
           user = account[name]
           config.USER = name
           break
@@ -353,7 +320,7 @@ class Nofan {
     let user = account[config.USER]
     if (!user) {
       for (const name in account) {
-        if (account.hasOwnProperty(name)) {
+        if (account.name) {
           user = account[name]
           config.USER = name
           break
@@ -367,7 +334,7 @@ class Nofan {
     util.setConfig(config)
     const ff = Nofan.initFanfou(user, config)
     return new Promise(resolve => {
-      fs.open(path, 'r', (err, fd) => {
+      fs.open(path, 'r', err => {
         if (err) {
           if (err.code === 'ENOENT') {
             process.spinner.fail(`file '${path}' does not exist`)
@@ -412,7 +379,9 @@ class Nofan {
 
   static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
     const config = process.NOFAN_CONFIG
-    if (process.spinner) process.spinner.stop()
+    if (process.spinner) {
+      process.spinner.stop()
+    }
     timeAgoTag = timeAgoTag || config.TIME_TAG
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
     const colors = config.COLORS || {}
@@ -427,7 +396,9 @@ class Nofan {
     const parseHighlight = (style, item) => {
       if (item.bold_arr) {
         return item.bold_arr.map(keyword => {
-          if (keyword.bold) return chalkPipe(`${style}.${highlightColor}`)(keyword.text)
+          if (keyword.bold) {
+            return chalkPipe(`${style}.${highlightColor}`)(keyword.text)
+          }
           return chalkPipe(style)(keyword.text)
         }).join('')
       }
@@ -454,14 +425,17 @@ class Nofan {
       const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(status.user.name) + chalkPipe(textColor)(']')
       if (status.photo && !noPhotoTag) {
         const photoTag = chalkPipe(photoColor)('[图]')
-        if (text.length) text += ` ${photoTag}`
-        else text += photoTag
+        if (text.length > 0) {
+          text += ` ${photoTag}`
+        } else {
+          text += photoTag
+        }
       }
-      if (!timeAgoTag) {
-        console.log(`${name} ${text}`)
-      } else {
+      if (timeAgoTag) {
         const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`)
         console.log(`${name} ${text} ${statusTimeAgo}`)
+      } else {
+        console.log(`${name} ${text}`)
       }
     })
   }

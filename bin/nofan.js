@@ -21,7 +21,7 @@ program
   .command('config [consumer_key] [consumer_secret]')
   .option('-a, --all', 'Show all config')
   .description('Config consumer key and consumer secret')
-  .action(function (key, secret, options) {
+  .action((key, secret, options) => {
     const showAll = options.all
     Nofan.config(key, secret, showAll)
   })
@@ -30,21 +30,21 @@ program
   .command('colors')
   .alias('color')
   .description('Customize color style')
-  .action(function () {
+  .action(() => {
     Nofan.colors()
   })
 
 program
   .command('login [username] [password]')
   .description('Login nofan')
-  .action(function (username, password) {
+  .action((username, password) => {
     Nofan.login(username, password)
   })
 
 program
   .command('logout')
   .description('Logout nofan')
-  .action(function () {
+  .action(() => {
     Nofan.logout()
   })
 
@@ -52,7 +52,7 @@ program
   .command('switch [id]')
   .alias('s')
   .description('Switch account')
-  .action(function (id) {
+  .action(id => {
     Nofan.switchUser(id)
   })
 
@@ -60,10 +60,10 @@ program
   .command('home [count]')
   .alias('h')
   .description('Show home timeline')
-  .action(function (count, options) {
+  .action((count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.homeTimeline({
-      count: count,
+      count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
@@ -73,10 +73,10 @@ program
   .command('mentions [count]')
   .alias('m')
   .description('Show mentions')
-  .action(function (count, options) {
+  .action((count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.mentions({
-      count: count,
+      count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
@@ -85,10 +85,10 @@ program
 program
   .command('me [count]')
   .description('Show my statuses')
-  .action(function (count, options) {
+  .action((count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.me({
-      count: count,
+      count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
@@ -98,10 +98,10 @@ program
   .command('public [count]')
   .alias('p')
   .description('Show public timeline')
-  .action(function (count, options) {
+  .action((count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.publicTimeline({
-      count: count,
+      count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
@@ -111,10 +111,10 @@ program
   .command('search <query> [count]')
   .alias('se')
   .description('Search public timeline')
-  .action(function (query, count, options) {
+  .action((query, count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.searchTimeline(query, {
-      count: count,
+      count,
       time_ago: options.parent.time,
       no_photo_tag: !options.parent.photoTag
     })
@@ -124,15 +124,15 @@ program
   .command('trends [count]')
   .alias('tr')
   .description('Fetch trends')
-  .action(function (count) {
+  .action(count => {
     process.spinner = ora('Fetching').start()
-    Nofan.trendsTimeline({count: count})
+    Nofan.trendsTimeline({count})
   })
 
 program
   .command('undo')
   .description('Delete last status')
-  .action(function () {
+  .action(() => {
     process.spinner = ora('Deleting').start()
     Nofan.undo()
   })
@@ -141,7 +141,7 @@ program
   .command('notifier [operate]')
   .alias('n')
   .description('Nofan Notifier')
-  .action(function (operate) {
+  .action(operate => {
     process.spinner = ora('Setting Notifier').start()
     switch (operate) {
       case undefined:
@@ -167,12 +167,15 @@ program
   .arguments('<status> [more...]')
   .option('-p, --photo <path>', 'Attach a photo')
   .description('')
-  .action(function (pre, more, options) {
+  .action((pre, more, options) => {
     process.spinner = ora('Sending').start()
     more.unshift(pre)
     const text = more.join(' ')
-    if (!options.photo) Nofan.update(text)
-    else Nofan.upload(options.photo, text)
+    if (options.photo) {
+      Nofan.upload(options.photo, text)
+    } else {
+      Nofan.update(text)
+    }
   })
 
 program.parse(process.argv)

@@ -4,7 +4,7 @@
   "description": "CLI for Fanfou",
   "bin": "bin/nofan.js",
   "scripts": {
-    "build": "standard && babel src -d lib",
+    "build": "xo && babel src -d lib",
     "test": "npm run build",
     "ava": "cross-env NODE_ENV=test ava test.js -s -v"
   },
@@ -46,6 +46,17 @@
     "ava": "^0.25.0",
     "cross-env": "^5.1.1",
     "execa": "^0.10.0",
-    "standard": "^11.0.0"
+    "xo": "^0.21.0"
+  },
+  "xo": {
+    "rules": {
+      "camelcase": 0,
+      "space-before-function-paren": [
+        "error",
+        "always"
+      ]
+    },
+    "semicolon": false,
+    "space": 2
   }
 }

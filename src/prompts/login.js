@@ -12,6 +12,8 @@ module.exports = opt => {
     message: 'Enter your password',
     mask: '*'
   }
-  if (opt.hasName) return [passwordInput]
+  if (opt.hasName) {
+    return [passwordInput]
+  }
   return [usernameInput, passwordInput]
 }
