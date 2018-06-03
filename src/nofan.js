@@ -133,17 +133,13 @@ class Nofan {
         process.exit(1)
       }
     } else {
-      const choices = []
       const currentName = config.USER
-      for (const name in account) {
-        if (account.name) {
-          if (currentName === name) {
-            choices.push({name, disabled: chalk.green('current')})
-          } else {
-            choices.push(name)
-          }
+      const choices = Object.keys(account).map(name => {
+        if (name === currentName) {
+          return ({name, disabled: chalk.green('current')})
         }
-      }
+        return name
+      })
       if (choices.length > 1) {
         const user = await inquirer.prompt(switchPrompt(choices))
         config.USER = user.username
