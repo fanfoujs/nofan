@@ -124,7 +124,7 @@ class Nofan {
       await util.getAccount()
     ]
     if (id) {
-      if (account.id) {
+      if (account[id]) {
         config.USER = id
         await util.setConfig(config)
         process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(id)}`)
