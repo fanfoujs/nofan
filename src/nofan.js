@@ -219,35 +219,31 @@ class Nofan {
     const {count, timeAgo, noPhotoTag, reply} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'})
     if(reply === false) Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
-    else Nofan.reply(statuses)
+    else Nofan._reply(statuses)
   }
 
-  static async reply (statuses) {
+  static async _reply (statuses) {
     if (process.spinner) {
       process.spinner.stop()
     }
     Promise.all(statuses).then((result) => {
-      var list = [];
+      let list = [];
       result.forEach(status => {
-        console.log(status.plain_text);
+        list.push(status.plain_text);
       })
-    })
-    console.log(list);
-    inquirer
+      inquirer
       .prompt([
           {
               type: 'list',
               name: 'mentions',
               message: 'You recent mentions',
               choices: list,
-              // filter: (status) => {
-              //   return status.plain_text;
-              // }
           }
       ])
       .then(answers => {
         console.log(answers);
       });
+    })
   }
 
   static async me (options) {
