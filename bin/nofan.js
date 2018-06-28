@@ -9,7 +9,7 @@ const pkg = importLazy('../package')
 const Nofan = importLazy('../lib/nofan')
 const pm2 = importLazy('../lib/pm2')
 
-updateNotifier({pkg}).notify()
+updateNotifier({ pkg }).notify()
 
 program
   .option('-v, --version', 'Output the version info')
@@ -78,7 +78,8 @@ program
     Nofan.mentions({
       count,
       time_ago: options.parent.time,
-      no_photo_tag: !options.parent.photoTag
+      no_photo_tag: !options.parent.photoTag,
+      reply: false
     })
   })
 
@@ -126,7 +127,7 @@ program
   .description('Fetch trends')
   .action(count => {
     process.spinner = ora('Fetching').start()
-    Nofan.trendsTimeline({count})
+    Nofan.trendsTimeline({ count })
   })
 
 program
@@ -176,6 +177,20 @@ program
     } else {
       Nofan.update(text)
     }
+  })
+
+program
+  .command('reply [count]')
+  .alias('r')
+  .description('Reply to recent mentions')
+  .action((count, options) => {
+    process.spinner = ora('Fetching').start()
+    Nofan.mentions({
+      count,
+      time_ago: options.parent.time,
+      no_photo_tag: !options.parent.photoTag,
+      reply: true
+    })
   })
 
 program.parse(process.argv)
