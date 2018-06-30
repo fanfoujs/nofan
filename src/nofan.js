@@ -20,6 +20,7 @@ const configPrompt = importLazy('./prompts/config')
 const loginPrompt = importLazy('./prompts/login')
 const switchPrompt = importLazy('./prompts/switch')
 const trendsPrompt = importLazy('./prompts/trends')
+const replyPrompt = importLazy('./prompts/reply')
 
 class Nofan {
   static async login (username, password) {
@@ -152,9 +153,9 @@ class Nofan {
   }
 
   static async homeTimeline (options) {
-    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
+    const {count, timeAgo, noPhotoTag, reply} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'})
-    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag, reply)
   }
 
   static async publicTimeline (options) {
@@ -192,10 +193,12 @@ class Nofan {
     const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10
     const timeAgo = options.time_ago || false
     const noPhotoTag = options.no_photo_tag || false
+    const reply = options.reply || false
     return {
       count,
       timeAgo,
-      noPhotoTag
+      noPhotoTag,
+      reply
     }
   }
 
@@ -218,32 +221,7 @@ class Nofan {
   static async mentions (options) {
     const {count, timeAgo, noPhotoTag, reply} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'})
-    if(reply === false) Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
-    else Nofan._reply(statuses)
-  }
-
-  static async _reply (statuses) {
-    if (process.spinner) {
-      process.spinner.stop()
-    }
-    Promise.all(statuses).then((result) => {
-      let list = [];
-      result.forEach(status => {
-        list.push(status.plain_text);
-      })
-      inquirer
-      .prompt([
-          {
-              type: 'list',
-              name: 'mentions',
-              message: 'You recent mentions',
-              choices: list,
-          }
-      ])
-      .then(answers => {
-        console.log(answers);
-      });
-    })
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag, reply)
   }
 
   static async me (options) {
@@ -398,7 +376,7 @@ class Nofan {
     })
   }
 
-  static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
+  static async _renderTimeline (timeline, timeAgoTag, noPhotoTag) {
     const config = process.NOFAN_CONFIG
     if (process.spinner) {
       process.spinner.stop()
@@ -425,7 +403,7 @@ class Nofan {
       }
       return false
     }
-    timeline.forEach(status => {
+    const renderStatus = status => {
       let text = ''
       status.txt.forEach(item => {
         switch (item.type) {
@@ -454,11 +432,29 @@ class Nofan {
       }
       if (timeAgoTag) {
         const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`)
-        console.log(`${name} ${text} ${statusTimeAgo}`)
-      } else {
-        console.log(`${name} ${text}`)
+        return `${name} ${text} ${statusTimeAgo}`
       }
-    })
+      return `${name} ${text}`
+    }
+    return timeline.map(renderStatus)
+  }
+
+  static async _replyList (renderedTL) {
+    inquirer.prompt(replyPrompt(renderedTL))
+      .then(selectedMen => {
+        console.log(selectedMen)
+      })
+  }
+
+  static async _displayTimeline (timeline, timeAgoTag, noPhotoTag, reply) {
+    const renderedTL = await this._renderTimeline(timeline, timeAgoTag, noPhotoTag)
+    if (reply) {
+      this._replyList(renderedTL)
+    } else {
+      renderedTL.forEach(status => {
+        console.log(status)
+      })
+    }
   }
 
   static initFanfou (user, config) {
