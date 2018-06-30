@@ -455,17 +455,19 @@ class Nofan {
           }]).then(reply => {
             this.update(text + reply.content)
           })
-        } else {
+        } else if (selectedStatus.replyType === 'Repost') {
           selectedStatus.status.txt.forEach(item => {
             text = (item.type === 'at') ? (text + '@' + item.name) : (text + item._text)
           })
           inquirer.prompt([{
             type: 'input',
             name: 'content',
-            message: 'Enter your Repost content...to ' + chalkPipe(textColor)(text)
+            message: 'Enter your repost content...to ' + chalkPipe(textColor)(text)
           }]).then(reply => {
             this.update(reply.content.trim() + '转' + text)
           })
+        } else {
+          process.exit()
         }
       })
   }

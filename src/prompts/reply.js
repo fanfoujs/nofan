@@ -11,6 +11,6 @@ module.exports = statuses => {
     type: 'list',
     name: 'replyType',
     message: 'Reply or Repost',
-    choices: ['Reply', 'Repost']
+    choices: ['Reply', 'Repost', 'Cancel']
   }]
 }
