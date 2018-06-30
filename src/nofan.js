@@ -440,7 +440,7 @@ class Nofan {
   }
 
   static async _replyList (renderedTL) {
-    inquirer.prompt(replyPrompt(renderedTL))
+    inquirer.prompt(replyPrompt.replyPrompt(renderedTL))
       .then(selectedStatus => {
         let text = '@' + selectedStatus.status.user.name + ' '
         const config = process.NOFAN_CONFIG
@@ -448,24 +448,18 @@ class Nofan {
         const atColor = colors.at || 'blue'
         const textColor = colors.text
         if (selectedStatus.replyType === 'Reply') {
-          inquirer.prompt([{
-            type: 'input',
-            name: 'content',
-            message: 'Enter your reply...to ' + chalkPipe(atColor)(text)
-          }]).then(reply => {
-            this.update(text + reply.content)
-          })
+          inquirer.prompt(replyPrompt.replyInputPrompt('Enter your reply...to ' + chalkPipe(atColor)(text)))
+            .then(reply => {
+              this.update(text + reply.content)
+            })
         } else if (selectedStatus.replyType === 'Repost') {
           selectedStatus.status.txt.forEach(item => {
             text = (item.type === 'at') ? (text + '@' + item.name) : (text + item._text)
           })
-          inquirer.prompt([{
-            type: 'input',
-            name: 'content',
-            message: 'Enter your repost content...to ' + chalkPipe(textColor)(text)
-          }]).then(reply => {
-            this.update(reply.content.trim() + '转' + text)
-          })
+          inquirer.prompt(replyPrompt.replyInputPrompt('Enter your repost content...to ' + chalkPipe(textColor)(text)))
+            .then(reply => {
+              this.update(reply.content.trim() + ' 转' + text)
+            })
         } else {
           process.exit()
         }

@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = statuses => {
+const replyPrompt = statuses => {
   return [{
     type: 'list',
     name: 'status',
@@ -13,4 +13,17 @@ module.exports = statuses => {
     message: 'Reply or Repost',
     choices: ['Reply', 'Repost', 'Cancel']
   }]
+}
+
+const replyInputPrompt = messageTxt => {
+  return [{
+    type: 'input',
+    name: 'content',
+    message: messageTxt
+  }]
+}
+
+module.exports = {
+  replyPrompt,
+  replyInputPrompt
 }
