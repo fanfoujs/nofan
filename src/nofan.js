@@ -432,17 +432,41 @@ class Nofan {
       }
       if (timeAgoTag) {
         const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`)
-        return `${name} ${text} ${statusTimeAgo}`
+        return {name: `${name} ${text} ${statusTimeAgo}`, value: status}
       }
-      return `${name} ${text}`
+      return {name: `${name} ${text}`, value: status}
     }
     return timeline.map(renderStatus)
   }
 
   static async _replyList (renderedTL) {
     inquirer.prompt(replyPrompt(renderedTL))
-      .then(selectedMen => {
-        console.log(selectedMen)
+      .then(selectedStatus => {
+        let text = '@' + selectedStatus.status.user.name + ' '
+        const config = process.NOFAN_CONFIG
+        const colors = config.COLORS || {}
+        const atColor = colors.at || 'blue'
+        const textColor = colors.text
+        if (selectedStatus.replyType === 'Reply') {
+          inquirer.prompt([{
+            type: 'input',
+            name: 'content',
+            message: 'Enter your reply...to ' + chalkPipe(atColor)(text)
+          }]).then(reply => {
+            this.update(text + reply.content)
+          })
+        } else {
+          selectedStatus.status.txt.forEach(item => {
+            text = (item.type === 'at') ? (text + '@' + item.name) : (text + item._text)
+          })
+          inquirer.prompt([{
+            type: 'input',
+            name: 'content',
+            message: 'Enter your Repost content...to ' + chalkPipe(textColor)(text)
+          }]).then(reply => {
+            this.update(reply.content.trim() + '转' + text)
+          })
+        }
       })
   }
 
@@ -452,7 +476,7 @@ class Nofan {
       this._replyList(renderedTL)
     } else {
       renderedTL.forEach(status => {
-        console.log(status)
+        console.log(status.name)
       })
     }
   }
