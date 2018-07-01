@@ -59,7 +59,7 @@ program
 program
   .command('home [count]')
   .alias('h')
-  .option('-r, --reply', 'enter reply mode')
+  .option('-r, --reply', 'Enter reply mode')
   .description('Show home timeline')
   .action((count, options) => {
     process.spinner = ora('Fetching').start()
@@ -74,7 +74,7 @@ program
 program
   .command('mentions [count]')
   .alias('m')
-  .option('-r, --reply', 'enter reply mode')
+  .option('-r, --reply', 'Enter reply mode')
   .description('Show mentions')
   .action((count, options) => {
     process.spinner = ora('Fetching').start()
@@ -180,20 +180,6 @@ program
     } else {
       Nofan.update(text)
     }
-  })
-
-program
-  .command('reply [count]')
-  .alias('r')
-  .description('Reply to recent mentions')
-  .action((count, options) => {
-    process.spinner = ora('Fetching').start()
-    Nofan.mentions({
-      count,
-      time_ago: options.parent.time,
-      no_photo_tag: !options.parent.photoTag,
-      reply: true
-    })
   })
 
 program.parse(process.argv)
