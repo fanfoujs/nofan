@@ -4,7 +4,7 @@ const list = statuses => {
   return [{
     type: 'list',
     name: 'status',
-    message: 'Select fan to reply',
+    message: 'Select status to reply',
     choices: statuses
   }]
 }
