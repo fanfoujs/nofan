@@ -159,15 +159,15 @@ class Nofan {
   }
 
   static async publicTimeline (options) {
-    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
+    const {count, timeAgo, noPhotoTag, reply} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'})
-    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag, reply)
   }
 
   static async searchTimeline (q, options) {
-    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
+    const {count, timeAgo, noPhotoTag, reply} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'})
-    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag, reply)
   }
 
   static async trendsTimeline (options) {
@@ -225,9 +225,9 @@ class Nofan {
   }
 
   static async me (options) {
-    const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options)
+    const {count, timeAgo, noPhotoTag, reply} = await Nofan.getConfig(options)
     const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'})
-    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag)
+    Nofan._displayTimeline(statuses, timeAgo, noPhotoTag, reply)
   }
 
   static async _get (uri, params) {
@@ -440,36 +440,19 @@ class Nofan {
   }
 
   static async _replyList (renderedTL) {
-    inquirer.prompt(replyPrompt.replyPrompt(renderedTL))
-      .then(selectedStatus => {
-        let text = '@' + selectedStatus.status.user.name + ' '
-        const config = process.NOFAN_CONFIG
-        const colors = config.COLORS || {}
-        const atColor = colors.at || 'blue'
-        const textColor = colors.text
-        if (selectedStatus.replyType === 'Reply') {
-          inquirer.prompt(replyPrompt.replyInputPrompt('Enter your reply...to ' + chalkPipe(atColor)(text)))
-            .then(reply => {
-              this.update(text + reply.content)
-            })
-        } else if (selectedStatus.replyType === 'Repost') {
-          selectedStatus.status.txt.forEach(item => {
-            text = (item.type === 'at') ? (text + '@' + item.name) : (text + item._text)
-          })
-          inquirer.prompt(replyPrompt.replyInputPrompt('Enter your repost content...to ' + chalkPipe(textColor)(text)))
-            .then(reply => {
-              this.update(reply.content.trim() + ' 转' + text)
-            })
-        } else {
-          process.exit()
-        }
-      })
+    const selectedStatus = await inquirer.prompt(replyPrompt.list(renderedTL))
+    const text = '@' + selectedStatus.status.user.name
+    const config = process.NOFAN_CONFIG
+    const colors = config.COLORS || {}
+    const atColor = colors.at || 'blue'
+    const reply = await inquirer.prompt(replyPrompt.input('Enter your reply...to ' + chalkPipe(atColor)(text)))
+    Nofan.update(text + ' ' + reply.content)
   }
 
   static async _displayTimeline (timeline, timeAgoTag, noPhotoTag, reply) {
-    const renderedTL = await this._renderTimeline(timeline, timeAgoTag, noPhotoTag)
+    const renderedTL = await Nofan._renderTimeline(timeline, timeAgoTag, noPhotoTag)
     if (reply) {
-      this._replyList(renderedTL)
+      Nofan._replyList(renderedTL)
     } else {
       renderedTL.forEach(status => {
         console.log(status.name)

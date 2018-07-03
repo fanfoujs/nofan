@@ -88,49 +88,56 @@ program
 
 program
   .command('me [count]')
+  .option('-r, --reply', 'Enter reply mode')
   .description('Show my statuses')
   .action((count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.me({
       count,
       time_ago: options.parent.time,
-      no_photo_tag: !options.parent.photoTag
+      no_photo_tag: !options.parent.photoTag,
+      reply: options.reply
     })
   })
 
 program
   .command('public [count]')
   .alias('p')
+  .option('-r, --reply', 'Enter reply mode')
   .description('Show public timeline')
   .action((count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.publicTimeline({
       count,
       time_ago: options.parent.time,
-      no_photo_tag: !options.parent.photoTag
+      no_photo_tag: !options.parent.photoTag,
+      reply: options.reply
     })
   })
 
 program
   .command('search <query> [count]')
   .alias('se')
+  .option('-r, --reply', 'Enter reply mode')
   .description('Search public timeline')
   .action((query, count, options) => {
     process.spinner = ora('Fetching').start()
     Nofan.searchTimeline(query, {
       count,
       time_ago: options.parent.time,
-      no_photo_tag: !options.parent.photoTag
+      no_photo_tag: !options.parent.photoTag,
+      reply: options.reply
     })
   })
 
 program
   .command('trends [count]')
   .alias('tr')
+  .option('-r, --reply', 'Enter reply mode')
   .description('Fetch trends')
-  .action(count => {
+  .action((count, options) => {
     process.spinner = ora('Fetching').start()
-    Nofan.trendsTimeline({count})
+    Nofan.trendsTimeline({count, reply: options.reply})
   })
 
 program
