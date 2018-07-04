@@ -172,7 +172,7 @@ program
     process.spinner = ora('Sending').start()
     more.unshift(pre)
     const text = more.join(' ')
-    if (options) {
+    if (options.photo || options.clipboard) {
       Nofan.upload(options, text)
     } else {
       Nofan.update(text)
