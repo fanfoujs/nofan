@@ -204,8 +204,14 @@ class Nofan {
     process.spinner.succeed('Sent!')
   }
 
-  static async upload (path, text) {
-    await Nofan._upload(path, text)
+  static async upload (options, text) {
+    const {photo, clipboard} = options
+    if (photo) {
+      await Nofan._upload(photo, text)
+    } else if (clipboard) {
+      const tempFilepath = await util.getTempImagePath()
+      await Nofan._upload(tempFilepath, text)
+    }
     process.spinner.succeed('Sent!')
   }
 
