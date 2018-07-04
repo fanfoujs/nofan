@@ -1,10 +1,14 @@
+#!/usr/bin/env node
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
 const importLazy = require('import-lazy')(require)
 
 const chalk = importLazy('chalk')
+const boxen = importLazy('boxen')
 const homedir = importLazy('homedir')
+const execa = importLazy('execa')
 
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/'
 
@@ -91,11 +95,36 @@ function setAccount (account) {
   createJsonFile('account', account)
 }
 
+async function getTempImagePath () {
+  const tempPath = homedir() + configPath + 'temp'
+  const filepath = path.join(tempPath, 'temp.png')
+  if (process.platform !== 'darwin') {
+    process.spinner.fail('Upload from clipboard only available in macOS')
+    process.exit(1)
+  }
+  try {
+    fs.mkdirSync(tempPath)
+  } catch (err) {}
+  try {
+    await execa('pngpaste', [filepath])
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      const tip = `Please use ${chalk.green('`brew install pngpaste`')} to solve`
+      process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, {padding: 1}))
+      process.exit(1)
+    }
+    process.spinner.fail(err.stderr.trim())
+    process.exit(1)
+  }
+  return filepath
+}
+
 module.exports = {
   createNofanDir,
   getConfig,
   getAccount,
   setConfig,
   setAccount,
-  sdkVersion: readSDKVersion
+  sdkVersion: readSDKVersion,
+  getTempImagePath
 }

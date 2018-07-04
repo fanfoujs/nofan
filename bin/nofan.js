@@ -166,13 +166,14 @@ program
 program
   .arguments('<status> [more...]')
   .option('-p, --photo <path>', 'Attach a photo')
+  .option('-c, --clipboard', 'Use image from clipboard')
   .description('')
   .action((pre, more, options) => {
     process.spinner = ora('Sending').start()
     more.unshift(pre)
     const text = more.join(' ')
-    if (options.photo) {
-      Nofan.upload(options.photo, text)
+    if (options) {
+      Nofan.upload(options, text)
     } else {
       Nofan.update(text)
     }
