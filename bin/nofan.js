@@ -185,7 +185,7 @@ program
     if (options.photo) {
       Nofan.upload(options.photo, text)
     } else {
-      Nofan.update(text)
+      Nofan.update({status: text})
     }
   })
 

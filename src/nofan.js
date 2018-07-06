@@ -202,8 +202,8 @@ class Nofan {
     }
   }
 
-  static async update (text, reply_id) {
-    await Nofan._post('/statuses/update', {status: text, in_reply_to_status_id: reply_id})
+  static async update (params) {
+    await Nofan._post('/statuses/update', params)
     process.spinner.succeed('Sent!')
   }
 
@@ -447,7 +447,10 @@ class Nofan {
     const atColor = colors.at || 'blue'
     const reply = await inquirer.prompt(replyPrompt.input('Enter your reply...to ' + chalkPipe(atColor)(text)))
     process.spinner.start('Sending')
-    Nofan.update(text + ' ' + reply.content, selectedStatus.status.in_reply_to_status_id)
+    Nofan.update({
+      status: text + ' ' + reply.content,
+      in_reply_to_status_id: selectedStatus.status.in_reply_to_status_id
+    })
   }
 
   static async _displayTimeline (timeline, timeAgoTag, noPhotoTag, reply) {
