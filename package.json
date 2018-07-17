@@ -31,7 +31,7 @@
     "import-lazy": "^3.1.0",
     "inquirer": "^6.0.0",
     "node-notifier": "^5.2.1",
-    "ora": "^2.0.0",
+    "ora": "^3.0.0",
     "pangu": "^3.3.0",
     "pm2": "^3.0.0",
     "timeago.js": "^3.0.1",
