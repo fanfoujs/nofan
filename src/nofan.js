@@ -305,16 +305,10 @@ class Nofan {
     util.setConfig(config)
     const ff = Nofan.initFanfou(user, config)
     try {
-      fs.openSync(path, 'r')
       const res = await ff.upload('/photos/upload', {photo: fs.createReadStream(path), status})
       return res
     } catch (err) {
-      if (err.code === 'ENOENT') {
-        process.spinner.fail(`file '${path}' does not exist`)
-        process.exit(1)
-      } else {
-        Nofan._handleError(err, config)
-      }
+      Nofan._handleError(err, config)
     }
   }
 
