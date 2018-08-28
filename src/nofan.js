@@ -24,9 +24,8 @@ const trendsPrompt = importLazy('./prompts/trends')
 class Nofan {
   static async login (username, password) {
     const config = await util.getConfig()
-    const login = (username, password) => {
+    const login = async (username, password) => {
       const ff = new Fanfou({
-        authType: 'xauth',
         consumerKey: config.CONSUMER_KEY,
         cosnumerSecret: config.CONSUMER_SECRET,
         username,
@@ -36,24 +35,23 @@ class Nofan {
         oauthDomain: config.OAUTH_DOMAIN,
         fakeHttps: config.FAKE_HTTPS || false
       })
-      ff.xauth(async (e, token) => {
-        if (e) {
-          process.spinner.fail(pangu.spacing(e.message))
-          process.exit(1)
-        } else {
-          config.USER = username
-          await util.setConfig(config)
-          const account = await util.getAccount()
-          account[username] = {
-            CONSUMER_KEY: config.CONSUMER_KEY,
-            CONSUMER_SECRET: config.CONSUMER_SECRET,
-            OAUTH_TOKEN: token.oauth_token,
-            OAUTH_TOKEN_SECRET: token.oauth_token_secret
-          }
-          await util.setAccount(account)
-          process.spinner.succeed('Login succeed!')
+      try {
+        const token = await ff.xauth()
+        config.USER = username
+        await util.setConfig(config)
+        const account = await util.getAccount()
+        account[username] = {
+          CONSUMER_KEY: config.CONSUMER_KEY,
+          CONSUMER_SECRET: config.CONSUMER_SECRET,
+          OAUTH_TOKEN: token.oauthToken,
+          OAUTH_TOKEN_SECRET: token.oauthTokenSecret
         }
-      })
+        await util.setAccount(account)
+        process.spinner.succeed('Login succeed!')
+      } catch (err) {
+        process.spinner.fail(pangu.spacing(err.message))
+        process.exit(1)
+      }
     }
     if (username && password) {
       process.spinner = ora('Logging in...').start()
@@ -252,27 +250,12 @@ class Nofan {
     }
     util.setConfig(config)
     const ff = Nofan.initFanfou(user, config)
-
-    return new Promise(resolve => {
-      ff.get(uri, params, (err, res) => {
-        const expectHttpsError = /Invalid signature\. Expected basestring is GET&http%3A%2F%2F/
-        if (
-          config.SSL &&
-          !config.FAKE_HTTS &&
-          err &&
-          typeof err.message === 'string' &&
-          err.message.match(expectHttpsError)
-        ) {
-          const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-          err.message += `\n\n${boxen(tip, {padding: 1})}`
-        }
-        if (err) {
-          process.spinner.fail(pangu.spacing(err.message))
-          process.exit(1)
-        }
-        resolve(res)
-      })
-    })
+    try {
+      const res = await ff.get(uri, params)
+      return res
+    } catch (err) {
+      Nofan._handleError(err, config)
+    }
   }
 
   static async _post (uri, params) {
@@ -294,26 +277,12 @@ class Nofan {
     }
     util.setConfig(config)
     const ff = Nofan.initFanfou(user, config)
-    return new Promise(resolve => {
-      ff.post(uri, params, (err, res) => {
-        const expectHttpsError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
-        if (
-          config.SSL &&
-          !config.FAKE_HTTS &&
-          err &&
-          typeof err.message === 'string' &&
-          err.message.match(expectHttpsError)
-        ) {
-          const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-          err.message += `\n\n${boxen(tip, {padding: 1})}`
-        }
-        if (err) {
-          process.spinner.fail(pangu.spacing(err.message))
-          process.exit(1)
-        }
-        resolve(res)
-      })
-    })
+    try {
+      const res = await ff.post(uri, params)
+      return res
+    } catch (err) {
+      Nofan._handleError(err, config)
+    }
   }
 
   static async _upload (path, status) {
@@ -335,48 +304,34 @@ class Nofan {
     }
     util.setConfig(config)
     const ff = Nofan.initFanfou(user, config)
-    return new Promise(resolve => {
-      fs.open(path, 'r', err => {
-        if (err) {
-          if (err.code === 'ENOENT') {
-            process.spinner.fail(`file '${path}' does not exist`)
-          } else {
-            process.spinner.fail(err.message)
-          }
-          process.exit(1)
-        } else {
-          ff.up('/photos/upload', {photo: fs.createReadStream(path), status}, (err, res) => {
-            if (err) {
-              const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
-              const expectHttpsError = /Invalid signature\. Expected basestring is POST&https%3A%2F%2F/
-              if (
-                config.SSL &&
-                !config.FAKE_HTTS &&
-                err &&
-                typeof err.message === 'string' &&
-                err.message.match(expectHttpError)
-              ) {
-                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
-                err.message += `\n\n${boxen(tip, {padding: 1})}`
-              } else if (
-                config.SSL &&
-                config.FAKE_HTTPS &&
-                err &&
-                typeof err.message === 'string' &&
-                err.message.match(expectHttpsError)
-              ) {
-                const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} off`
-                err.message += `\n\n${boxen(tip, {padding: 1})}`
-              }
-              process.spinner.fail(pangu.spacing(err.message))
-              process.exit(1)
-            } else {
-              resolve(res)
-            }
-          })
-        }
-      })
-    })
+    try {
+      fs.openSync(path, 'r')
+      const res = await ff.upload('/photos/upload', {photo: fs.createReadStream(path), status})
+      return res
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        process.spinner.fail(`file '${path}' does not exist`)
+        process.exit(1)
+      } else {
+        Nofan._handleError(err, config)
+      }
+    }
+  }
+
+  static _handleError (err, config) {
+    const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/
+    if (
+      config.SSL &&
+      !config.FAKE_HTTS &&
+      err &&
+      typeof err.message === 'string' &&
+      err.message.match(expectHttpError)
+    ) {
+      const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`
+      err.message += `\n\n${boxen(tip, {padding: 1})}`
+    }
+    process.spinner.fail(pangu.spacing(err.message))
+    process.exit(1)
   }
 
   static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
@@ -444,7 +399,6 @@ class Nofan {
 
   static initFanfou (user, config) {
     return new Fanfou({
-      authType: 'oauth',
       consumerKey: user.CONSUMER_KEY,
       consumerSecret: user.CONSUMER_SECRET,
       oauthToken: user.OAUTH_TOKEN,
