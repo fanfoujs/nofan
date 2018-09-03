@@ -335,15 +335,17 @@ class Nofan {
     }
     timeAgoTag = timeAgoTag || config.TIME_TAG
     noPhotoTag = noPhotoTag || !config.PHOTO_TAG
-    const colors = config.COLORS || {}
-    const nameColor = colors.name || 'green'
-    const textColor = colors.text
-    const atColor = colors.at || 'blue'
-    const linkColor = colors.link || 'blue'
-    const tagColor = colors.tag || 'blue'
-    const photoColor = colors.photo || 'blue'
-    const timeagoColor = colors.timeago || 'green'
-    const highlightColor = colors.highlight || 'bold'
+    const {COLORS: colors = {}} = config
+    const {
+      name: nameColor = 'green',
+      text: textColor,
+      at: atColor = 'blue',
+      link: linkColor = 'blue',
+      tag: tagColor = 'blue',
+      photo: photoColor = 'blue',
+      timeago: timeagoColor = 'green',
+      highlight: highlightColor = 'bold'
+    } = colors
     const parseHighlight = (style, item) => {
       if (item.bold_arr) {
         return item.bold_arr.map(keyword => {
