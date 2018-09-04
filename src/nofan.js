@@ -328,7 +328,7 @@ class Nofan {
     process.exit(1)
   }
 
-  static async _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
+  static _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
     const config = process.NOFAN_CONFIG
     if (process.spinner) {
       process.spinner.stop()
