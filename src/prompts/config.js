@@ -49,7 +49,7 @@ module.exports = (config, showAll) => {
     }, {
       type: 'checkbox',
       name: 'https',
-      message: `Replace 'https' with 'http' in OAuth base string`,
+      message: 'Replace \'https\' with \'http\' in OAuth base string',
       choices: [{
         name: 'fake_https',
         checked: config.FAKE_HTTPS || false

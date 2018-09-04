@@ -54,6 +54,12 @@
       "space-before-function-paren": [
         "error",
         "always"
+      ],
+      "unicorn/catch-error-name": [
+        "error",
+        {
+          "name": "err"
+        }
       ]
     },
     "semicolon": false,
