@@ -10,6 +10,7 @@ const TimeAgo = importLazy('timeago.js');
 const Fanfou = importLazy('fanfou-sdk');
 const inquirer = importLazy('inquirer');
 const figlet = importLazy('figlet');
+const moment = importLazy('moment');
 const boxen = importLazy('boxen');
 const chalk = importLazy('chalk');
 const pangu = importLazy('pangu');
@@ -391,7 +392,7 @@ class Nofan {
 				}
 			}
 			if (timeAgoTag) {
-				const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`);
+				const statusTimeAgo = chalkPipe(timeagoColor)(`(${verbose ? `${moment(new Date(status.created_at)).local().format('YYYY-MM-DD HH:mm:ss')}` : new TimeAgo().format(status.created_at)})`);
 				console.log(`${name} ${text} ${statusTimeAgo}`);
 			} else {
 				console.log(`${name} ${text}`);

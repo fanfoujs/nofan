@@ -30,6 +30,7 @@
     "homedir": "^0.6.0",
     "import-lazy": "^3.1.0",
     "inquirer": "^6.2.0",
+    "moment": "^2.23.0",
     "node-notifier": "^5.2.1",
     "ora": "^3.0.0",
     "pangu": "^3.3.0",
