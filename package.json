@@ -51,10 +51,6 @@
   "xo": {
     "rules": {
       "camelcase": 0,
-      "space-before-function-paren": [
-        "error",
-        "always"
-      ],
       "unicorn/catch-error-name": [
         "error",
         {

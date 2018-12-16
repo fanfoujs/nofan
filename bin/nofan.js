@@ -15,6 +15,7 @@ program
 	.option('-v, --version', 'Output the version info')
 	.option('-t, --time', 'Show time ago tag')
 	.option('--no-photo-tag', 'Hide photo tag')
+	.option('--verbose', 'Verbose output')
 	.version(Nofan.version());
 
 program
@@ -127,6 +128,18 @@ program
 	.action(count => {
 		process.spinner = ora('Fetching').start();
 		Nofan.trendsTimeline({count});
+	});
+
+program
+	.command('user <id>')
+	.description('Fetch user-timeline')
+	.action((id, options) => {
+		process.spinner = ora('Fetching').start();
+		Nofan.userTimeline(id, {
+			trendsTimeline: options.parent.time,
+			no_photo_tag: !options.parent.photoTag,
+			verbose: options.parent.verbose
+		});
 	});
 
 program
