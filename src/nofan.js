@@ -313,7 +313,7 @@ class Nofan {
 	}
 
 	static _handleError (err, config) {
-		const expectHttpError = /Invalid signature\. Expected basestring is POST&http%3A%2F%2F/;
+		const expectHttpError = /Invalid signature\. Expected basestring is (GET|POST)&http%3A%2F%2F/;
 		if (
 			config.SSL &&
       !config.FAKE_HTTS &&
