@@ -74,6 +74,7 @@ $ nofan m                    # Alias for `nofan mentions`
 $ nofan hi nofan.            # Post status "hi nofan."
 $ nofan undo                 # Delete last status
 $ nofan hi -p ~/hola.png     # Post status "hi" with a photo
+$ nofan hi -c                # Post status "hi" with a photo from clipboard
 $ nofan home -t              # Display timeline with time ago tag
 $ nofan notifier start       # Start Nofan Notifier process
 $ nofan notifier stop        # Stop Nofan Notifier process
