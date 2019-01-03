@@ -153,19 +153,19 @@ class Nofan {
 	static async homeTimeline(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
 	static async publicTimeline(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
 	static async searchTimeline(q, options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
 	static async trendsTimeline(options) {
@@ -188,7 +188,7 @@ class Nofan {
 	static async userTimeline(id, options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {id, count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag, Boolean(options.verbose));
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
 	}
 
 	static async getConfig(options) {
@@ -229,13 +229,13 @@ class Nofan {
 	static async mentions(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
 	static async me(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
 	static async _get(uri, params) {
@@ -335,11 +335,12 @@ class Nofan {
 		process.exit(1);
 	}
 
-	static _displayTimeline(timeline, timeAgoTag, noPhotoTag, verbose) {
+	static _displayTimeline(timeline, opt) {
 		const config = process.NOFAN_CONFIG;
 		if (process.spinner) {
 			process.spinner.stop();
 		}
+		let {timeAgo: timeAgoTag, noPhotoTag, verbose} = opt;
 		timeAgoTag = timeAgoTag || config.TIME_TAG;
 		noPhotoTag = noPhotoTag || !config.PHOTO_TAG;
 		const {COLORS: colors = {}} = config;
