@@ -12,7 +12,7 @@ const execa = importLazy('execa');
 
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
 
-function createNofanDir () {
+function createNofanDir() {
 	return new Promise(resolve => {
 		fs.mkdir(`${homedir()}${configPath}`, () => {
 			resolve();
@@ -20,7 +20,7 @@ function createNofanDir () {
 	});
 }
 
-function createJsonFile (filename, content) {
+function createJsonFile(filename, content) {
 	return new Promise((resolve, reject) => {
 		const filePath = `${homedir()}${configPath}${filename}.json`;
 		fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8', e => {
@@ -33,7 +33,7 @@ function createJsonFile (filename, content) {
 	});
 }
 
-function readJsonFile (filename) {
+function readJsonFile(filename) {
 	return new Promise((resolve, reject) => {
 		const filePath = `${homedir()}${configPath}${filename}.json`;
 		fs.open(filePath, 'r', err => {
@@ -49,11 +49,11 @@ function readJsonFile (filename) {
 	});
 }
 
-function readSDKVersion () {
+function readSDKVersion() {
 	return require('fanfou-sdk/package').version;
 }
 
-async function getConfig () {
+async function getConfig() {
 	try {
 		return await readJsonFile('config');
 	} catch (err) {
@@ -79,7 +79,7 @@ async function getConfig () {
 	}
 }
 
-async function getAccount () {
+async function getAccount() {
 	try {
 		return await readJsonFile('account');
 	} catch (err) {
@@ -87,15 +87,15 @@ async function getAccount () {
 	}
 }
 
-function setConfig (config) {
+function setConfig(config) {
 	createJsonFile('config', config);
 }
 
-function setAccount (account) {
+function setAccount(account) {
 	createJsonFile('account', account);
 }
 
-async function getTempImagePath () {
+async function getTempImagePath() {
 	const tempPath = homedir() + configPath + 'temp';
 	const filepath = path.join(tempPath, 'temp.png');
 	if (process.platform !== 'darwin') {

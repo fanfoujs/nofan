@@ -10,6 +10,7 @@ const TimeAgo = importLazy('timeago.js');
 const Fanfou = importLazy('fanfou-sdk');
 const inquirer = importLazy('inquirer');
 const figlet = importLazy('figlet');
+const moment = importLazy('moment');
 const boxen = importLazy('boxen');
 const chalk = importLazy('chalk');
 const pangu = importLazy('pangu');
@@ -22,7 +23,7 @@ const switchPrompt = importLazy('./prompts/switch');
 const trendsPrompt = importLazy('./prompts/trends');
 
 class Nofan {
-	static async login (username, password) {
+	static async login(username, password) {
 		const config = await util.getConfig();
 		const login = async (username, password) => {
 			const ff = new Fanfou({
@@ -66,7 +67,7 @@ class Nofan {
 		}
 	}
 
-	static async logout () {
+	static async logout() {
 		process.spinner = ora('Logging out').start();
 		const config = await util.getConfig();
 		if (config.USER) {
@@ -77,7 +78,7 @@ class Nofan {
 		}
 	}
 
-	static async config (key, secret, showAll) {
+	static async config(key, secret, showAll) {
 		const config = await util.getConfig();
 		if (key && secret) {
 			config.CONSUMER_KEY = key;
@@ -106,7 +107,7 @@ class Nofan {
 		}
 	}
 
-	static async colors () {
+	static async colors() {
 		const config = await util.getConfig();
 		config.COLORS = config.COLORS || {};
 		const paints = await inquirer.prompt(colorsPrompt(config));
@@ -116,7 +117,7 @@ class Nofan {
 		await util.setConfig(config);
 	}
 
-	static async switchUser (id) {
+	static async switchUser(id) {
 		const [config, account] = [
 			await util.getConfig(),
 			await util.getAccount()
@@ -149,25 +150,25 @@ class Nofan {
 		}
 	}
 
-	static async homeTimeline (options) {
+	static async homeTimeline(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
-	static async publicTimeline (options) {
+	static async publicTimeline(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
-	static async searchTimeline (q, options) {
+	static async searchTimeline(q, options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
-	static async trendsTimeline (options) {
+	static async trendsTimeline(options) {
 		options = options || {};
 		const [{trends: hotTrends}, savedTrends] = [
 			await Nofan._get('/trends/list'),
@@ -184,7 +185,13 @@ class Nofan {
 		}
 	}
 
-	static async getConfig (options) {
+	static async userTimeline(id, options) {
+		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
+		const statuses = await Nofan._get('/statuses/user_timeline', {id, count, format: 'html'});
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
+	}
+
+	static async getConfig(options) {
 		options = options || {};
 		process.NOFAN_CONFIG = await util.getConfig();
 		const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10;
@@ -197,12 +204,12 @@ class Nofan {
 		};
 	}
 
-	static async update (text) {
+	static async update(text) {
 		await Nofan._post('/statuses/update', {status: text});
 		process.spinner.succeed('Sent!');
 	}
 
-	static async upload (options, text) {
+	static async upload(options, text) {
 		const {photo, clipboard} = options;
 		if (photo) {
 			await Nofan._upload(photo, text);
@@ -213,25 +220,25 @@ class Nofan {
 		process.spinner.succeed('Sent!');
 	}
 
-	static async undo () {
+	static async undo() {
 		const statuses = await Nofan._get('/statuses/user_timeline', {});
 		await Nofan._post('/statuses/destroy', {id: statuses[0].id});
 		process.spinner.succeed('Deleted!');
 	}
 
-	static async mentions (options) {
+	static async mentions(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
-	static async me (options) {
+	static async me(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, timeAgo, noPhotoTag);
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
 	}
 
-	static async _get (uri, params) {
+	static async _get(uri, params) {
 		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig();
 		const account = await util.getAccount();
 		let user = account[config.USER];
@@ -258,7 +265,7 @@ class Nofan {
 		}
 	}
 
-	static async _post (uri, params) {
+	static async _post(uri, params) {
 		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig();
 		const account = await util.getAccount();
 		let user = account[config.USER];
@@ -285,7 +292,7 @@ class Nofan {
 		}
 	}
 
-	static async _upload (path, status) {
+	static async _upload(path, status) {
 		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig();
 		const account = await util.getAccount();
 		let user = account[config.USER];
@@ -312,14 +319,14 @@ class Nofan {
 		}
 	}
 
-	static _handleError (err, config) {
+	static _handleError(err, config) {
 		const expectHttpError = /Invalid signature\. Expected basestring is (GET|POST)&http%3A%2F%2F/;
 		if (
 			config.SSL &&
-      !config.FAKE_HTTS &&
-      err &&
-      typeof err.message === 'string' &&
-      err.message.match(expectHttpError)
+			!config.FAKE_HTTS &&
+			err &&
+			typeof err.message === 'string' &&
+			err.message.match(expectHttpError)
 		) {
 			const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`;
 			err.message += `\n\n${boxen(tip, {padding: 1})}`;
@@ -328,11 +335,12 @@ class Nofan {
 		process.exit(1);
 	}
 
-	static _displayTimeline (timeline, timeAgoTag, noPhotoTag) {
+	static _displayTimeline(timeline, opt) {
 		const config = process.NOFAN_CONFIG;
 		if (process.spinner) {
 			process.spinner.stop();
 		}
+		let {timeAgo: timeAgoTag, noPhotoTag, verbose} = opt;
 		timeAgoTag = timeAgoTag || config.TIME_TAG;
 		noPhotoTag = noPhotoTag || !config.PHOTO_TAG;
 		const {COLORS: colors = {}} = config;
@@ -362,7 +370,7 @@ class Nofan {
 			status.txt.forEach(item => {
 				switch (item.type) {
 					case 'at':
-						text += parseHighlight(atColor, item) || chalkPipe(atColor)(item.text);
+						text += parseHighlight(atColor, item) || chalkPipe(atColor)(verbose ? `${item.text}:${item.id}` : item.text);
 						break;
 					case 'link':
 						text += parseHighlight(linkColor, item) || chalkPipe(linkColor)(item.text);
@@ -375,7 +383,7 @@ class Nofan {
 						break;
 				}
 			});
-			const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(status.user.name) + chalkPipe(textColor)(']');
+			const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(verbose ? `${status.user.name}:${status.id}` : status.user.name) + chalkPipe(textColor)(']');
 			if (status.photo && !noPhotoTag) {
 				const photoTag = chalkPipe(photoColor)('[图]');
 				if (text.length > 0) {
@@ -385,7 +393,7 @@ class Nofan {
 				}
 			}
 			if (timeAgoTag) {
-				const statusTimeAgo = chalkPipe(timeagoColor)(`(${new TimeAgo().format(status.created_at)})`);
+				const statusTimeAgo = chalkPipe(timeagoColor)(`(${verbose ? `${moment(new Date(status.created_at)).local().format('YYYY-MM-DD HH:mm:ss')}` : new TimeAgo().format(status.created_at)})`);
 				console.log(`${name} ${text} ${statusTimeAgo}`);
 			} else {
 				console.log(`${name} ${text}`);
@@ -393,7 +401,7 @@ class Nofan {
 		});
 	}
 
-	static initFanfou (user, config) {
+	static initFanfou(user, config) {
 		return new Fanfou({
 			consumerKey: user.CONSUMER_KEY,
 			consumerSecret: user.CONSUMER_SECRET,
@@ -406,7 +414,7 @@ class Nofan {
 		});
 	}
 
-	static version () {
+	static version() {
 		const banner = gradient.rainbow(figlet.textSync('Nofan', {
 			font: 'Small Slant'
 		}));
