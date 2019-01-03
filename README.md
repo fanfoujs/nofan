@@ -18,6 +18,7 @@ CLI for Fanfou
 - Fetch public-timeline
 - Fetch mentions-timeline
 - Fetch self-timeline
+- Fetch user-timeline
 - Fetch trends-timeline
 - Search statuses
 - Post statuses
@@ -57,14 +58,15 @@ $ nofan colors               # Customize color style
 $ nofan login                # Login fanfou account
 $ nofan logout               # Logout current account
 $ nofan switch               # Switch fanfou account
-$ nofan                      # Fetch the latest 10 statuses from home timeline
-$ nofan home                 # Fetch the latest 10 statuses from home timeline
-$ nofan mentions             # Fetch the latest 10 statuses from mentions
+$ nofan                      # Fetch the latest 10 statuses from home-timeline
+$ nofan home                 # Fetch the latest 10 statuses from home-timeline
+$ nofan mentions             # Fetch the latest 10 statuses from mentions-timeline
 $ nofan me                   # Fetch the latest 10 statuses from yourself
-$ nofan public               # Fetch the latest 10 statuses from public timeline
+$ nofan public               # Fetch the latest 10 statuses from public-timeline
 $ nofan trends               # Fetch trends
 $ nofan search <query>       # Search status from public timeline
-$ nofan home 20              # Fetch the latest 20 statuses from public timeline
+$ nofan home 20              # Fetch the latest 20 statuses from public-timeline
+$ nofan user <id>            # Fetch user-timeline by ID
 $ nofan s                    # Alias for `nofan switch`
 $ nofan h                    # Alias for `nofan home`
 $ nofan p                    # Alias for `nofan public`
