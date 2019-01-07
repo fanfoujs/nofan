@@ -4,6 +4,7 @@
 const fs = require('fs');
 const importLazy = require('import-lazy')(require);
 
+const terminalLink = importLazy('terminal-link');
 const gradient = importLazy('gradient-string');
 const chalkPipe = importLazy('chalk-pipe');
 const TimeAgo = importLazy('timeago.js');
@@ -385,7 +386,7 @@ class Nofan {
 			});
 			const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(verbose ? `${status.user.name}:${status.id}` : status.user.name) + chalkPipe(textColor)(']');
 			if (status.photo && !noPhotoTag) {
-				const photoTag = chalkPipe(photoColor)('[图]');
+				const photoTag = chalkPipe(photoColor)(terminalLink('[图]', status.photo.originurl, {fallback: text => text}));
 				if (text.length > 0) {
 					text += ` ${photoTag}`;
 				} else {
