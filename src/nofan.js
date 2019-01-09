@@ -35,7 +35,9 @@ class Nofan {
 				protocol: config.SSL ? 'https:' : 'http:',
 				apiDomain: config.API_DOMAIN,
 				oauthDomain: config.OAUTH_DOMAIN,
-				fakeHttps: config.FAKE_HTTPS || false
+				hooks: {
+					baseString: str => config.FAKE_HTTPS ? str.replace('https', 'http') : str
+				}
 			});
 			try {
 				const token = await ff.xauth();
@@ -313,7 +315,7 @@ class Nofan {
 		util.setConfig(config);
 		const ff = Nofan.initFanfou(user, config);
 		try {
-			const res = await ff.upload('/photos/upload', {photo: fs.createReadStream(path), status});
+			const res = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
 			return res;
 		} catch (err) {
 			Nofan._handleError(err, config);
@@ -411,7 +413,9 @@ class Nofan {
 			protocol: config.SSL ? 'https:' : 'http:',
 			apiDomain: config.API_DOMAIN,
 			oauthDomain: config.OAUTH_DOMAIN,
-			fakeHttps: config.FAKE_HTTPS || false
+			hooks: {
+				baseString: str => config.FAKE_HTTPS ? str.replace('https', 'http') : str
+			}
 		});
 	}
 
