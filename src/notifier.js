@@ -22,7 +22,9 @@ const run = async () => {
 		oauthToken,
 		oauthTokenSecret,
 		protocol: config.SSL ? 'https:' : 'http:',
-		fakeHttps: Boolean(config.FAKE_HTTPS)
+		hooks: {
+			baseString: str => config.SSL ? str.replace('https', 'http') : str
+		}
 	};
 
 	const streamer = new Streamer(options);
