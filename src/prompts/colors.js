@@ -6,6 +6,7 @@ module.exports = config => {
 	const transformer = text => {
 		return chalkPipe(text)(text);
 	};
+
 	return [
 		{
 			type: 'input',

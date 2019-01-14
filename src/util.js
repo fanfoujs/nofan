@@ -41,6 +41,7 @@ function readJsonFile(filename) {
 				if (err.code === 'ENOENT') {
 					reject(chalk.red(`file '${filePath}' does not exist`));
 				}
+
 				reject(chalk.red(`read file '${filePath}' failed`));
 			} else {
 				resolve(require(filePath));
@@ -102,9 +103,11 @@ async function getTempImagePath() {
 		process.spinner.fail('Upload from clipboard only available in macOS');
 		process.exit(1);
 	}
+
 	try {
 		fs.mkdirSync(tempPath);
 	} catch (err) {}
+
 	try {
 		await execa('pngpaste', [filepath]);
 	} catch (err) {
@@ -113,9 +116,11 @@ async function getTempImagePath() {
 			process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, {padding: 1}));
 			process.exit(1);
 		}
+
 		process.spinner.fail(err.stderr.trim());
 		process.exit(1);
 	}
+
 	return filepath;
 }
 

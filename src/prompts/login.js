@@ -15,5 +15,6 @@ module.exports = opt => {
 	if (opt.hasName) {
 		return [passwordInput];
 	}
+
 	return [usernameInput, passwordInput];
 };
