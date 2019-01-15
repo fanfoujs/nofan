@@ -56,5 +56,6 @@ module.exports = (config, showAll) => {
 			}]
 		}]);
 	}
+
 	return promptList;
 };

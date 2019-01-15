@@ -57,6 +57,7 @@ class Nofan {
 				process.exit(1);
 			}
 		};
+
 		if (username && password) {
 			process.spinner = ora('Logging in...').start();
 			login(username, password);
@@ -65,6 +66,7 @@ class Nofan {
 			if (username) {
 				user.username = username;
 			}
+
 			process.spinner = ora('Logging in').start();
 			login(user.username, user.password);
 		}
@@ -99,12 +101,15 @@ class Nofan {
 			if (settings.api_domain) {
 				config.API_DOMAIN = settings.api_domain;
 			}
+
 			if (settings.oauth_domain) {
 				config.OAUTH_DOMAIN = settings.oauth_domain;
 			}
+
 			if (settings.https) {
 				config.FAKE_HTTPS = settings.https.indexOf('fake_https') !== -1;
 			}
+
 			await util.createNofanDir();
 			await util.setConfig(config);
 		}
@@ -140,6 +145,7 @@ class Nofan {
 				if (name === currentName) {
 					return ({name, disabled: chalk.green('current')});
 				}
+
 				return name;
 			});
 			if (choices.length > 1) {
@@ -220,6 +226,7 @@ class Nofan {
 			const tempFilepath = await util.getTempImagePath();
 			await Nofan._upload(tempFilepath, text);
 		}
+
 		process.spinner.succeed('Sent!');
 	}
 
@@ -253,11 +260,13 @@ class Nofan {
 					break;
 				}
 			}
+
 			if (!user) {
 				process.spinner.fail('Not logged in');
 				process.exit(1);
 			}
 		}
+
 		util.setConfig(config);
 		const ff = Nofan.initFanfou(user, config);
 		try {
@@ -280,11 +289,13 @@ class Nofan {
 					break;
 				}
 			}
+
 			if (!user) {
 				process.spinner.fail('Not logged in');
 				process.exit(1);
 			}
 		}
+
 		util.setConfig(config);
 		const ff = Nofan.initFanfou(user, config);
 		try {
@@ -307,11 +318,13 @@ class Nofan {
 					break;
 				}
 			}
+
 			if (!user) {
 				process.spinner.fail('Not logged in');
 				process.exit(1);
 			}
 		}
+
 		util.setConfig(config);
 		const ff = Nofan.initFanfou(user, config);
 		try {
@@ -334,6 +347,7 @@ class Nofan {
 			const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`;
 			err.message += `\n\n${boxen(tip, {padding: 1})}`;
 		}
+
 		process.spinner.fail(pangu.spacing(err.message));
 		process.exit(1);
 	}
@@ -343,6 +357,7 @@ class Nofan {
 		if (process.spinner) {
 			process.spinner.stop();
 		}
+
 		let {timeAgo: timeAgoTag, noPhotoTag, verbose} = opt;
 		timeAgoTag = timeAgoTag || config.TIME_TAG;
 		noPhotoTag = noPhotoTag || !config.PHOTO_TAG;
@@ -363,11 +378,14 @@ class Nofan {
 					if (keyword.bold) {
 						return chalkPipe(`${style}.${highlightColor}`)(keyword.text);
 					}
+
 					return chalkPipe(style)(keyword.text);
 				}).join('');
 			}
+
 			return false;
 		};
+
 		timeline.forEach(status => {
 			let text = '';
 			status.txt.forEach(item => {
@@ -395,6 +413,7 @@ class Nofan {
 					text += photoTag;
 				}
 			}
+
 			if (timeAgoTag) {
 				const statusTimeAgo = chalkPipe(timeagoColor)(`(${verbose ? `${moment(new Date(status.created_at)).local().format('YYYY-MM-DD HH:mm:ss')}` : new TimeAgo().format(status.created_at)})`);
 				console.log(`${name} ${text} ${statusTimeAgo}`);

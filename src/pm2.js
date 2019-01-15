@@ -28,6 +28,7 @@ const start = async () => {
 		} else {
 			process.spinner.succeed('Nofan Notifier started!');
 		}
+
 		pm2.disconnect();
 	});
 };
@@ -41,6 +42,7 @@ const stop = async () => {
 		} else {
 			process.spinner.succeed('Nofan Notifier stoped!');
 		}
+
 		pm2.disconnect();
 	});
 };
@@ -54,6 +56,7 @@ const restart = async () => {
 		} else {
 			process.spinner.succeed('Nofan Notifier restarted!');
 		}
+
 		pm2.disconnect();
 	});
 };
@@ -67,6 +70,7 @@ const deleting = async () => {
 		} else {
 			process.spinner.succeed('Nofan Notifier deleted!');
 		}
+
 		pm2.disconnect();
 	});
 };
