@@ -162,19 +162,19 @@ class Nofan {
 	static async homeTimeline(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
 	}
 
 	static async publicTimeline(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
 	}
 
 	static async searchTimeline(q, options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
 	}
 
 	static async trendsTimeline(options) {
@@ -239,13 +239,13 @@ class Nofan {
 	static async mentions(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
 	}
 
 	static async me(options) {
 		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag});
+		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
 	}
 
 	static async _get(uri, params) {

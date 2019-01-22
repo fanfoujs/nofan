@@ -66,7 +66,8 @@ program
 		Nofan.homeTimeline({
 			count,
 			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag
+			no_photo_tag: !options.parent.photoTag,
+			verbose: options.parent.verbose
 		});
 	});
 
@@ -79,7 +80,8 @@ program
 		Nofan.mentions({
 			count,
 			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag
+			no_photo_tag: !options.parent.photoTag,
+			verbose: options.parent.verbose
 		});
 	});
 
@@ -91,7 +93,8 @@ program
 		Nofan.me({
 			count,
 			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag
+			no_photo_tag: !options.parent.photoTag,
+			verbose: options.parent.verbose
 		});
 	});
 
@@ -104,7 +107,8 @@ program
 		Nofan.publicTimeline({
 			count,
 			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag
+			no_photo_tag: !options.parent.photoTag,
+			verbose: options.parent.verbose
 		});
 	});
 
@@ -117,7 +121,8 @@ program
 		Nofan.searchTimeline(query, {
 			count,
 			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag
+			no_photo_tag: !options.parent.photoTag,
+			verbose: options.parent.verbose
 		});
 	});
 
@@ -125,9 +130,9 @@ program
 	.command('trends [count]')
 	.alias('tr')
 	.description('Fetch trends')
-	.action(count => {
+	.action((count, options) => {
 		process.spinner = ora('Fetching').start();
-		Nofan.trendsTimeline({count});
+		Nofan.trendsTimeline({count, verbose: options.parent.verbose});
 	});
 
 program
