@@ -14,7 +14,6 @@ const figlet = importLazy('figlet');
 const moment = importLazy('moment');
 const boxen = importLazy('boxen');
 const chalk = importLazy('chalk');
-const pangu = importLazy('pangu');
 const ora = importLazy('ora');
 const util = importLazy('./util');
 const colorsPrompt = importLazy('./prompts/colors');
