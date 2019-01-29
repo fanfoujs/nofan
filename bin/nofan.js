@@ -6,8 +6,7 @@ const importLazy = require('import-lazy')(require);
 const ora = importLazy('ora');
 const updateNotifier = importLazy('update-notifier');
 const pkg = importLazy('../package');
-const Nofan = importLazy('../lib/nofan');
-const pm2 = importLazy('../lib/pm2');
+const Nofan = importLazy('../src/nofan');
 
 updateNotifier({pkg}).notify();
 
@@ -153,32 +152,6 @@ program
 	.action(() => {
 		process.spinner = ora('Deleting').start();
 		Nofan.undo();
-	});
-
-program
-	.command('notifier [operate]')
-	.alias('n')
-	.description('Nofan Notifier')
-	.action(operate => {
-		process.spinner = ora('Setting Notifier').start();
-		switch (operate) {
-			case undefined:
-			case 'start':
-				pm2.start();
-				break;
-			case 'stop':
-				pm2.stop();
-				break;
-			case 'restart':
-				pm2.restart();
-				break;
-			case 'delete':
-				pm2.deleting();
-				break;
-			default:
-				process.spinner.fail('Invalid Notifier command');
-				break;
-		}
 	});
 
 program

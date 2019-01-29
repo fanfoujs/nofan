@@ -53,7 +53,7 @@ class Nofan {
 				await util.setAccount(account);
 				process.spinner.succeed('Login succeed!');
 			} catch (err) {
-				process.spinner.fail(pangu.spacing(err.message));
+				process.spinner.fail(err.message);
 				process.exit(1);
 			}
 		};
@@ -348,7 +348,7 @@ class Nofan {
 			err.message += `\n\n${boxen(tip, {padding: 1})}`;
 		}
 
-		process.spinner.fail(pangu.spacing(err.message));
+		process.spinner.fail(err.message);
 		process.exit(1);
 	}
 
