@@ -1,6 +1,7 @@
 .idea/
 src/
 media/
+.vscode/
 screenshot.png
 .travis.yml
 appveyor.yml
