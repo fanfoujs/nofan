@@ -9,7 +9,7 @@ const pkg = importLazy('../package');
 const Nofan = importLazy('../lib/nofan');
 const pm2 = importLazy('../lib/pm2');
 
-updateNotifier({pkg}).notify();
+updateNotifier({pkg}).notify({isGlobal: true});
 
 program
 	.option('-v, --version', 'Output the version info')
