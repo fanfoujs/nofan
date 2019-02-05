@@ -421,13 +421,12 @@ class Nofan {
 	}
 
 	static version() {
+		const nofanVersion = require('../package').version;
 		const banner = gradient.rainbow(figlet.textSync('Nofan', {
 			font: 'Small Slant'
-		}));
-		const nofanVersion = chalk.cyanBright(`nofan: ${require('../package').version}`);
+		}).replace('/_//_/', `/_//_/ ${nofanVersion}`));
 		const sdkVersion = chalk.green(`fanfou-sdk: ${util.sdkVersion()}`);
-		const streamerVersion = chalk.blueBright(`fanfou-streamer: ${require('fanfou-streamer/package').version}`);
-		const version = `${banner}\n${nofanVersion}\n${sdkVersion}\n${streamerVersion}`;
+		const version = `${banner}\n${sdkVersion}`;
 		return version;
 	}
 }
