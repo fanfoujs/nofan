@@ -4,7 +4,7 @@ module.exports = opt => {
 	const usernameInput = {
 		type: 'input',
 		name: 'username',
-		message: 'Enter your usename'
+		message: 'Enter your username'
 	};
 	const passwordInput = {
 		type: 'password',

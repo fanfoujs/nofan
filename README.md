@@ -27,7 +27,6 @@ CLI for Fanfou
 - HTTPS secure connection
 - Customizable timeline
 - Customizable color themes
-- Desktop notifier support
 
 ## Installation
 
@@ -35,17 +34,12 @@ CLI for Fanfou
 $ npm install -g nofan
 ```
 
-## Config & Login
+## Login
 
 ```bash
-# Config consumer key and consumer secret
-$ nofan config
-
 # Login fanfou account
 $ nofan login
 ```
-
-> If you don't have consumer key, come [here](https://fanfou.com/apps) to create one.
 
 ## Usage
 
@@ -53,7 +47,7 @@ $ nofan login
 
 ```bash
 $ nofan --help               # Show help
-$ nofan config               # Config consumer key and consumer secret
+$ nofan config               # Customize display
 $ nofan colors               # Customize color style
 $ nofan login                # Login fanfou account
 $ nofan logout               # Logout current account
@@ -78,10 +72,6 @@ $ nofan undo                 # Delete last status
 $ nofan hi -p ~/hola.png     # Post status "hi" with a photo
 $ nofan hi -c                # Post status "hi" with a photo from clipboard
 $ nofan home -t              # Display timeline with time ago tag
-$ nofan notifier start       # Start Nofan Notifier process
-$ nofan notifier stop        # Stop Nofan Notifier process
-$ nofan notifier restart     # Restart Nofan Notifier process
-$ nofan notifier delete      # Delete Nofan Notifier process
 ```
 
 ### Color scheme
