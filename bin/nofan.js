@@ -8,7 +8,7 @@ const updateNotifier = importLazy('update-notifier');
 const pkg = importLazy('../package');
 const Nofan = importLazy('../src/nofan');
 
-updateNotifier({pkg}).notify();
+updateNotifier({pkg}).notify({isGlobal: true});
 
 program
 	.option('-v, --version', 'Output the version info')

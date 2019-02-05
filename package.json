@@ -1,6 +1,6 @@
 {
   "name": "nofan",
-  "version": "0.14.0",
+  "version": "0.14.3",
   "description": "CLI for Fanfou",
   "bin": "bin/nofan.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "chalk": "^2.4.1",
     "chalk-pipe": "^2.0.0",
     "commander": "^2.17.1",
-    "fanfou-sdk": "^4.0.1",
+    "fanfou-sdk": "^4.0.2",
     "fanfou-streamer": "^0.2.1",
     "figlet": "^1.2.0",
     "gradient-string": "^1.1.0",
