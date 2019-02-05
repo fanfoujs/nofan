@@ -12,6 +12,27 @@ const execa = importLazy('execa');
 
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
 
+const defaultConfig = {
+	CONSUMER_KEY: '13456aa784cdf7688af69e85d482e011',
+	CONSUMER_SECRET: 'f75c02df373232732b69354ecfbcabea',
+	DISPLAY_COUNT: 10,
+	TIME_TAG: false,
+	PHOTO_TAG: true,
+	SSL: false,
+	API_DOMAIN: 'api.fanfou.com',
+	OAUTH_DOMAIN: 'fanfou.com',
+	COLORS: {
+		name: 'green',
+		text: '',
+		at: 'blue',
+		link: 'blue',
+		tag: 'blue',
+		photo: 'blue',
+		timeago: 'green',
+		highlight: 'bold'
+	}
+};
+
 function createNofanDir() {
 	return new Promise(resolve => {
 		fs.mkdir(`${homedir()}${configPath}`, () => {
@@ -58,25 +79,7 @@ async function getConfig() {
 	try {
 		return await readJsonFile('config');
 	} catch (err) {
-		return {
-			DISPLAY_COUNT: 10,
-			TIME_TAG: false,
-			PHOTO_TAG: true,
-			SSL: false,
-			API_DOMAIN: 'api.fanfou.com',
-			OAUTH_DOMAIN: 'fanfou.com',
-			FAKE_HTTPS: false,
-			COLORS: {
-				name: 'green',
-				text: '',
-				at: 'blue',
-				link: 'blue',
-				tag: 'blue',
-				photo: 'blue',
-				timeago: 'green',
-				highlight: 'bold'
-			}
-		};
+		return defaultConfig;
 	}
 }
 
@@ -125,6 +128,7 @@ async function getTempImagePath() {
 }
 
 module.exports = {
+	defaultConfig,
 	createNofanDir,
 	getConfig,
 	getAccount,

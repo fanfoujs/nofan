@@ -12,9 +12,7 @@ const Fanfou = importLazy('fanfou-sdk');
 const inquirer = importLazy('inquirer');
 const figlet = importLazy('figlet');
 const moment = importLazy('moment');
-const boxen = importLazy('boxen');
 const chalk = importLazy('chalk');
-const pangu = importLazy('pangu');
 const ora = importLazy('ora');
 const util = importLazy('./util');
 const colorsPrompt = importLazy('./prompts/colors');
@@ -36,7 +34,7 @@ class Nofan {
 				apiDomain: config.API_DOMAIN,
 				oauthDomain: config.OAUTH_DOMAIN,
 				hooks: {
-					baseString: str => config.FAKE_HTTPS ? str.replace('https', 'http') : str
+					baseString: str => config.SSL ? str.replace('https', 'http') : str
 				}
 			});
 			try {
@@ -53,7 +51,7 @@ class Nofan {
 				await util.setAccount(account);
 				process.spinner.succeed('Login succeed!');
 			} catch (err) {
-				process.spinner.fail(pangu.spacing(err.message));
+				process.spinner.fail(err.message);
 				process.exit(1);
 			}
 		};
@@ -104,10 +102,6 @@ class Nofan {
 
 			if (settings.oauth_domain) {
 				config.OAUTH_DOMAIN = settings.oauth_domain;
-			}
-
-			if (settings.https) {
-				config.FAKE_HTTPS = settings.https.indexOf('fake_https') !== -1;
 			}
 
 			await util.createNofanDir();
@@ -273,7 +267,7 @@ class Nofan {
 			const res = await ff.get(uri, params);
 			return res;
 		} catch (err) {
-			Nofan._handleError(err, config);
+			Nofan._handleError(err);
 		}
 	}
 
@@ -302,7 +296,7 @@ class Nofan {
 			const res = await ff.post(uri, params);
 			return res;
 		} catch (err) {
-			Nofan._handleError(err, config);
+			Nofan._handleError(err);
 		}
 	}
 
@@ -331,24 +325,12 @@ class Nofan {
 			const res = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
 			return res;
 		} catch (err) {
-			Nofan._handleError(err, config);
+			Nofan._handleError(err);
 		}
 	}
 
-	static _handleError(err, config) {
-		const expectHttpError = /Invalid signature\. Expected basestring is (GET|POST)&http%3A%2F%2F/;
-		if (
-			config.SSL &&
-			!config.FAKE_HTTS &&
-			err &&
-			typeof err.message === 'string' &&
-			err.message.match(expectHttpError)
-		) {
-			const tip = `Please try ${chalk.green('`nofan config -a`')} to switch ${chalk.green('`fake_https`')} on`;
-			err.message += `\n\n${boxen(tip, {padding: 1})}`;
-		}
-
-		process.spinner.fail(pangu.spacing(err.message));
+	static _handleError(err) {
+		process.spinner.fail(err.message);
 		process.exit(1);
 	}
 
@@ -433,7 +415,7 @@ class Nofan {
 			apiDomain: config.API_DOMAIN,
 			oauthDomain: config.OAUTH_DOMAIN,
 			hooks: {
-				baseString: str => config.FAKE_HTTPS ? str.replace('https', 'http') : str
+				baseString: str => config.SSL ? str.replace('https', 'http') : str
 			}
 		});
 	}

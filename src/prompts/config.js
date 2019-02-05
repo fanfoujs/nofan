@@ -1,23 +1,18 @@
 'use strict';
 
+const importLazy = require('import-lazy')(require);
+
+const util = importLazy('../util');
+
 module.exports = (config, showAll) => {
 	let promptList = [
 		{
 			type: 'input',
-			name: 'key',
-			message: 'Enter your consumer key',
-			default: config.CONSUMER_KEY
-		}, {
-			type: 'input',
-			name: 'secret',
-			message: 'Enter your consumer secret',
-			default: config.CONSUMER_SECRET
-		}, {
-			type: 'input',
 			name: 'display_count',
 			message: 'How many statuses would you like to display (1 - 60)',
 			default: config.DISPLAY_COUNT || 10
-		}, {
+		},
+		{
 			type: 'checkbox',
 			name: 'display',
 			message: 'Global Settings',
@@ -36,25 +31,32 @@ module.exports = (config, showAll) => {
 		}
 	];
 	if (showAll) {
-		promptList = promptList.concat([{
-			type: 'input',
-			name: 'api_domain',
-			message: 'Config your api domain',
-			default: config.API_DOMAIN || 'api.fanfou.com'
-		}, {
-			type: 'input',
-			name: 'oauth_domain',
-			message: 'Config your oauth domain',
-			default: config.OAUTH_DOMAIN || 'fanfou.com'
-		}, {
-			type: 'checkbox',
-			name: 'https',
-			message: 'Replace \'https\' with \'http\' in OAuth base string',
-			choices: [{
-				name: 'fake_https',
-				checked: config.FAKE_HTTPS || false
-			}]
-		}]);
+		promptList = promptList.concat([
+			{
+				type: 'input',
+				name: 'key',
+				message: 'Enter your consumer key',
+				default: config.CONSUMER_KEK || util.defaultConfig.CONSUMER_KEY
+			},
+			{
+				type: 'input',
+				name: 'secret',
+				message: 'Enter your consumer secret',
+				default: config.CONSUMER_SECRET || util.defaultConfig.CONSUMER_SECRET
+			},
+			{
+				type: 'input',
+				name: 'api_domain',
+				message: 'Config your api domain',
+				default: config.API_DOMAIN || 'api.fanfou.com'
+			},
+			{
+				type: 'input',
+				name: 'oauth_domain',
+				message: 'Config your oauth domain',
+				default: config.OAUTH_DOMAIN || 'fanfou.com'
+			}
+		]);
 	}
 
 	return promptList;
