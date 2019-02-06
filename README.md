@@ -52,13 +52,13 @@ $ nofan colors             # Customize color style
 $ nofan login              # Login fanfou account
 $ nofan logout             # Logout current account
 $ nofan switch             # Switch fanfou account
-$ nofan                    # Fetch the latest 10 statuses from home-timeline
-$ nofan home|h             # Fetch the latest 10 statuses from home-timeline
-$ nofan mentions|m         # Fetch the latest 10 statuses from mentions-timeline
-$ nofan me                 # Fetch the latest 10 statuses from yourself
-$ nofan public|p           # Fetch the latest 10 statuses from public-timeline
-$ nofan trends|tr          # Fetch trends
-$ nofan search|se <query>  # Search status from public timeline
+$ nofan                    # Fetch home-timeline
+$ nofan home|h             # Fetch home-timeline
+$ nofan mentions|m         # Fetch mentions-timeline
+$ nofan me                 # Fetch self-timeline
+$ nofan public|p           # Fetch public-timeline
+$ nofan trends|tr          # Fetch trends-timeline
+$ nofan search|se <query>  # Search public-timeline
 $ nofan user <id>          # Fetch user-timeline by ID
 $ nofan undo               # Delete last status
 ```
