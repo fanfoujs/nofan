@@ -83,6 +83,7 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 > pink.underline
 > cyanBright
 > orange.inverse.underline
+> bgYellow.black
 ```
 
 ## Related
