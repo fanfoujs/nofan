@@ -46,32 +46,21 @@ $ nofan login
 ### Commands
 
 ```bash
-$ nofan --help               # Show help
-$ nofan config               # Customize display
-$ nofan colors               # Customize color style
-$ nofan login                # Login fanfou account
-$ nofan logout               # Logout current account
-$ nofan switch               # Switch fanfou account
-$ nofan                      # Fetch the latest 10 statuses from home-timeline
-$ nofan home                 # Fetch the latest 10 statuses from home-timeline
-$ nofan mentions             # Fetch the latest 10 statuses from mentions-timeline
-$ nofan me                   # Fetch the latest 10 statuses from yourself
-$ nofan public               # Fetch the latest 10 statuses from public-timeline
-$ nofan trends               # Fetch trends
-$ nofan search <query>       # Search status from public timeline
-$ nofan home 20              # Fetch the latest 20 statuses from public-timeline
-$ nofan user <id>            # Fetch user-timeline by ID
-$ nofan s                    # Alias for `nofan switch`
-$ nofan h                    # Alias for `nofan home`
-$ nofan p                    # Alias for `nofan public`
-$ nofan se                   # Alias for `nofan search`
-$ nofan tr                   # Alias for `nofan trends`
-$ nofan m                    # Alias for `nofan mentions`
-$ nofan hi nofan.            # Post status "hi nofan."
-$ nofan undo                 # Delete last status
-$ nofan hi -p ~/hola.png     # Post status "hi" with a photo
-$ nofan hi -c                # Post status "hi" with a photo from clipboard
-$ nofan home -t              # Display timeline with time ago tag
+$ nofan -h                 # Show help
+$ nofan config             # Customize display
+$ nofan colors             # Customize color style
+$ nofan login              # Login fanfou account
+$ nofan logout             # Logout current account
+$ nofan switch             # Switch fanfou account
+$ nofan                    # Fetch the latest 10 statuses from home-timeline
+$ nofan home|h             # Fetch the latest 10 statuses from home-timeline
+$ nofan mentions|m         # Fetch the latest 10 statuses from mentions-timeline
+$ nofan me                 # Fetch the latest 10 statuses from yourself
+$ nofan public|p           # Fetch the latest 10 statuses from public-timeline
+$ nofan trends|tr          # Fetch trends
+$ nofan search|se <query>  # Search status from public timeline
+$ nofan user <id>          # Fetch user-timeline by ID
+$ nofan undo               # Delete last status
 ```
 
 ### Color scheme

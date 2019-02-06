@@ -16,20 +16,20 @@ const defaultConfig = {
 	CONSUMER_KEY: '13456aa784cdf7688af69e85d482e011',
 	CONSUMER_SECRET: 'f75c02df373232732b69354ecfbcabea',
 	DISPLAY_COUNT: 10,
-	TIME_TAG: false,
+	TIME_TAG: true,
 	PHOTO_TAG: true,
 	SSL: false,
 	API_DOMAIN: 'api.fanfou.com',
 	OAUTH_DOMAIN: 'fanfou.com',
 	COLORS: {
 		name: 'green',
-		text: '',
-		at: 'blue',
-		link: 'blue',
-		tag: 'blue',
-		photo: 'blue',
-		timeago: 'green',
-		highlight: 'bold'
+		text: '#cccccc',
+		at: 'cyan',
+		link: 'cyan.underline',
+		tag: 'orange.bold',
+		photo: 'grey',
+		timeago: 'dim.green.italic',
+		highlight: 'bgYellow.black'
 	}
 };
 

@@ -11,19 +11,16 @@ const Nofan = importLazy('../src/nofan');
 updateNotifier({pkg}).notify({isGlobal: true});
 
 program
-	.option('-v, --version', 'Output the version info')
-	.option('-t, --time', 'Show time ago tag')
-	.option('--no-photo-tag', 'Hide photo tag')
 	.option('--verbose', 'Verbose output')
-	.version(Nofan.version());
+	.version(Nofan.version(), '-v, --version');
 
 program
-	.command('config [consumer_key] [consumer_secret]')
-	.option('-a, --all', 'Show all config')
-	.description('Config consumer key and consumer secret')
-	.action((key, secret, options) => {
+	.command('config')
+	.option('-a, --all', 'Show advanced config')
+	.description('Config display')
+	.action(options => {
 		const showAll = options.all;
-		Nofan.config(key, secret, showAll);
+		Nofan.config(showAll);
 	});
 
 program
@@ -64,8 +61,6 @@ program
 		process.spinner = ora('Fetching').start();
 		Nofan.homeTimeline({
 			count,
-			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag,
 			verbose: options.parent.verbose
 		});
 	});
@@ -78,8 +73,6 @@ program
 		process.spinner = ora('Fetching').start();
 		Nofan.mentions({
 			count,
-			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag,
 			verbose: options.parent.verbose
 		});
 	});
@@ -91,8 +84,6 @@ program
 		process.spinner = ora('Fetching').start();
 		Nofan.me({
 			count,
-			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag,
 			verbose: options.parent.verbose
 		});
 	});
@@ -105,8 +96,6 @@ program
 		process.spinner = ora('Fetching').start();
 		Nofan.publicTimeline({
 			count,
-			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag,
 			verbose: options.parent.verbose
 		});
 	});
@@ -119,8 +108,6 @@ program
 		process.spinner = ora('Fetching').start();
 		Nofan.searchTimeline(query, {
 			count,
-			time_ago: options.parent.time,
-			no_photo_tag: !options.parent.photoTag,
 			verbose: options.parent.verbose
 		});
 	});
@@ -135,13 +122,12 @@ program
 	});
 
 program
-	.command('user <id>')
+	.command('user <id> [count]')
 	.description('Fetch user-timeline')
-	.action((id, options) => {
+	.action((id, count, options) => {
 		process.spinner = ora('Fetching').start();
 		Nofan.userTimeline(id, {
-			trendsTimeline: options.parent.time,
-			no_photo_tag: !options.parent.photoTag,
+			count,
 			verbose: options.parent.verbose
 		});
 	});
@@ -156,8 +142,8 @@ program
 
 program
 	.arguments('<status> [more...]')
-	.option('-p, --photo <path>', 'Attach a photo')
-	.option('-c, --clipboard', 'Use image from clipboard')
+	.option('-p, --photo <path>', 'Attach a photo from path')
+	.option('-c, --clipboard', 'Attach a photo from clipboard')
 	.description('')
 	.action((pre, more, options) => {
 		process.spinner = ora('Sending').start();
@@ -174,8 +160,5 @@ program.parse(process.argv);
 
 if (program.args.length === 0) {
 	process.spinner = ora('Fetching').start();
-	Nofan.homeTimeline({
-		time_ago: program.time,
-		no_photo_tag: !program.photoTag
-	});
+	Nofan.homeTimeline({verbose: false});
 }

@@ -1,9 +1,5 @@
 'use strict';
 
-const importLazy = require('import-lazy')(require);
-
-const util = importLazy('../util');
-
 module.exports = (config, showAll) => {
 	let promptList = [
 		{
@@ -36,13 +32,13 @@ module.exports = (config, showAll) => {
 				type: 'input',
 				name: 'key',
 				message: 'Enter your consumer key',
-				default: config.CONSUMER_KEK || util.defaultConfig.CONSUMER_KEY
+				default: config.CONSUMER_KEY
 			},
 			{
 				type: 'input',
 				name: 'secret',
 				message: 'Enter your consumer secret',
-				default: config.CONSUMER_SECRET || util.defaultConfig.CONSUMER_SECRET
+				default: config.CONSUMER_SECRET
 			},
 			{
 				type: 'input',

@@ -81,32 +81,27 @@ class Nofan {
 		}
 	}
 
-	static async config(key, secret, showAll) {
+	static async config(showAll) {
 		const config = await util.getConfig();
-		if (key && secret) {
-			config.CONSUMER_KEY = key;
-			config.CONSUMER_SECRET = secret;
-			await util.createNofanDir();
-			await util.setConfig(config);
-		} else {
-			const settings = await inquirer.prompt(configPrompt(config, showAll));
-			config.CONSUMER_KEY = settings.key || '';
-			config.CONSUMER_SECRET = settings.secret || '';
-			config.DISPLAY_COUNT = settings.display_count;
-			config.TIME_TAG = settings.display.indexOf('time_tag') !== -1;
-			config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1;
-			config.SSL = settings.display.indexOf('use_https') !== -1;
-			if (settings.api_domain) {
-				config.API_DOMAIN = settings.api_domain;
-			}
+		const settings = await inquirer.prompt(configPrompt(config, showAll));
 
-			if (settings.oauth_domain) {
-				config.OAUTH_DOMAIN = settings.oauth_domain;
-			}
+		config.CONSUMER_KEY = settings.key || util.defaultConfig.CONSUMER_KEY;
+		config.CONSUMER_SECRET = settings.secret || util.defaultConfig.CONSUMER_SECRET;
+		config.DISPLAY_COUNT = settings.display_count;
+		config.TIME_TAG = settings.display.indexOf('time_tag') !== -1;
+		config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1;
+		config.SSL = settings.display.indexOf('use_https') !== -1;
 
-			await util.createNofanDir();
-			await util.setConfig(config);
+		if (settings.api_domain) {
+			config.API_DOMAIN = settings.api_domain;
 		}
+
+		if (settings.oauth_domain) {
+			config.OAUTH_DOMAIN = settings.oauth_domain;
+		}
+
+		await util.createNofanDir();
+		await util.setConfig(config);
 	}
 
 	static async colors() {
@@ -154,21 +149,21 @@ class Nofan {
 	}
 
 	static async homeTimeline(options) {
-		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
+		const {count} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
+		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async publicTimeline(options) {
-		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
+		const {count} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
+		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async searchTimeline(q, options) {
-		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
+		const {count} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
+		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async trendsTimeline(options) {
@@ -189,22 +184,16 @@ class Nofan {
 	}
 
 	static async userTimeline(id, options) {
-		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
+		const {count} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {id, count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
+		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async getConfig(options) {
 		options = options || {};
 		process.NOFAN_CONFIG = await util.getConfig();
 		const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10;
-		const timeAgo = options.time_ago || false;
-		const noPhotoTag = options.no_photo_tag || false;
-		return {
-			count,
-			timeAgo,
-			noPhotoTag
-		};
+		return {count};
 	}
 
 	static async update(text) {
@@ -231,15 +220,15 @@ class Nofan {
 	}
 
 	static async mentions(options) {
-		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
+		const {count} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
+		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async me(options) {
-		const {count, timeAgo, noPhotoTag} = await Nofan.getConfig(options);
+		const {count} = await Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {timeAgo, noPhotoTag, verbose: Boolean(options.verbose)});
+		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async _get(uri, params) {
@@ -340,9 +329,9 @@ class Nofan {
 			process.spinner.stop();
 		}
 
-		let {timeAgo: timeAgoTag, noPhotoTag, verbose} = opt;
-		timeAgoTag = timeAgoTag || config.TIME_TAG;
-		noPhotoTag = noPhotoTag || !config.PHOTO_TAG;
+		const {verbose = false} = opt;
+		const hasTimeTag = config.TIME_TAG;
+		const hasPhotoTag = config.PHOTO_TAG;
 		const {COLORS: colors = {}} = config;
 		const {
 			name: nameColor = 'green',
@@ -387,7 +376,7 @@ class Nofan {
 				}
 			});
 			const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(verbose ? `${status.user.name}:${status.id}` : status.user.name) + chalkPipe(textColor)(']');
-			if (status.photo && !noPhotoTag) {
+			if (status.photo && hasPhotoTag) {
 				const photoTag = chalkPipe(photoColor)(terminalLink('[图]', status.photo.originurl, {fallback: text => text}));
 				if (text.length > 0) {
 					text += ` ${photoTag}`;
@@ -396,7 +385,7 @@ class Nofan {
 				}
 			}
 
-			if (timeAgoTag) {
+			if (hasTimeTag) {
 				const statusTimeAgo = chalkPipe(timeagoColor)(`(${verbose ? `${moment(new Date(status.created_at)).local().format('YYYY-MM-DD HH:mm:ss')}` : new TimeAgo().format(status.created_at)})`);
 				console.log(`${name} ${text} ${statusTimeAgo}`);
 			} else {
