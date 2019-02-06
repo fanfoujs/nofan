@@ -10,7 +10,7 @@
 
 CLI for Fanfou
 
-<div align="center"><img src="https://raw.githubusercontent.com/LitoMore/nofan/master/screenshot.png" alt="Nofan" /></div>
+<div align="center"><img src="https://raw.githubusercontent.com/LitoMore/nofan/master/media/screenshot.png" alt="Nofan" /></div>
 
 ## Features
 
