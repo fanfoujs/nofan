@@ -13,7 +13,6 @@ const execa = importLazy('execa');
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
 const homedir = os.homedir();
 
-
 const defaultConfig = {
 	CONSUMER_KEY: '13456aa784cdf7688af69e85d482e011',
 	CONSUMER_SECRET: 'f75c02df373232732b69354ecfbcabea',
@@ -118,7 +117,7 @@ async function getTempImagePath() {
 	} catch (err) {
 		if (err.code === 'ENOENT') {
 			const tip = `Please use ${chalk.green('`brew install pngpaste`')} to solve`;
-			process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, { padding: 1 }));
+			process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, {padding: 1}));
 			process.exit(1);
 		}
 
