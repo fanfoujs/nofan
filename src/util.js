@@ -2,15 +2,17 @@
 'use strict';
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const importLazy = require('import-lazy')(require);
 
 const chalk = importLazy('chalk');
 const boxen = importLazy('boxen');
-const homedir = importLazy('homedir');
 const execa = importLazy('execa');
 
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
+const homedir = os.homedir();
+
 
 const defaultConfig = {
 	CONSUMER_KEY: '13456aa784cdf7688af69e85d482e011',
@@ -35,7 +37,7 @@ const defaultConfig = {
 
 function createNofanDir() {
 	return new Promise(resolve => {
-		fs.mkdir(`${homedir()}${configPath}`, () => {
+		fs.mkdir(`${homedir}${configPath}`, () => {
 			resolve();
 		});
 	});
@@ -43,7 +45,7 @@ function createNofanDir() {
 
 function createJsonFile(filename, content) {
 	return new Promise((resolve, reject) => {
-		const filePath = `${homedir()}${configPath}${filename}.json`;
+		const filePath = `${homedir}${configPath}${filename}.json`;
 		fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8', e => {
 			if (e) {
 				reject(chalk.red(`create file '${filePath}' failed`));
@@ -56,7 +58,7 @@ function createJsonFile(filename, content) {
 
 function readJsonFile(filename) {
 	return new Promise((resolve, reject) => {
-		const filePath = `${homedir()}${configPath}${filename}.json`;
+		const filePath = `${homedir}${configPath}${filename}.json`;
 		fs.open(filePath, 'r', err => {
 			if (err) {
 				if (err.code === 'ENOENT') {
@@ -100,7 +102,7 @@ function setAccount(account) {
 }
 
 async function getTempImagePath() {
-	const tempPath = homedir() + configPath + 'temp';
+	const tempPath = homedir + configPath + 'temp';
 	const filepath = path.join(tempPath, 'temp.png');
 	if (process.platform !== 'darwin') {
 		process.spinner.fail('Upload from clipboard only available in macOS');
@@ -109,14 +111,14 @@ async function getTempImagePath() {
 
 	try {
 		fs.mkdirSync(tempPath);
-	} catch (err) {}
+	} catch (err) { }
 
 	try {
 		await execa('pngpaste', [filepath]);
 	} catch (err) {
 		if (err.code === 'ENOENT') {
 			const tip = `Please use ${chalk.green('`brew install pngpaste`')} to solve`;
-			process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, {padding: 1}));
+			process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, { padding: 1 }));
 			process.exit(1);
 		}
 

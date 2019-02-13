@@ -24,7 +24,6 @@
     "fanfou-sdk": "^4.0.2",
     "figlet": "^1.2.0",
     "gradient-string": "^1.1.0",
-    "homedir": "^0.6.0",
     "import-lazy": "^3.1.0",
     "inquirer": "^6.2.0",
     "moment": "^2.23.0",
