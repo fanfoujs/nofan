@@ -160,5 +160,5 @@ program.parse(process.argv);
 
 if (program.args.length === 0) {
 	process.spinner = ora('Fetching').start();
-	Nofan.homeTimeline({verbose: false});
+	Nofan.homeTimeline({verbose: program.verbose});
 }
