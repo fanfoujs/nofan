@@ -11,8 +11,8 @@ const Nofan = importLazy('../src/nofan');
 updateNotifier({pkg}).notify({isGlobal: true});
 
 program
-	.option('--verbose', 'Verbose output')
-	.version(Nofan.version(), '-v, --version');
+	.version(Nofan.version(), '--version')
+	.option('-v, --verbose', 'Verbose output');
 
 program
 	.command('config')
