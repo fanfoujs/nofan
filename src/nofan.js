@@ -190,7 +190,7 @@ class Nofan {
 		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
-	static async getConfig(options) {
+	static getConfig(options) {
 		options = options || {};
 		process.NOFAN_CONFIG = util.getConfig();
 		const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10;
