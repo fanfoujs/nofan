@@ -40,15 +40,16 @@ class Nofan {
 			try {
 				const token = await ff.xauth();
 				config.USER = username;
-				await util.setConfig(config);
-				const account = await util.getAccount();
+				util.createNofanDir();
+				util.setConfig(config);
+				const account = util.getAccount();
 				account[username] = {
 					CONSUMER_KEY: config.CONSUMER_KEY,
 					CONSUMER_SECRET: config.CONSUMER_SECRET,
 					OAUTH_TOKEN: token.oauthToken,
 					OAUTH_TOKEN_SECRET: token.oauthTokenSecret
 				};
-				await util.setAccount(account);
+				util.setAccount(account);
 				process.spinner.succeed('Login succeed!');
 			} catch (err) {
 				process.spinner.fail(err.message);
@@ -72,17 +73,17 @@ class Nofan {
 
 	static async logout() {
 		process.spinner = ora('Logging out').start();
-		const config = await util.getConfig();
+		const config = util.getConfig();
 		if (config.USER) {
-			const account = await util.getAccount();
+			const account = util.getAccount();
 			delete account[config.USER];
-			await util.setAccount(account);
+			util.setAccount(account);
 			process.spinner.succeed('Logout succeed!');
 		}
 	}
 
 	static async config(showAll) {
-		const config = await util.getConfig();
+		const config = util.getConfig();
 		const settings = await inquirer.prompt(configPrompt(config, showAll));
 
 		config.CONSUMER_KEY = settings.key || util.defaultConfig.CONSUMER_KEY;
@@ -100,29 +101,29 @@ class Nofan {
 			config.OAUTH_DOMAIN = settings.oauth_domain;
 		}
 
-		await util.createNofanDir();
-		await util.setConfig(config);
+		util.createNofanDir();
+		util.setConfig(config);
 	}
 
 	static async colors() {
-		const config = await util.getConfig();
+		const config = util.getConfig();
 		config.COLORS = config.COLORS || {};
 		const paints = await inquirer.prompt(colorsPrompt(config));
 		const colors = {...paints};
 		config.COLORS = colors;
-		await util.createNofanDir();
-		await util.setConfig(config);
+		util.createNofanDir();
+		util.setConfig(config);
 	}
 
 	static async switchUser(id) {
 		const [config, account] = [
-			await util.getConfig(),
-			await util.getAccount()
+			util.getConfig(),
+			util.getAccount()
 		];
 		if (id) {
 			if (account[id]) {
 				config.USER = id;
-				await util.setConfig(config);
+				util.setConfig(config);
 				process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(id)}`);
 			} else {
 				process.spinner = ora().info(`${chalk.blue.bold(id)} needs login`);
@@ -140,7 +141,7 @@ class Nofan {
 			if (choices.length > 1) {
 				const user = await inquirer.prompt(switchPrompt(choices));
 				config.USER = user.username;
-				await util.setConfig(config);
+				util.setConfig(config);
 			} else {
 				process.spinner = ora().info('No more account');
 				process.exit(1);
@@ -149,19 +150,19 @@ class Nofan {
 	}
 
 	static async homeTimeline(options) {
-		const {count} = await Nofan.getConfig(options);
+		const {count} = Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'});
 		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async publicTimeline(options) {
-		const {count} = await Nofan.getConfig(options);
+		const {count} = Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'});
 		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async searchTimeline(q, options) {
-		const {count} = await Nofan.getConfig(options);
+		const {count} = Nofan.getConfig(options);
 		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'});
 		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
@@ -184,14 +185,14 @@ class Nofan {
 	}
 
 	static async userTimeline(id, options) {
-		const {count} = await Nofan.getConfig(options);
+		const {count} = Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {id, count, format: 'html'});
 		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async getConfig(options) {
 		options = options || {};
-		process.NOFAN_CONFIG = await util.getConfig();
+		process.NOFAN_CONFIG = util.getConfig();
 		const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10;
 		return {count};
 	}
@@ -220,20 +221,20 @@ class Nofan {
 	}
 
 	static async mentions(options) {
-		const {count} = await Nofan.getConfig(options);
+		const {count} = Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'});
 		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async me(options) {
-		const {count} = await Nofan.getConfig(options);
+		const {count} = Nofan.getConfig(options);
 		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'});
 		Nofan._displayTimeline(statuses, {verbose: options.verbose});
 	}
 
 	static async _get(uri, params) {
-		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig();
-		const account = await util.getAccount();
+		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
+		const account = util.getAccount();
 		let user = account[config.USER];
 		if (!user) {
 			for (const name in account) {
@@ -261,8 +262,8 @@ class Nofan {
 	}
 
 	static async _post(uri, params) {
-		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig();
-		const account = await util.getAccount();
+		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
+		const account = util.getAccount();
 		let user = account[config.USER];
 		if (!user) {
 			for (const name in account) {
@@ -290,8 +291,8 @@ class Nofan {
 	}
 
 	static async _upload(path, status) {
-		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : await util.getConfig();
-		const account = await util.getAccount();
+		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
+		const account = util.getAccount();
 		let user = account[config.USER];
 		if (!user) {
 			for (const name in account) {

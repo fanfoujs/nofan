@@ -35,69 +35,47 @@ const defaultConfig = {
 };
 
 function createNofanDir() {
-	return new Promise(resolve => {
-		fs.mkdir(`${homedir}${configPath}`, () => {
-			resolve();
-		});
-	});
+	try {
+		fs.mkdirSync(`${homedir}${configPath}`);
+	} catch (err) {}
 }
 
 function createJsonFile(filename, content) {
-	return new Promise((resolve, reject) => {
-		const filePath = `${homedir}${configPath}${filename}.json`;
-		fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8', e => {
-			if (e) {
-				reject(chalk.red(`create file '${filePath}' failed`));
-			} else {
-				resolve();
-			}
-		});
-	});
+	const filePath = `${homedir}${configPath}${filename}.json`;
+	return fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
 }
 
 function readJsonFile(filename) {
-	return new Promise((resolve, reject) => {
-		const filePath = `${homedir}${configPath}${filename}.json`;
-		fs.open(filePath, 'r', err => {
-			if (err) {
-				if (err.code === 'ENOENT') {
-					reject(chalk.red(`file '${filePath}' does not exist`));
-				}
-
-				reject(chalk.red(`read file '${filePath}' failed`));
-			} else {
-				resolve(require(filePath));
-			}
-		});
-	});
+	const filePath = `${homedir}${configPath}${filename}.json`;
+	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
 function readSDKVersion() {
 	return require('fanfou-sdk/package').version;
 }
 
-async function getConfig() {
+function getConfig() {
 	try {
-		return await readJsonFile('config');
+		return readJsonFile('config');
 	} catch (err) {
 		return defaultConfig;
 	}
 }
 
-async function getAccount() {
+function getAccount() {
 	try {
-		return await readJsonFile('account');
+		return readJsonFile('account');
 	} catch (err) {
 		return {};
 	}
 }
 
 function setConfig(config) {
-	createJsonFile('config', config);
+	return createJsonFile('config', config);
 }
 
 function setAccount(account) {
-	createJsonFile('account', account);
+	return createJsonFile('account', account);
 }
 
 async function getTempImagePath() {
