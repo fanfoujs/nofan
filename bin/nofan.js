@@ -85,7 +85,7 @@ switch (commands[0]) {
 	case 'switch':
 	case 's': {
 		const [, id] = commands;
-		Nofan.switch(id);
+		Nofan.switchUser(id);
 		break;
 	}
 
