@@ -155,7 +155,7 @@ switch (commands[0]) {
 			}
 		} else {
 			spinner('Fetching');
-			Nofan.homeTimeline({verbose});
+			nofan.homeTimeline();
 		}
 	}
 }
