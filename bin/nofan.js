@@ -33,8 +33,8 @@ Commands:
   search|se <query>            Search public timeline
   trends|tr                    Fetch trends
   user <id>                    Fetch user-timeline
-	undo                         Delete last status
-	<status> [more...]           Post status
+  undo                         Delete last status
+  <status> [more...]           Post statusgit
 `, {
 	flags: {
 		help: {
