@@ -47,7 +47,7 @@ $ nofan login
 
 ```bash
 $ nofan -h                 # Show help
-$ nofan config             # Customize display
+$ nofan config             # Config nofan
 $ nofan colors             # Customize color style
 $ nofan login              # Login fanfou account
 $ nofan logout             # Logout current account
@@ -61,6 +61,7 @@ $ nofan trends|tr          # Fetch trends-timeline
 $ nofan search|se <query>  # Search public-timeline
 $ nofan user <id>          # Fetch user-timeline by ID
 $ nofan undo               # Delete last status
+$ nofan <status> [more...] # Post status
 ```
 
 ### Color scheme

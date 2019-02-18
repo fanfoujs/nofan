@@ -14,26 +14,27 @@ const cli = meow(`
 Usage: nofan [options] [command] <status> [more...]
 
 Options:
-  --version                    output the version number
+  --version                    Output the version number
   -v, --verbose                Verbose output
   -p, --photo <path>           Attach a photo from path
   -c, --clipboard              Attach a photo from clipboard
-  -h, --help                   output usage information
+  -h, --help                   Output usage information
 
 Commands:
-  config [options]             Config nofan
+  config                       Config nofan
   colors|color                 Customize color style
   login [username] [password]  Login nofan
   logout                       Logout nofan
   switch|s [id]                Switch account
-  home|h [count]               Show home timeline
-  mentions|m [count]           Show mentions
+  home|h                       Show home timeline
+  mentions|m                   Show mentions
   me [count]                   Show my statuses
-  public|p [count]             Show public timeline
-  search|se <query> [count]    Search public timeline
-  trends|tr [count]            Fetch trends
-  user <id> [count]            Fetch user-timeline
-  undo                         Delete last status
+  public|p                     Show public timeline
+  search|se <query>            Search public timeline
+  trends|tr                    Fetch trends
+  user <id>                    Fetch user-timeline
+	undo                         Delete last status
+	<status> [more...]           Post status
 `, {
 	flags: {
 		help: {
