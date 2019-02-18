@@ -53,7 +53,7 @@ Commands:
 });
 
 const commands = cli.input;
-const {clipboard, photo, verbose} = cli.flags;
+const {clipboard, photo} = cli.flags;
 const nofan = new Nofan(cli.flags);
 
 const spinner = text => {

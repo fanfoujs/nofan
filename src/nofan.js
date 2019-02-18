@@ -4,6 +4,7 @@
 const fs = require('fs');
 const importLazy = require('import-lazy')(require);
 
+const justSnakeCase = importLazy('just-snake-case');
 const terminalLink = importLazy('terminal-link');
 const gradient = importLazy('gradient-string');
 const chalkPipe = importLazy('chalk-pipe');
@@ -27,7 +28,10 @@ class Nofan {
 		this.verbose = verbose;
 		this.photo = photo;
 		this.clipboard = clipboard;
-		this.params = params;
+		this.params = {};
+		Object.keys(params).forEach(key => {
+			this.params[justSnakeCase(key)] = params[key];
+		});
 	}
 
 	static async login(username, password) {
@@ -205,7 +209,7 @@ class Nofan {
 	}
 
 	async update(text) {
-		await Nofan._post('/statuses/update', {status: text});
+		await Nofan._post('/statuses/update', {status: text, ...this.params});
 		process.spinner.succeed('Sent!');
 	}
 
