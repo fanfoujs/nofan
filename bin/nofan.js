@@ -54,6 +54,7 @@ Commands:
 
 const commands = cli.input;
 const {clipboard, photo, verbose} = cli.flags;
+const nofan = new Nofan(cli.flags);
 
 const spinner = text => {
 	process.spinner = ora(text).start();
@@ -90,27 +91,27 @@ switch (commands[0]) {
 	case 'home':
 	case 'h': {
 		spinner('Fetching');
-		Nofan.homeTimeline({verbose});
+		nofan.homeTimeline();
 		break;
 	}
 
 	case 'mentions':
 	case 'm': {
 		spinner('Fetching');
-		Nofan.mentions({verbose});
+		nofan.mentions();
 		break;
 	}
 
 	case 'me': {
 		spinner('Fetching');
-		Nofan.me({verbose});
+		nofan.me();
 		break;
 	}
 
 	case 'public':
 	case 'p': {
 		spinner('Fetching');
-		Nofan.publicTimeline({verbose});
+		nofan.publicTimeline();
 		break;
 	}
 
@@ -118,21 +119,21 @@ switch (commands[0]) {
 	case 'se': {
 		spinner('Fetching');
 		const [, query] = commands;
-		Nofan.searchTimeline(query, {verbose});
+		nofan.searchTimeline(query);
 		break;
 	}
 
 	case 'trends':
 	case 'tr': {
 		spinner('Fetching');
-		Nofan.trendsTimeline({verbose});
+		nofan.trendsTimeline();
 		break;
 	}
 
 	case 'user': {
 		spinner('Fetching');
 		const [, id] = commands;
-		Nofan.userTimeline(id, {verbose});
+		nofan.userTimeline(id);
 		break;
 	}
 
@@ -148,9 +149,9 @@ switch (commands[0]) {
 			const text = commands.join(' ');
 
 			if (photo || clipboard) {
-				Nofan.upload({photo, clipboard}, text);
+				nofan.upload(text);
 			} else {
-				Nofan.update(text);
+				nofan.update(text);
 			}
 		} else {
 			spinner('Fetching');

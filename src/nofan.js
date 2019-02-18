@@ -22,6 +22,14 @@ const switchPrompt = importLazy('./prompts/switch');
 const trendsPrompt = importLazy('./prompts/trends');
 
 class Nofan {
+	constructor(opt = {}) {
+		const {verbose, photo, clipboard, ...params} = opt;
+		this.verbose = verbose;
+		this.photo = photo;
+		this.clipboard = clipboard;
+		this.params = params;
+	}
+
 	static async login(username, password) {
 		const config = await util.getConfig();
 		const login = async (username, password) => {
@@ -37,6 +45,7 @@ class Nofan {
 					baseString: str => config.SSL ? str.replace('https', 'http') : str
 				}
 			});
+
 			try {
 				const token = await ff.xauth();
 				config.USER = username;
@@ -149,26 +158,25 @@ class Nofan {
 		}
 	}
 
-	static async homeTimeline(options) {
-		const {count} = Nofan.getConfig(options);
-		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {verbose: options.verbose});
+	async homeTimeline() {
+		const {count} = Nofan.getConfig();
+		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html', ...this.params});
+		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	static async publicTimeline(options) {
-		const {count} = Nofan.getConfig(options);
-		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {verbose: options.verbose});
+	async publicTimeline() {
+		const {count} = Nofan.getConfig();
+		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html', ...this.params});
+		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	static async searchTimeline(q, options) {
-		const {count} = Nofan.getConfig(options);
-		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html'});
-		Nofan._displayTimeline(statuses, {verbose: options.verbose});
+	async searchTimeline(q) {
+		const {count} = Nofan.getConfig();
+		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html', ...this.params});
+		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	static async trendsTimeline(options) {
-		options = options || {};
+	async trendsTimeline() {
 		const [{trends: hotTrends}, savedTrends] = [
 			await Nofan._get('/trends/list'),
 			await Nofan._get('/saved_searches/list')
@@ -177,33 +185,32 @@ class Nofan {
 			process.spinner.stop();
 			const {trends: trend} = await inquirer.prompt(trendsPrompt(hotTrends, savedTrends));
 			process.spinner.start('Fetching');
-			await Nofan.searchTimeline(trend, options);
+			await this.searchTimeline(trend);
 		} else {
 			process.spinner.fail('No trends exist');
 			process.exit(1);
 		}
 	}
 
-	static async userTimeline(id, options) {
-		const {count} = Nofan.getConfig(options);
-		const statuses = await Nofan._get('/statuses/user_timeline', {id, count, format: 'html'});
-		Nofan._displayTimeline(statuses, {verbose: options.verbose});
+	async userTimeline(id) {
+		const {count} = Nofan.getConfig();
+		const statuses = await Nofan._get('/statuses/user_timeline', {id, count, format: 'html', ...this.params});
+		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	static getConfig(options) {
-		options = options || {};
+	static getConfig() {
 		process.NOFAN_CONFIG = util.getConfig();
-		const count = options.count || process.NOFAN_CONFIG.DISPLAY_COUNT || 10;
+		const count = process.NOFAN_CONFIG.DISPLAY_COUNT || 10;
 		return {count};
 	}
 
-	static async update(text) {
+	async update(text) {
 		await Nofan._post('/statuses/update', {status: text});
 		process.spinner.succeed('Sent!');
 	}
 
-	static async upload(options, text) {
-		const {photo, clipboard} = options;
+	async upload(text) {
+		const {photo, clipboard} = this;
 		if (photo) {
 			await Nofan._upload(photo, text);
 		} else if (clipboard) {
@@ -220,16 +227,16 @@ class Nofan {
 		process.spinner.succeed('Deleted!');
 	}
 
-	static async mentions(options) {
-		const {count} = Nofan.getConfig(options);
+	async mentions() {
+		const {count} = Nofan.getConfig();
 		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {verbose: options.verbose});
+		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	static async me(options) {
-		const {count} = Nofan.getConfig(options);
+	async me() {
+		const {count} = Nofan.getConfig();
 		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html'});
-		Nofan._displayTimeline(statuses, {verbose: options.verbose});
+		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	static async _get(uri, params) {
@@ -252,6 +259,7 @@ class Nofan {
 		}
 
 		util.setConfig(config);
+
 		const ff = Nofan.initFanfou(user, config);
 		try {
 			const res = await ff.get(uri, params);
@@ -281,6 +289,7 @@ class Nofan {
 		}
 
 		util.setConfig(config);
+
 		const ff = Nofan.initFanfou(user, config);
 		try {
 			const res = await ff.post(uri, params);
@@ -311,6 +320,7 @@ class Nofan {
 
 		util.setConfig(config);
 		const ff = Nofan.initFanfou(user, config);
+
 		try {
 			const res = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
 			return res;
