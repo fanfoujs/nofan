@@ -333,26 +333,37 @@ class Nofan {
 		const {verbose = false} = opt;
 		const hasTimeTag = config.TIME_TAG;
 		const hasPhotoTag = config.PHOTO_TAG;
-		const {COLORS: colors = {}} = config;
+		const {COLORS: colors} = config || util.defaultConfig;
+
 		const {
-			name: nameColor = 'green',
+			name: nameColor,
 			text: textColor,
-			at: atColor = 'blue',
-			link: linkColor = 'blue',
-			tag: tagColor = 'blue',
-			photo: photoColor = 'blue',
-			timeago: timeagoColor = 'green',
-			highlight: highlightColor = 'bold'
+			at: atColor,
+			link: linkColor,
+			tag: tagColor,
+			photo: photoColor,
+			timeago: timeagoColor,
+			highlight: highlightColor
 		} = colors;
+
 		const parseHighlight = (style, item) => {
+			let appendText = '';
+
+			if (verbose && item.type === 'at') {
+				appendText = chalkPipe(style)(`:${item.id}`);
+			}
+
 			if (item.bold_arr) {
-				return item.bold_arr.map(keyword => {
+				const highlightText = item.bold_arr.map(keyword => {
 					if (keyword.bold) {
-						return chalkPipe(`${style}.${highlightColor}`)(keyword.text);
+						const boldColor = `${style}.${highlightColor}`;
+						return chalkPipe(boldColor)(keyword.text);
 					}
 
 					return chalkPipe(style)(keyword.text);
 				}).join('');
+
+				return highlightText + appendText;
 			}
 
 			return false;
@@ -376,7 +387,10 @@ class Nofan {
 						break;
 				}
 			});
-			const name = chalkPipe(textColor)('[') + chalkPipe(nameColor)(verbose ? `${status.user.name}:${status.id}` : status.user.name) + chalkPipe(textColor)(']');
+
+			const name = chalkPipe(textColor)('[') +
+				chalkPipe(nameColor)(verbose ? `${status.user.name}:${status.id}` : status.user.name) +
+				chalkPipe(textColor)(']');
 			if (status.photo && hasPhotoTag) {
 				const photoTag = chalkPipe(photoColor)(terminalLink('[图]', status.photo.originurl, {fallback: text => text}));
 				if (text.length > 0) {
@@ -387,7 +401,13 @@ class Nofan {
 			}
 
 			if (hasTimeTag) {
-				const statusTimeAgo = chalkPipe(timeagoColor)(`(${verbose ? `${moment(new Date(status.created_at)).local().format('YYYY-MM-DD HH:mm:ss')}` : new TimeAgo().format(status.created_at)})`);
+				const statusTimeAgo = chalkPipe(timeagoColor)(
+					`(${verbose ?
+						`${moment(new Date(status.created_at))
+							.local()
+							.format('YYYY-MM-DD HH:mm:ss')}` :
+						new TimeAgo().format(status.created_at)})`
+				);
 				console.log(`${name} ${text} ${statusTimeAgo}`);
 			} else {
 				console.log(`${name} ${text}`);
