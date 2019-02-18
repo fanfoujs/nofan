@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const program = require('commander');
+const meow = require('meow');
 const importLazy = require('import-lazy')(require);
 
 const ora = importLazy('ora');
@@ -10,155 +10,150 @@ const Nofan = importLazy('../src/nofan');
 
 updateNotifier({pkg}).notify({isGlobal: true});
 
-program
-	.version(Nofan.version(), '--version')
-	.option('-v, --verbose', 'Verbose output');
+const cli = meow(`
+Usage: nofan [options] [command] <status> [more...]
 
-program
-	.command('config')
-	.option('-a, --all', 'Show advanced config')
-	.description('Config display')
-	.action(options => {
-		const showAll = options.all;
-		Nofan.config(showAll);
-	});
+Options:
+  --version                    output the version number
+  -v, --verbose                Verbose output
+  -p, --photo <path>           Attach a photo from path
+  -c, --clipboard              Attach a photo from clipboard
+  -h, --help                   output usage information
 
-program
-	.command('colors')
-	.alias('color')
-	.description('Customize color style')
-	.action(() => {
-		Nofan.colors();
-	});
-
-program
-	.command('login [username] [password]')
-	.description('Login nofan')
-	.action((username, password) => {
-		Nofan.login(username, password);
-	});
-
-program
-	.command('logout')
-	.description('Logout nofan')
-	.action(() => {
-		Nofan.logout();
-	});
-
-program
-	.command('switch [id]')
-	.alias('s')
-	.description('Switch account')
-	.action(id => {
-		Nofan.switchUser(id);
-	});
-
-program
-	.command('home [count]')
-	.alias('h')
-	.description('Show home timeline')
-	.action((count, options) => {
-		process.spinner = ora('Fetching').start();
-		Nofan.homeTimeline({
-			count,
-			verbose: options.parent.verbose
-		});
-	});
-
-program
-	.command('mentions [count]')
-	.alias('m')
-	.description('Show mentions')
-	.action((count, options) => {
-		process.spinner = ora('Fetching').start();
-		Nofan.mentions({
-			count,
-			verbose: options.parent.verbose
-		});
-	});
-
-program
-	.command('me [count]')
-	.description('Show my statuses')
-	.action((count, options) => {
-		process.spinner = ora('Fetching').start();
-		Nofan.me({
-			count,
-			verbose: options.parent.verbose
-		});
-	});
-
-program
-	.command('public [count]')
-	.alias('p')
-	.description('Show public timeline')
-	.action((count, options) => {
-		process.spinner = ora('Fetching').start();
-		Nofan.publicTimeline({
-			count,
-			verbose: options.parent.verbose
-		});
-	});
-
-program
-	.command('search <query> [count]')
-	.alias('se')
-	.description('Search public timeline')
-	.action((query, count, options) => {
-		process.spinner = ora('Fetching').start();
-		Nofan.searchTimeline(query, {
-			count,
-			verbose: options.parent.verbose
-		});
-	});
-
-program
-	.command('trends [count]')
-	.alias('tr')
-	.description('Fetch trends')
-	.action((count, options) => {
-		process.spinner = ora('Fetching').start();
-		Nofan.trendsTimeline({count, verbose: options.parent.verbose});
-	});
-
-program
-	.command('user <id> [count]')
-	.description('Fetch user-timeline')
-	.action((id, count, options) => {
-		process.spinner = ora('Fetching').start();
-		Nofan.userTimeline(id, {
-			count,
-			verbose: options.parent.verbose
-		});
-	});
-
-program
-	.command('undo')
-	.description('Delete last status')
-	.action(() => {
-		process.spinner = ora('Deleting').start();
-		Nofan.undo();
-	});
-
-program
-	.arguments('<status> [more...]')
-	.option('-p, --photo <path>', 'Attach a photo from path')
-	.option('-c, --clipboard', 'Attach a photo from clipboard')
-	.description('')
-	.action((pre, more, options) => {
-		process.spinner = ora('Sending').start();
-		more.unshift(pre);
-		const text = more.join(' ');
-		if (options.photo || options.clipboard) {
-			Nofan.upload(options, text);
-		} else {
-			Nofan.update(text);
+Commands:
+  config [options]             Config nofan
+  colors|color                 Customize color style
+  login [username] [password]  Login nofan
+  logout                       Logout nofan
+  switch|s [id]                Switch account
+  home|h [count]               Show home timeline
+  mentions|m [count]           Show mentions
+  me [count]                   Show my statuses
+  public|p [count]             Show public timeline
+  search|se <query> [count]    Search public timeline
+  trends|tr [count]            Fetch trends
+  user <id> [count]            Fetch user-timeline
+  undo                         Delete last status
+`, {
+	flags: {
+		help: {
+			alias: 'h'
+		},
+		clipboard: {
+			alias: 'c'
+		},
+		photo: {
+			alias: 'p'
+		},
+		verbose: {
+			alias: 'v'
 		}
-	});
+	}
+});
 
-program.parse(process.argv);
+const commands = cli.input;
+const {clipboard, photo, verbose} = cli.flags;
 
-if (program.args.length === 0) {
-	process.spinner = ora('Fetching').start();
-	Nofan.homeTimeline({verbose: program.verbose});
+const spinner = text => {
+	process.spinner = ora(text).start();
+};
+
+switch (commands[0]) {
+	case 'config': {
+		Nofan.config();
+		break;
+	}
+
+	case 'colors': {
+		Nofan.colors();
+		break;
+	}
+
+	case 'login': {
+		const [, username, password] = commands;
+		Nofan.login(username, password);
+		break;
+	}
+
+	case 'logout': {
+		Nofan.logout();
+		break;
+	}
+
+	case 'switch': {
+		const [, id] = commands;
+		Nofan.switch(id);
+		break;
+	}
+
+	case 'home':
+	case 'h': {
+		spinner('Fetching');
+		Nofan.homeTimeline({verbose});
+		break;
+	}
+
+	case 'mentions':
+	case 'm': {
+		spinner('Fetching');
+		Nofan.mentions({verbose});
+		break;
+	}
+
+	case 'me': {
+		spinner('Fetching');
+		Nofan.me({verbose});
+		break;
+	}
+
+	case 'public':
+	case 'p': {
+		spinner('Fetching');
+		Nofan.publicTimeline({verbose});
+		break;
+	}
+
+	case 'search':
+	case 'se': {
+		spinner('Fetching');
+		const [, query] = commands;
+		Nofan.searchTimeline(query, {verbose});
+		break;
+	}
+
+	case 'trends':
+	case 'tr': {
+		spinner('Fetching');
+		Nofan.trendsTimeline({verbose});
+		break;
+	}
+
+	case 'user': {
+		spinner('Fetching');
+		const [, id] = commands;
+		Nofan.userTimeline(id, {verbose});
+		break;
+	}
+
+	case 'undo': {
+		spinner('Deleting');
+		Nofan.undo();
+		break;
+	}
+
+	default: {
+		if (commands.length > 0) {
+			spinner('Sending');
+			const text = commands.join(' ');
+
+			if (photo || clipboard) {
+				Nofan.upload({photo, clipboard}, text);
+			} else {
+				Nofan.update(text);
+			}
+		} else {
+			spinner('Fetching');
+			Nofan.homeTimeline({verbose});
+		}
+	}
 }

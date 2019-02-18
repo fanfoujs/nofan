@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = (config, showAll) => {
-	let promptList = [
+module.exports = config => {
+	const promptList = [
 		{
 			type: 'input',
 			name: 'display_count',
@@ -24,36 +24,32 @@ module.exports = (config, showAll) => {
 					checked: config.SSL || false
 				}
 			]
+		},
+		{
+			type: 'input',
+			name: 'key',
+			message: 'Enter your consumer key',
+			default: config.CONSUMER_KEY
+		},
+		{
+			type: 'input',
+			name: 'secret',
+			message: 'Enter your consumer secret',
+			default: config.CONSUMER_SECRET
+		},
+		{
+			type: 'input',
+			name: 'api_domain',
+			message: 'Config your api domain',
+			default: config.API_DOMAIN || 'api.fanfou.com'
+		},
+		{
+			type: 'input',
+			name: 'oauth_domain',
+			message: 'Config your oauth domain',
+			default: config.OAUTH_DOMAIN || 'fanfou.com'
 		}
 	];
-	if (showAll) {
-		promptList = promptList.concat([
-			{
-				type: 'input',
-				name: 'key',
-				message: 'Enter your consumer key',
-				default: config.CONSUMER_KEY
-			},
-			{
-				type: 'input',
-				name: 'secret',
-				message: 'Enter your consumer secret',
-				default: config.CONSUMER_SECRET
-			},
-			{
-				type: 'input',
-				name: 'api_domain',
-				message: 'Config your api domain',
-				default: config.API_DOMAIN || 'api.fanfou.com'
-			},
-			{
-				type: 'input',
-				name: 'oauth_domain',
-				message: 'Config your oauth domain',
-				default: config.OAUTH_DOMAIN || 'fanfou.com'
-			}
-		]);
-	}
 
 	return promptList;
 };
