@@ -37,7 +37,7 @@ Commands:
   reply|re <id> [text]         Reply status
   repost|rt <id> [text]        Repost status
   undo                         Delete last status
-  <text> [more...]           Post statusgit
+  <text> [more...]             Post statusgit
 `, {
 	flags: {
 		help: {
