@@ -33,6 +33,7 @@ Commands:
   search|se <query>            Search public timeline
   trends|tr                    Fetch trends
 	user <id>                    Fetch user-timeline
+	show <id>                    Fetch status item
 	reply|re <id> [text]         Reply status
 	repost|rt <id> [text]        Repost status
   undo                         Delete last status
@@ -161,6 +162,13 @@ switch (commands[0]) {
 		const [, id, ...cmd] = commands;
 		const text = cmd.join(' ');
 		nofan.repost(id, text);
+		break;
+	}
+
+	case 'show': {
+		spinner('Fetching');
+		const [, id] = commands;
+		nofan.show(id);
 		break;
 	}
 

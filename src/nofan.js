@@ -257,6 +257,12 @@ class Nofan {
 		process.spinner.succeed('Sent!');
 	}
 
+	async show(id) {
+		Nofan.getConfig();
+		const status = await Nofan._getStatus(id);
+		Nofan._displayTimeline([status], {verbose: this.verbose});
+	}
+
 	static async _get(uri, params) {
 		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
 		const account = util.getAccount();

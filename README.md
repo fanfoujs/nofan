@@ -20,6 +20,7 @@ CLI for Fanfou
 - Fetch self-timeline
 - Fetch user-timeline
 - Fetch trends-timeline
+- Fetch status item
 - Search statuses
 - Post statuses
 - Post photos
@@ -62,9 +63,10 @@ $ nofan public|p               # Fetch public-timeline
 $ nofan trends|tr              # Fetch trends-timeline
 $ nofan search|se <query>      # Search public-timeline
 $ nofan user <id>              # Fetch user-timeline by ID
-$ nofan undo                   # Delete last status
+$ nofan show <id>              # Fetch status item
 $ nofan reply|re <id> [text]   # Reply status
 $ nofan repost|rt <id> [text]  # Repost status
+$ nofan undo                   # Delete last status
 $ nofan <text> [more...]       # Post status
 ```
 
