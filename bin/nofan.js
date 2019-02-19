@@ -32,10 +32,10 @@ Commands:
   public|p                     Show public timeline
   search|se <query>            Search public timeline
   trends|tr                    Fetch trends
-	user <id>                    Fetch user-timeline
-	show <id>                    Fetch status item
-	reply|re <id> [text]         Reply status
-	repost|rt <id> [text]        Repost status
+  user <id>                    Fetch user-timeline
+  show <id>                    Fetch status item
+  reply|re <id> [text]         Reply status
+  repost|rt <id> [text]        Repost status
   undo                         Delete last status
   <text> [more...]           Post statusgit
 `, {
