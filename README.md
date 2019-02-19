@@ -65,7 +65,7 @@ $ nofan user <id>              # Fetch user-timeline by ID
 $ nofan undo                   # Delete last status
 $ nofan reply|re <id> [text]   # Reply status
 $ nofan repost|rt <id> [text]  # Repost status
-$ nofan <text> [more...]     # Post status
+$ nofan <text> [more...]       # Post status
 ```
 
 ### Color scheme
