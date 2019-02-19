@@ -23,6 +23,8 @@ CLI for Fanfou
 - Search statuses
 - Post statuses
 - Post photos
+- Reply status
+- Repost status
 - Multiple account login
 - HTTPS secure connection
 - Customizable timeline
@@ -46,22 +48,24 @@ $ nofan login
 ### Commands
 
 ```bash
-$ nofan -h                 # Show help
-$ nofan config             # Config nofan
-$ nofan colors             # Customize color style
-$ nofan login              # Login fanfou account
-$ nofan logout             # Logout current account
-$ nofan switch             # Switch fanfou account
-$ nofan                    # Fetch home-timeline
-$ nofan home|h             # Fetch home-timeline
-$ nofan mentions|m         # Fetch mentions-timeline
-$ nofan me                 # Fetch self-timeline
-$ nofan public|p           # Fetch public-timeline
-$ nofan trends|tr          # Fetch trends-timeline
-$ nofan search|se <query>  # Search public-timeline
-$ nofan user <id>          # Fetch user-timeline by ID
-$ nofan undo               # Delete last status
-$ nofan <status> [more...] # Post status
+$ nofan -h                     # Show help
+$ nofan config                 # Config nofan
+$ nofan colors                 # Customize color style
+$ nofan login                  # Login fanfou account
+$ nofan logout                 # Logout current account
+$ nofan switch                 # Switch fanfou account
+$ nofan                        # Fetch home-timeline
+$ nofan home|h                 # Fetch home-timeline
+$ nofan mentions|m             # Fetch mentions-timeline
+$ nofan me                     # Fetch self-timeline
+$ nofan public|p               # Fetch public-timeline
+$ nofan trends|tr              # Fetch trends-timeline
+$ nofan search|se <query>      # Search public-timeline
+$ nofan user <id>              # Fetch user-timeline by ID
+$ nofan undo                   # Delete last status
+$ nofan reply|re <id> [text]   # Reply status
+$ nofan repost|rt <id> [text]  # Repost status
+$ nofan <text> [more...]     # Post status
 ```
 
 ### Color scheme

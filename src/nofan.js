@@ -243,6 +243,20 @@ class Nofan {
 		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
+	async reply(id, text) {
+		const status = await Nofan._getStatus(id);
+		const replyText = `@${status.user.name} ${text}`.trim();
+		await Nofan._post('/statuses/update', {in_reply_to_status_id: id, status: replyText, ...this.params});
+		process.spinner.succeed('Sent!');
+	}
+
+	async repost(id, text) {
+		const status = await Nofan._getStatus(id);
+		const repostText = `${text} 转@${status.user.name} ${status.plain_text}`.trim();
+		await Nofan._post('/statuses/update', {repost_status_id: id, status: repostText, ...this.params});
+		process.spinner.succeed('Sent!');
+	}
+
 	static async _get(uri, params) {
 		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
 		const account = util.getAccount();
@@ -301,6 +315,10 @@ class Nofan {
 		} catch (err) {
 			Nofan._handleError(err);
 		}
+	}
+
+	static async _getStatus(id) {
+		return Nofan._get('/statuses/show', {id, format: 'html'});
 	}
 
 	static async _upload(path, status) {

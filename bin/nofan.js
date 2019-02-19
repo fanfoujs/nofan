@@ -32,9 +32,11 @@ Commands:
   public|p                     Show public timeline
   search|se <query>            Search public timeline
   trends|tr                    Fetch trends
-  user <id>                    Fetch user-timeline
+	user <id>                    Fetch user-timeline
+	reply|re <id> [text]         Reply status
+	repost|rt <id> [text]        Repost status
   undo                         Delete last status
-  <status> [more...]           Post statusgit
+  <text> [more...]           Post statusgit
 `, {
 	flags: {
 		help: {
@@ -141,6 +143,24 @@ switch (commands[0]) {
 	case 'undo': {
 		spinner('Deleting');
 		Nofan.undo();
+		break;
+	}
+
+	case 'reply':
+	case 're': {
+		spinner('Sending');
+		const [, id, ...cmd] = commands;
+		const text = cmd.join(' ');
+		nofan.reply(id, text);
+		break;
+	}
+
+	case 'repost':
+	case 'rt': {
+		spinner('Sending');
+		const [, id, ...cmd] = commands;
+		const text = cmd.join(' ');
+		nofan.repost(id, text);
 		break;
 	}
 
