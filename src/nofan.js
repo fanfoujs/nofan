@@ -6,12 +6,10 @@ const importLazy = require('import-lazy')(require);
 
 const justSnakeCase = importLazy('just-snake-case');
 const terminalLink = importLazy('terminal-link');
-const gradient = importLazy('gradient-string');
 const chalkPipe = importLazy('chalk-pipe');
 const TimeAgo = importLazy('timeago.js');
 const Fanfou = importLazy('fanfou-sdk');
 const inquirer = importLazy('inquirer');
-const figlet = importLazy('figlet');
 const moment = importLazy('moment');
 const chalk = importLazy('chalk');
 const ora = importLazy('ora');
@@ -466,16 +464,6 @@ class Nofan {
 				baseString: str => config.SSL ? str.replace('https', 'http') : str
 			}
 		});
-	}
-
-	static version() {
-		const nofanVersion = require('../package').version;
-		const banner = gradient.rainbow(figlet.textSync('Nofan', {
-			font: 'Small Slant'
-		}).replace('/_//_/', `/_//_/ ${nofanVersion}`));
-		const sdkVersion = chalk.green(`fanfou-sdk: ${util.sdkVersion()}`);
-		const version = `${banner}\n${sdkVersion}`;
-		return version;
 	}
 }
 

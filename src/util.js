@@ -50,10 +50,6 @@ function readJsonFile(filename) {
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
-function readSDKVersion() {
-	return require('fanfou-sdk/package').version;
-}
-
 function getConfig() {
 	try {
 		return readJsonFile('config');
@@ -113,6 +109,5 @@ module.exports = {
 	getAccount,
 	setConfig,
 	setAccount,
-	sdkVersion: readSDKVersion,
 	getTempImagePath
 };
