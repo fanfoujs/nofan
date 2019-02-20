@@ -26,7 +26,6 @@
     "just-snake-case": "^1.1.0",
     "meow": "^5.0.0",
     "moment": "^2.23.0",
-    "node-notifier": "^5.2.1",
     "ora": "^3.0.0",
     "terminal-link": "^1.2.0",
     "timeago.js": "^3.0.1",
