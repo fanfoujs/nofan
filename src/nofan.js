@@ -174,7 +174,8 @@ class Nofan {
 
 	async searchTimeline(q) {
 		const {count} = Nofan.getConfig();
-		const statuses = await Nofan._get('/search/public_timeline', {q, count, format: 'html', ...this.params});
+		const uri = this.params.id ? '/search/user_timeline' : '/search/public_timeline';
+		const statuses = await Nofan._get(uri, {q, count, format: 'html', ...this.params});
 		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
