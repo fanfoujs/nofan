@@ -30,7 +30,7 @@ Commands:
   mentions|m                   Show mentions
   me [count]                   Show my statuses
   public|p                     Show public timeline
-  search|se <query>            Search public timeline
+  search|se <query>            Search public or user timeline
   trends|tr                    Fetch trends
   user <id>                    Fetch user-timeline
   show <id>                    Fetch status item

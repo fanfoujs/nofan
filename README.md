@@ -61,14 +61,14 @@ $ nofan colors                 # Customize color style
 $ nofan login                  # Login fanfou account
 $ nofan logout                 # Logout current account
 $ nofan switch                 # Switch fanfou account
-$ nofan                        # Fetch home-timeline
-$ nofan home|h                 # Fetch home-timeline
-$ nofan mentions|m             # Fetch mentions-timeline
-$ nofan me                     # Fetch self-timeline
-$ nofan public|p               # Fetch public-timeline
-$ nofan trends|tr              # Fetch trends-timeline
-$ nofan search|se <query>      # Search public-timeline
-$ nofan user <id>              # Fetch user-timeline by ID
+$ nofan                        # Fetch home timeline
+$ nofan home|h                 # Fetch home timeline
+$ nofan mentions|m             # Fetch mentions timeline
+$ nofan me                     # Fetch self timeline
+$ nofan public|p               # Fetch public timeline
+$ nofan trends|tr              # Fetch trends timeline
+$ nofan search|se <query>      # Search public timeline
+$ nofan user <id>              # Fetch user timeline
 $ nofan show <id>              # Fetch status item
 $ nofan reply|re <id> [text]   # Reply status
 $ nofan repost|rt <id> [text]  # Repost status
