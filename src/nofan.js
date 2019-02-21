@@ -230,14 +230,14 @@ class Nofan {
 	}
 
 	async mentions() {
-		Nofan.getConfig();
-		const statuses = await Nofan._get('/statuses/mentions', {format: 'html', ...this.params});
+		const {count} = Nofan.getConfig();
+		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html', ...this.params});
 		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async me() {
-		Nofan.getConfig();
-		const statuses = await Nofan._get('/statuses/user_timeline', {format: 'html', ...this.params});
+		const {count} = Nofan.getConfig();
+		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html', ...this.params});
 		Nofan._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
