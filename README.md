@@ -80,7 +80,7 @@ $ nofan <text> [more...]       # Post status
 
 Use `nofan colors` to customize your color scheme.
 
-![nofan-colors](https://raw.githubusercontent.com/LitoMore/nofan/master/media/nofan-colors.gif)
+<img width="50%" height="50%" src="https://raw.githubusercontent.com/LitoMore/nofan/master/media/nofan-colors.gif" />
 
 **Format**
 
