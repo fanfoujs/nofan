@@ -122,7 +122,8 @@ switch (commands[0]) {
 	case 'search':
 	case 'se': {
 		spinner('Fetching');
-		const [, query] = commands;
+		const [, ...cmd] = commands;
+		const query = cmd.join(' ');
 		nofan.searchTimeline(query);
 		break;
 	}
