@@ -5,8 +5,8 @@ const importLazy = require('import-lazy')(require);
 
 const ora = importLazy('ora');
 const updateNotifier = importLazy('update-notifier');
-const pkg = importLazy('../package');
-const Nofan = importLazy('../src/nofan');
+const pkg = importLazy('./package');
+const Nofan = importLazy('./src/nofan');
 
 updateNotifier({pkg}).notify({isGlobal: true});
 
