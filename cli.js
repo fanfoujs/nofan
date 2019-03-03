@@ -176,15 +176,16 @@ switch (commands[0]) {
 
 	case 'get':
 	case 'post': {
-		const [method, uri] = commands;
-		spinner(`${method.toUpperCase()} ${uri}`);
+		const [method, uri = ''] = commands;
+		const uriPath = path.join('/', uri);
+		spinner(`${method.toUpperCase()} ${uriPath}`);
 
 		if (!uri) {
 			process.spinner.fail('Please specify the URI');
 			process.exit(1);
 		}
 
-		nofan[method](path.join('/', uri))
+		nofan[method](uriPath)
 			.then(Nofan.normalDisplay)
 			.catch(err => {
 				console.log(err.message);
