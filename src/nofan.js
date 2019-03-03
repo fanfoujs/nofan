@@ -262,6 +262,14 @@ class Nofan {
 		Nofan._displayTimeline([status], {verbose: this.verbose});
 	}
 
+	async get(uri) {
+		return Nofan._get(uri, this.params);
+	}
+
+	async post(uri) {
+		return Nofan._post(uri, this.params);
+	}
+
 	static async _get(uri, params) {
 		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
 		const account = util.getAccount();
@@ -450,6 +458,11 @@ class Nofan {
 				console.log(`${name} ${text}`);
 			}
 		});
+	}
+
+	static normalDisplay(item) {
+		process.spinner.succeed();
+		console.log(item);
 	}
 
 	static initFanfou(user, config) {

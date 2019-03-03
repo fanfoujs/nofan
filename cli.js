@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const path = require('path');
 const meow = require('meow');
 const importLazy = require('import-lazy')(require);
 
@@ -173,6 +174,26 @@ switch (commands[0]) {
 		break;
 	}
 
+	case 'get':
+	case 'post': {
+		const [method, uri] = commands;
+		spinner(`${method.toUpperCase()} ${uri}`);
+
+		if (!uri) {
+			process.spinner.fail('Please specify the URI');
+			process.exit(1);
+		}
+
+		nofan[method](path.join('/', uri))
+			.then(Nofan.normalDisplay)
+			.catch(err => {
+				console.log(err.message);
+				process.exit(1);
+			});
+
+		break;
+	}
+
 	default: {
 		if (commands.length > 0) {
 			spinner('Sending');
@@ -187,5 +208,7 @@ switch (commands[0]) {
 			spinner('Fetching');
 			nofan.homeTimeline();
 		}
+
+		break;
 	}
 }
