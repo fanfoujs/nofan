@@ -30,14 +30,21 @@ class Nofan {
 		Object.keys(params).forEach(key => {
 			this.params[justSnakeCase(key)] = params[key];
 		});
+
+		try {
+			this.config = util.getConfig();
+		} catch (err) {
+			process.spinner.fail(err.message);
+			process.exit();
+		}
 	}
 
-	static async login(username, password) {
-		const config = await util.getConfig();
+	async login(username, password) {
+		const {config} = this;
 		const login = async (username, password) => {
 			const ff = new Fanfou({
 				consumerKey: config.CONSUMER_KEY,
-				cosnumerSecret: config.CONSUMER_SECRET,
+				consumerSecret: config.CONSUMER_SECRET,
 				username,
 				password,
 				protocol: config.SSL ? 'https:' : 'http:',
@@ -82,9 +89,9 @@ class Nofan {
 		}
 	}
 
-	static async logout() {
+	async logout() {
 		process.spinner = ora('Logging out').start();
-		const config = util.getConfig();
+		const {config} = this;
 		if (config.USER) {
 			const account = util.getAccount();
 			delete account[config.USER];
@@ -93,9 +100,9 @@ class Nofan {
 		}
 	}
 
-	static async config(showAll) {
-		const config = util.getConfig();
-		const settings = await inquirer.prompt(configPrompt(config, showAll));
+	async config(showAll) {
+		const {config} = this;
+		const settings = await inquirer.prompt(configPrompt(this.config, showAll));
 
 		config.CONSUMER_KEY = settings.key || util.defaultConfig.CONSUMER_KEY;
 		config.CONSUMER_SECRET = settings.secret || util.defaultConfig.CONSUMER_SECRET;
@@ -116,9 +123,8 @@ class Nofan {
 		util.setConfig(config);
 	}
 
-	static async colors() {
-		const config = util.getConfig();
-		config.COLORS = config.COLORS || {};
+	async colors() {
+		const {config} = this;
 		const paints = await inquirer.prompt(colorsPrompt(config));
 		const colors = {...paints};
 		config.COLORS = colors;
@@ -126,11 +132,10 @@ class Nofan {
 		util.setConfig(config);
 	}
 
-	static async switchUser(id) {
-		const [config, account] = [
-			util.getConfig(),
-			util.getAccount()
-		];
+	async switchUser(id) {
+		const {config} = this;
+		const account = util.getAccount();
+
 		if (id) {
 			if (account[id]) {
 				config.USER = id;
@@ -161,28 +166,28 @@ class Nofan {
 	}
 
 	async homeTimeline() {
-		const {count} = Nofan.getConfig();
-		const statuses = await Nofan._get('/statuses/home_timeline', {count, format: 'html', ...this.params});
-		Nofan._displayTimeline(statuses, {verbose: this.verbose});
+		const {count} = this.config;
+		const statuses = await this._get('/statuses/home_timeline', {count, format: 'html', ...this.params});
+		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async publicTimeline() {
-		const {count} = Nofan.getConfig();
-		const statuses = await Nofan._get('/statuses/public_timeline', {count, format: 'html', ...this.params});
-		Nofan._displayTimeline(statuses, {verbose: this.verbose});
+		const {count} = this.config;
+		const statuses = await this._get('/statuses/public_timeline', {count, format: 'html', ...this.params});
+		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async searchTimeline(q) {
-		const {count} = Nofan.getConfig();
+		const {count} = this.config;
 		const uri = this.params.id ? '/search/user_timeline' : '/search/public_timeline';
-		const statuses = await Nofan._get(uri, {q, count, format: 'html', ...this.params});
-		Nofan._displayTimeline(statuses, {verbose: this.verbose});
+		const statuses = await this._get(uri, {q, count, format: 'html', ...this.params});
+		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async trendsTimeline() {
 		const [{trends: hotTrends}, savedTrends] = [
-			await Nofan._get('/trends/list'),
-			await Nofan._get('/saved_searches/list')
+			await this._get('/trends/list'),
+			await this._get('/saved_searches/list')
 		];
 		if (hotTrends.length + savedTrends.length > 0) {
 			process.spinner.stop();
@@ -196,82 +201,75 @@ class Nofan {
 	}
 
 	async userTimeline(id) {
-		const {count} = Nofan.getConfig();
-		const statuses = await Nofan._get('/statuses/user_timeline', {id, count, format: 'html', ...this.params});
-		Nofan._displayTimeline(statuses, {verbose: this.verbose});
-	}
-
-	static getConfig() {
-		process.NOFAN_CONFIG = util.getConfig();
-		const count = process.NOFAN_CONFIG.DISPLAY_COUNT || 10;
-		return {count};
+		const {count} = this.config;
+		const statuses = await this._get('/statuses/user_timeline', {id, count, format: 'html', ...this.params});
+		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async update(text) {
-		await Nofan._post('/statuses/update', {status: text, ...this.params});
+		await this._post('/statuses/update', {status: text, ...this.params});
 		process.spinner.succeed('Sent!');
 	}
 
 	async upload(text) {
 		const {photo, clipboard} = this;
 		if (photo) {
-			await Nofan._upload(photo, text);
+			await this._upload(photo, text);
 		} else if (clipboard) {
 			const tempFilepath = await util.getTempImagePath();
-			await Nofan._upload(tempFilepath, text);
+			await this._upload(tempFilepath, text);
 		}
 
 		process.spinner.succeed('Sent!');
 	}
 
-	static async undo() {
-		const statuses = await Nofan._get('/statuses/user_timeline', {});
-		await Nofan._post('/statuses/destroy', {id: statuses[0].id});
+	async undo() {
+		const statuses = await this._get('/statuses/user_timeline', {});
+		await this._post('/statuses/destroy', {id: statuses[0].id});
 		process.spinner.succeed('Deleted!');
 	}
 
 	async mentions() {
-		const {count} = Nofan.getConfig();
-		const statuses = await Nofan._get('/statuses/mentions', {count, format: 'html', ...this.params});
-		Nofan._displayTimeline(statuses, {verbose: this.verbose});
+		const {count} = this.config;
+		const statuses = await this._get('/statuses/mentions', {count, format: 'html', ...this.params});
+		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async me() {
-		const {count} = Nofan.getConfig();
-		const statuses = await Nofan._get('/statuses/user_timeline', {count, format: 'html', ...this.params});
-		Nofan._displayTimeline(statuses, {verbose: this.verbose});
+		const {count} = this.config;
+		const statuses = await this._get('/statuses/user_timeline', {count, format: 'html', ...this.params});
+		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async reply(id, text) {
-		const status = await Nofan._getStatus(id);
+		const status = await this._getStatus(id);
 		const replyText = `@${status.user.name} ${text}`.trim();
-		await Nofan._post('/statuses/update', {in_reply_to_status_id: id, status: replyText, ...this.params});
+		await this._post('/statuses/update', {in_reply_to_status_id: id, status: replyText, ...this.params});
 		process.spinner.succeed('Sent!');
 	}
 
 	async repost(id, text) {
-		const status = await Nofan._getStatus(id);
+		const status = await this._getStatus(id);
 		const repostText = `${text} 转@${status.user.name} ${status.plain_text}`.trim();
-		await Nofan._post('/statuses/update', {repost_status_id: id, status: repostText, ...this.params});
+		await this._post('/statuses/update', {repost_status_id: id, status: repostText, ...this.params});
 		process.spinner.succeed('Sent!');
 	}
 
 	async show(id) {
-		Nofan.getConfig();
-		const status = await Nofan._getStatus(id);
-		Nofan._displayTimeline([status], {verbose: this.verbose});
+		const status = await this._getStatus(id);
+		this._displayTimeline([status], {verbose: this.verbose});
 	}
 
 	async get(uri) {
-		return Nofan._get(uri, this.params);
+		return this._get(uri, this.params);
 	}
 
 	async post(uri) {
-		return Nofan._post(uri, this.params);
+		return this._post(uri, this.params);
 	}
 
-	static async _get(uri, params) {
-		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
+	async _get(uri, params) {
+		const {config} = this;
 		const account = util.getAccount();
 		let user = account[config.USER];
 		if (!user) {
@@ -291,7 +289,7 @@ class Nofan {
 
 		util.setConfig(config);
 
-		const ff = Nofan.initFanfou(user, config);
+		const ff = this.initFanfou(user, config);
 		try {
 			const res = await ff.get(uri, params);
 			return res;
@@ -300,10 +298,11 @@ class Nofan {
 		}
 	}
 
-	static async _post(uri, params) {
-		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
+	async _post(uri, params) {
+		const {config} = this;
 		const account = util.getAccount();
 		let user = account[config.USER];
+
 		if (!user) {
 			for (const name in account) {
 				if (account.name) {
@@ -321,7 +320,7 @@ class Nofan {
 
 		util.setConfig(config);
 
-		const ff = Nofan.initFanfou(user, config);
+		const ff = this.initFanfou(user, config);
 		try {
 			const res = await ff.post(uri, params);
 			return res;
@@ -330,12 +329,12 @@ class Nofan {
 		}
 	}
 
-	static async _getStatus(id) {
-		return Nofan._get('/statuses/show', {id, format: 'html'});
+	async _getStatus(id) {
+		return this._get('/statuses/show', {id, format: 'html'});
 	}
 
-	static async _upload(path, status) {
-		const config = process.NOFAN_CONFIG ? process.NOFAN_CONFIG : util.getConfig();
+	async _upload(path, status) {
+		const {config} = this;
 		const account = util.getAccount();
 		let user = account[config.USER];
 		if (!user) {
@@ -354,7 +353,7 @@ class Nofan {
 		}
 
 		util.setConfig(config);
-		const ff = Nofan.initFanfou(user, config);
+		const ff = this.initFanfou(user, config);
 
 		try {
 			const res = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
@@ -369,8 +368,9 @@ class Nofan {
 		process.exit(1);
 	}
 
-	static _displayTimeline(timeline, opt) {
-		const config = process.NOFAN_CONFIG;
+	_displayTimeline(timeline, opt) {
+		const {config} = this;
+
 		if (process.spinner) {
 			process.spinner.stop();
 		}
@@ -465,7 +465,8 @@ class Nofan {
 		console.log(item);
 	}
 
-	static initFanfou(user, config) {
+	initFanfou(user) {
+		const {config} = this;
 		return new Fanfou({
 			consumerKey: user.CONSUMER_KEY,
 			consumerSecret: user.CONSUMER_SECRET,

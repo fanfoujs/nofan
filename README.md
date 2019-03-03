@@ -31,10 +31,10 @@ CLI for Fanfou
 - Customizable timeline
 - Customizable color themes
 
-## Installation
+## Install
 
 ```bash
-$ npm install -g nofan
+$ npm i -g nofan
 ```
 
 ---

@@ -66,30 +66,30 @@ const spinner = text => {
 
 switch (commands[0]) {
 	case 'config': {
-		Nofan.config();
+		nofan.config();
 		break;
 	}
 
 	case 'colors': {
-		Nofan.colors();
+		nofan.colors();
 		break;
 	}
 
 	case 'login': {
 		const [, username, password] = commands;
-		Nofan.login(username, password);
+		nofan.login(username, password);
 		break;
 	}
 
 	case 'logout': {
-		Nofan.logout();
+		nofan.logout();
 		break;
 	}
 
 	case 'switch':
 	case 's': {
 		const [, id] = commands;
-		Nofan.switchUser(id);
+		nofan.switchUser(id);
 		break;
 	}
 
@@ -145,7 +145,7 @@ switch (commands[0]) {
 
 	case 'undo': {
 		spinner('Deleting');
-		Nofan.undo();
+		nofan.undo();
 		break;
 	}
 
