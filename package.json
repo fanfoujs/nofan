@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "ava": "^1.0.1",
-    "cross-env": "^5.2.0",
     "execa": "^1.0.0",
     "xo": "^0.24.0"
   },
