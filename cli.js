@@ -66,7 +66,7 @@ const spinner = text => {
 
 switch (commands[0]) {
 	case 'config': {
-		nofan.config();
+		nofan.configure();
 		break;
 	}
 
@@ -186,7 +186,9 @@ switch (commands[0]) {
 		}
 
 		nofan[method](uriPath)
-			.then(Nofan.normalDisplay)
+			.then(res => {
+				nofan.normalDisplay(res);
+			})
 			.catch(err => {
 				console.log(err.message);
 				process.exit(1);

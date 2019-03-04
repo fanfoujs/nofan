@@ -22,10 +22,11 @@ const trendsPrompt = importLazy('./prompts/trends');
 
 class Nofan {
 	constructor(opt = {}) {
-		const {verbose, photo, clipboard, ...params} = opt;
+		const {verbose, photo, clipboard, consoleType = 'log', maxArrayLength, ...params} = opt;
 		this.verbose = verbose;
 		this.photo = photo;
 		this.clipboard = clipboard;
+		this.consoleType = consoleType;
 		this.params = {};
 		Object.keys(params).forEach(key => {
 			this.params[justSnakeCase(key)] = params[key];
@@ -100,9 +101,9 @@ class Nofan {
 		}
 	}
 
-	async config(showAll) {
+	async configure() {
 		const {config} = this;
-		const settings = await inquirer.prompt(configPrompt(this.config, showAll));
+		const settings = await inquirer.prompt(configPrompt(config));
 
 		config.CONSUMER_KEY = settings.key || util.defaultConfig.CONSUMER_KEY;
 		config.CONSUMER_SECRET = settings.secret || util.defaultConfig.CONSUMER_SECRET;
@@ -166,19 +167,19 @@ class Nofan {
 	}
 
 	async homeTimeline() {
-		const {count} = this.config;
+		const {DISPLAY_COUNT: count} = this.config;
 		const statuses = await this._get('/statuses/home_timeline', {count, format: 'html', ...this.params});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async publicTimeline() {
-		const {count} = this.config;
+		const {DISPLAY_COUNT: count} = this.config;
 		const statuses = await this._get('/statuses/public_timeline', {count, format: 'html', ...this.params});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async searchTimeline(q) {
-		const {count} = this.config;
+		const {DISPLAY_COUNT: count} = this.config;
 		const uri = this.params.id ? '/search/user_timeline' : '/search/public_timeline';
 		const statuses = await this._get(uri, {q, count, format: 'html', ...this.params});
 		this._displayTimeline(statuses, {verbose: this.verbose});
@@ -201,7 +202,7 @@ class Nofan {
 	}
 
 	async userTimeline(id) {
-		const {count} = this.config;
+		const {DISPLAY_COUNT: count} = this.config;
 		const statuses = await this._get('/statuses/user_timeline', {id, count, format: 'html', ...this.params});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
@@ -230,13 +231,13 @@ class Nofan {
 	}
 
 	async mentions() {
-		const {count} = this.config;
+		const {DISPLAY_COUNT: count} = this.config;
 		const statuses = await this._get('/statuses/mentions', {count, format: 'html', ...this.params});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async me() {
-		const {count} = this.config;
+		const {DISPLAY_COUNT: count} = this.config;
 		const statuses = await this._get('/statuses/user_timeline', {count, format: 'html', ...this.params});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
@@ -460,9 +461,10 @@ class Nofan {
 		});
 	}
 
-	static normalDisplay(item) {
+	normalDisplay(item) {
 		process.spinner.succeed();
-		console.log(item);
+		const {consoleType} = this;
+		console[consoleType](item);
 	}
 
 	initFanfou(user) {
