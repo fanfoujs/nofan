@@ -76,6 +76,8 @@ $ nofan undo                   # Delete last status
 $ nofan <text> [more...]       # Post status
 ```
 
+## Tips
+
 ### Color scheme
 
 Use `nofan colors` to customize your color scheme.
@@ -97,6 +99,46 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 > cyanBright
 > orange.inverse.underline
 > bgYellow.black
+```
+
+### API Parameter Flags
+
+Nofan is very easy to use, but also very powerful. You could pass to [API](https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory) parameters as flags to the CLI.
+
+You could do something like this:
+
+```bash
+$ nofan --page=2 --count=30
+```
+
+### Photos Posting
+
+Nofan support post a photo from a local path or clipboard:
+
+```bash
+# Post a photo from local path, use `-p` or `--photo`
+$ nofan unicorn -p ~/Desktop/heart.png
+
+# Post a photo from clipboard (macOS only), use `-c` or `--clipboard`
+$ nofan hi my love -c
+```
+
+### Verbose Mode
+
+Now we have a verbose mode for the timeline.
+
+<img width="815" alt="image" src="https://user-images.githubusercontent.com/8186898/53097674-fe3a2e80-355c-11e9-8884-5037f789bcd6.png">
+
+### Reply & Repost
+
+You could do a quick action by use `reply` and `repost` command:
+
+```bash
+# Reply
+$ nofan re _5gqZTpjAlM hi litomore
+
+# Repost
+$ nofan rt _5gqZTpjAlM hi litomore
 ```
 
 ## Related
