@@ -155,7 +155,7 @@ $ nofan get statuses/home_timeline --mode=lite
 $ nofan post statuses/update --status=hi
 ```
 
-You could specify a [console type](https://nodejs.org/dist/latest/docs/api/console.html) for output:
+You could specify a [console type](https://nodejs.org/dist/latest/docs/api/console.html) for output, default is `console.log`:
 
 ```bash
 $ nofan get account/notification --console-type=table
