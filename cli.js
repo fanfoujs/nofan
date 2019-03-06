@@ -23,7 +23,7 @@ Options:
 
 Commands:
   config                       Config nofan
-  colors|color                 Customize color style
+  colors                       Customize color style
   login [username] [password]  Login nofan
   logout                       Logout nofan
   switch|s [id]                Switch account
