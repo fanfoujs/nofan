@@ -158,7 +158,7 @@ $ nofan post statuses/update --status=hi
 You could specify a [console type](https://nodejs.org/dist/latest/docs/api/console.html) for output:
 
 ```bash
-$ nofan account/notification --console-type=table
+$ nofan get account/notification --console-type=table
 ```
 
 ## Related
