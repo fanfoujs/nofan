@@ -30,6 +30,7 @@ CLI for Fanfou
 - HTTPS secure connection
 - Customizable timeline
 - Customizable color themes
+- Customizable GET/POST request
 
 ## Install
 
@@ -144,7 +145,7 @@ $ nofan --page=2 --count=30
 $ nofan se unicron --count=60
 ```
 
-### Request API Directly
+### Customizable GET/POST Request
 
 Use `nofan get` or `nofan post` to create a GET/POST request:
 

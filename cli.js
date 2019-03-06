@@ -38,7 +38,9 @@ Commands:
   reply|re <id> [text]         Reply status
   repost|rt <id> [text]        Repost status
   undo                         Delete last status
-  <text> [more...]             Post statusgit
+  <text> [more...]             Post status
+  get <uri>                    Create GET request
+  post <uri>                   Create POST request
 `, {
 	flags: {
 		help: {
