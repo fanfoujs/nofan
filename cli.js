@@ -29,7 +29,7 @@ Commands:
   switch|s [id]                Switch account
   home|h                       Show home timeline
   mentions|m                   Show mentions
-  me [count]                   Show my statuses
+  me                           Show my statuses
   public|p                     Show public timeline
   search|se <query>            Search public or user timeline
   trends|tr                    Fetch trends
