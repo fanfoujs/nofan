@@ -189,7 +189,7 @@ switch (commands[0]) {
 
 		nofan[method](uriPath)
 			.then(res => {
-				nofan.normalDisplay(res);
+				nofan.consoleDisplay(res);
 			})
 			.catch(err => {
 				console.log(err.message);

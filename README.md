@@ -155,6 +155,12 @@ $ nofan get statuses/home_timeline --mode=lite
 $ nofan post statuses/update --status=hi
 ```
 
+You could specify a [console type](https://nodejs.org/dist/latest/docs/api/console.html) for output:
+
+```bash
+$ nofan account/notification --console-type=table
+```
+
 ## Related
 
 - [fanfou-sdk](https://github.com/LitoMore/fanfou-sdk-node) - Fanfou SDK for Node.js

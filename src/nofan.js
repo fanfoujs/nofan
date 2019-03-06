@@ -22,7 +22,7 @@ const trendsPrompt = importLazy('./prompts/trends');
 
 class Nofan {
 	constructor(opt = {}) {
-		const {verbose, photo, clipboard, consoleType = 'log', maxArrayLength, ...params} = opt;
+		const {verbose, photo, clipboard, consoleType = 'log', ...params} = opt;
 		this.verbose = verbose;
 		this.photo = photo;
 		this.clipboard = clipboard;
@@ -461,7 +461,7 @@ class Nofan {
 		});
 	}
 
-	normalDisplay(item) {
+	consoleDisplay(item) {
 		process.spinner.succeed();
 		const {consoleType} = this;
 		console[consoleType](item);
