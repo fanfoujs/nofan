@@ -74,11 +74,13 @@ $ nofan reply|re <id> [text]   # Reply status
 $ nofan repost|rt <id> [text]  # Repost status
 $ nofan undo                   # Delete last status
 $ nofan <text> [more...]       # Post status
+$ nofan get <uri>              # Create GET request
+$ nofan post <uri>             # Create POST request
 ```
 
 ## Tips
 
-### Color scheme
+### Color Scheme
 
 Use `nofan colors` to customize your color scheme.
 
@@ -99,16 +101,6 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 > cyanBright
 > orange.inverse.underline
 > bgYellow.black
-```
-
-### API Parameter Flags
-
-Nofan is very easy to use, but also very powerful. You could pass to [API](https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory) parameters as flags to the CLI.
-
-You could do something like this:
-
-```bash
-$ nofan --page=2 --count=30
 ```
 
 ### Photos Posting
@@ -139,6 +131,27 @@ $ nofan re _5gqZTpjAlM hi litomore
 
 # Repost
 $ nofan rt _5gqZTpjAlM hi litomore
+```
+
+### API Parameter Flags
+
+Nofan is very easy to use, but also very powerful. You could pass to [API](https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory) parameters as flags to the CLI.
+
+You could do something like this:
+
+```bash
+$ nofan --page=2 --count=30
+$ nofan se unicron --count=60
+```
+
+### Request API Directly
+
+Use `nofan get` or `nofan post` to create a GET/POST request:
+
+```bash
+$ nofan get account/notification
+$ nofan get statuses/home_timeline --mode=lite
+$ nofan post statuses/update --status=hi
 ```
 
 ## Related
