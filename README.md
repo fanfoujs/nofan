@@ -164,7 +164,7 @@ $ nofan get account/notification --console-type=table
 You could use `--repl` option to inspect the result in REPL:
 
 ```bash
-$ nf get users/show --id=litomore --repl
+$ nofan get users/show --id=litomore --repl
 
 > result.name
 #=> 'LitoMore' 
