@@ -14,6 +14,7 @@ const moment = importLazy('moment');
 const chalk = importLazy('chalk');
 const ora = importLazy('ora');
 const util = importLazy('./util');
+const nofanRepl = importLazy('./repl');
 const colorsPrompt = importLazy('./prompts/colors');
 const configPrompt = importLazy('./prompts/config');
 const loginPrompt = importLazy('./prompts/login');
@@ -22,10 +23,11 @@ const trendsPrompt = importLazy('./prompts/trends');
 
 class Nofan {
 	constructor(opt = {}) {
-		const {verbose, photo, clipboard, consoleType = 'log', ...params} = opt;
+		const {verbose, photo, clipboard, repl, consoleType = 'log', ...params} = opt;
 		this.verbose = verbose;
 		this.photo = photo;
 		this.clipboard = clipboard;
+		this.repl = repl;
 		this.consoleType = consoleType;
 		this.params = {};
 		Object.keys(params).forEach(key => {
@@ -463,8 +465,12 @@ class Nofan {
 
 	consoleDisplay(item) {
 		process.spinner.succeed();
-		const {consoleType} = this;
-		console[consoleType](item);
+		const {repl, consoleType} = this;
+		if (repl) {
+			nofanRepl.showInRepl(item);
+		} else {
+			console[consoleType](item);
+		}
 	}
 
 	initFanfou(user) {

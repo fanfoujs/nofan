@@ -16,6 +16,7 @@ Usage: nofan [options] [command] <status> [more...]
 
 Options:
   --version                    Output the version number
+  --repl                       Inspect result in REPL
   -v, --verbose                Verbose output
   -p, --photo <path>           Attach a photo from path
   -c, --clipboard              Attach a photo from clipboard
