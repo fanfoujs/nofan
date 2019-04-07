@@ -161,7 +161,7 @@ You could specify a [console type](https://nodejs.org/dist/latest/docs/api/conso
 $ nofan get account/notification --console-type=table
 ```
 
-You could use `--repl` option to inspect the result in REPL:
+You could use `--repl` option to inspect the result in [REPL](https://nodejs.org/dist/latest/docs/api/repl.html):
 
 ```bash
 $ nofan get users/show --id=litomore --repl
