@@ -98,6 +98,8 @@ class Nofan {
 		if (config.USER) {
 			const account = util.getAccount();
 			delete account[config.USER];
+			config.USER = Object.keys(account)[0] || '';
+			util.setConfig(config);
 			util.setAccount(account);
 			process.spinner.succeed('Logout succeed!');
 		}
