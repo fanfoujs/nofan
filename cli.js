@@ -188,14 +188,15 @@ switch (commands[0]) {
 			process.exit(1);
 		}
 
-		nofan[method](uriPath)
-			.then(res => {
+		(async () => {
+			try {
+				const res = await nofan[method](uriPath);
 				nofan.consoleDisplay(res);
-			})
-			.catch(err => {
+			} catch (err) {
 				console.log(err.message);
 				process.exit(1);
-			});
+			}
+		})();
 
 		break;
 	}

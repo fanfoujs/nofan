@@ -3,6 +3,9 @@
   "version": "1.4.1",
   "description": "CLI for Fanfou",
   "bin": "cli.js",
+  "engines": {
+    "node": ">=8"
+  },
   "scripts": {
     "test": "xo"
   },
