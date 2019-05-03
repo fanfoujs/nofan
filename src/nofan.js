@@ -142,10 +142,11 @@ class Nofan {
 		const account = util.getAccount();
 
 		if (id) {
-			if (account[id]) {
-				config.USER = id;
+			const found = Object.keys(account).find(k => k.toLowerCase() === id.toLowerCase());
+			if (found) {
+				config.USER = found;
 				util.setConfig(config);
-				process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(id)}`);
+				process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(found)}`);
 			} else {
 				process.spinner = ora().info(`${chalk.blue.bold(id)} needs login`);
 				process.exit(1);
