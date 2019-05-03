@@ -299,7 +299,7 @@ class Nofan {
 			const res = await ff.get(uri, params);
 			return res;
 		} catch (err) {
-			Nofan._handleError(err);
+			this._handleError(err);
 		}
 	}
 
@@ -330,7 +330,7 @@ class Nofan {
 			const res = await ff.post(uri, params);
 			return res;
 		} catch (err) {
-			Nofan._handleError(err);
+			this._handleError(err);
 		}
 	}
 
@@ -364,13 +364,17 @@ class Nofan {
 			const res = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
 			return res;
 		} catch (err) {
-			Nofan._handleError(err);
+			this._handleError(err);
 		}
 	}
 
-	static _handleError(err) {
-		process.spinner.fail(err.message);
-		process.exit(1);
+	_handleError(err) {
+		if (this.repl) {
+			throw err;
+		} else {
+			process.spinner.fail(err.message);
+			process.exit(1);
+		}
 	}
 
 	_displayTimeline(timeline, opt) {
@@ -466,7 +470,6 @@ class Nofan {
 	}
 
 	consoleDisplay(item) {
-		process.spinner.succeed();
 		const {repl, consoleType} = this;
 		if (repl) {
 			nofanRepl.showInRepl(item);
