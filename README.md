@@ -173,7 +173,7 @@ $ nofan get users/show --id=litomore --repl
 ## Related
 
 - [fanfou-sdk](https://github.com/LitoMore/fanfou-sdk-node) - Fanfou SDK for Node.js
-- [inquirer-chalk-pipe](https://github.com/LitoMore/inquirer-chalk-pipe) - Prompt for input chalk-pipe style strings
+- [bitbar-fanfou](https://github.com/LitoMore/bitbar-fanfou) - Fanfou notification indicator on BitBar
 
 ## License
 
