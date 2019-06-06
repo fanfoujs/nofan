@@ -444,7 +444,7 @@ class Nofan {
 			});
 
 			const name = chalkPipe(textColor)('[') +
-				chalkPipe(nameColor)(verbose ? `${status.user.name}:${status.id}` : status.user.name) +
+				chalkPipe(nameColor)(verbose ? `${status.user.name}(${status.user.id}):${status.id}` : status.user.name) +
 				chalkPipe(textColor)(']');
 			if (status.photo && hasPhotoTag) {
 				const photoTag = chalkPipe(photoColor)(terminalLink('[图]', status.photo.originurl, {fallback: text => text}));
