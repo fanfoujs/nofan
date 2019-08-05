@@ -1,16 +1,16 @@
 # Nofan
 
-[![](https://badges.greenkeeper.io/LitoMore/nofan.svg)](https://greenkeeper.io/)
-[![](https://img.shields.io/travis/LitoMore/nofan/master.svg)](https://travis-ci.org/LitoMore/nofan)
+[![](https://badges.greenkeeper.io/fanfoujs/nofan.svg)](https://greenkeeper.io/)
+[![](https://img.shields.io/travis/fanfoujs/nofan/master.svg)](https://travis-ci.org/fanfoujs/nofan)
 [![](https://img.shields.io/appveyor/ci/LitoMore/nofan/master.svg)](https://ci.appveyor.com/project/LitoMore/nofan)
 [![](https://img.shields.io/npm/v/nofan.svg)](https://www.npmjs.com/package/nofan)
-[![](https://img.shields.io/npm/l/nofan.svg)](https://github.com/LitoMore/nofan/blob/master/LICENSE)
+[![](https://img.shields.io/npm/l/nofan.svg)](https://github.com/fanfoujs/nofan/blob/master/LICENSE)
 [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://www.youtube.com/watch?v=9auOCbH5Ns4)
 [![](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/xojs/xo)
 
 CLI for Fanfou
 
-<div align="center"><img src="https://raw.githubusercontent.com/LitoMore/nofan/master/media/screenshot.png" alt="Nofan" /></div>
+<div align="center"><img src="https://raw.githubusercontent.com/fanfoujs/nofan/master/media/screenshot.png" alt="Nofan" /></div>
 
 ## Features
 
@@ -85,7 +85,7 @@ $ nofan post <uri>             # Create POST request
 
 Use `nofan colors` to customize your color scheme.
 
-<img width="50%" height="50%" src="https://raw.githubusercontent.com/LitoMore/nofan/master/media/nofan-colors.gif" />
+<img width="50%" height="50%" src="https://raw.githubusercontent.com/fanfoujs/nofan/master/media/nofan-colors.gif" />
 
 **Format**
 
@@ -172,9 +172,9 @@ $ nofan get users/show --id=litomore --repl
 
 ## Related
 
-- [fanfou-sdk](https://github.com/LitoMore/fanfou-sdk-node) - Fanfou SDK for Node.js
+- [fanfou-sdk](https://github.com/fanfoujs/fanfou-sdk-node) - Fanfou SDK for Node.js
 - [bitbar-fanfou](https://github.com/LitoMore/bitbar-fanfou) - Fanfou notification indicator on BitBar
 
 ## License
 
-MIT © [LitoMore](https://github.com/LitoMore)
+MIT

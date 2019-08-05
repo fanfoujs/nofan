@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LitoMore/nofan.git"
+    "url": "git+https://github.com/fanfoujs/nofan.git"
   },
   "author": "LitoMore",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/LitoMore/nofan/issues"
+    "url": "https://github.com/fanfoujs/nofan/issues"
   },
-  "homepage": "https://github.com/LitoMore/nofan#readme",
+  "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
     "boxen": "^4.0.0",
     "chalk": "^2.4.1",
