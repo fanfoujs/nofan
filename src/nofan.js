@@ -371,7 +371,9 @@ class Nofan {
 
 	_handleError(err) {
 		if (this.repl) {
-			throw err;
+			process.spinner.fail(err.message);
+			process.spinner.succeed = () => {};
+			nofanRepl.showInRepl(err);
 		} else {
 			process.spinner.fail(err.message);
 			process.exit(1);
