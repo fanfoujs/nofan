@@ -37,7 +37,7 @@ const defaultConfig = {
 function createNofanDir() {
 	try {
 		fs.mkdirSync(`${homedir}${configPath}`);
-	} catch (err) {}
+	} catch (_) {}
 }
 
 function createJsonFile(filename, content) {
@@ -53,7 +53,7 @@ function readJsonFile(filename) {
 function getConfig() {
 	try {
 		return readJsonFile('config');
-	} catch (err) {
+	} catch (_) {
 		return defaultConfig;
 	}
 }
@@ -61,7 +61,7 @@ function getConfig() {
 function getAccount() {
 	try {
 		return readJsonFile('account');
-	} catch (err) {
+	} catch (_) {
 		return {};
 	}
 }
@@ -84,7 +84,7 @@ async function getTempImagePath() {
 
 	try {
 		fs.mkdirSync(tempPath);
-	} catch (err) { }
+	} catch (_) { }
 
 	try {
 		await execa('pngpaste', [filepath]);

@@ -59,8 +59,8 @@ class Nofan {
 			});
 
 			try {
-				const token = await ff.xauth();
 				config.USER = username;
+				const token = await ff.xauth();
 				util.createNofanDir();
 				util.setConfig(config);
 				const account = util.getAccount();
@@ -112,9 +112,9 @@ class Nofan {
 		config.CONSUMER_KEY = settings.key || util.defaultConfig.CONSUMER_KEY;
 		config.CONSUMER_SECRET = settings.secret || util.defaultConfig.CONSUMER_SECRET;
 		config.DISPLAY_COUNT = settings.display_count;
-		config.TIME_TAG = settings.display.indexOf('time_tag') !== -1;
-		config.PHOTO_TAG = settings.display.indexOf('photo_tag') !== -1;
-		config.SSL = settings.display.indexOf('use_https') !== -1;
+		config.TIME_TAG = settings.display.includes('time_tag');
+		config.PHOTO_TAG = settings.display.includes('photo_tag');
+		config.SSL = settings.display.includes('use_https');
 
 		if (settings.api_domain) {
 			config.API_DOMAIN = settings.api_domain;
