@@ -37,7 +37,7 @@
   "devDependencies": {
     "ava": "^2.3.0",
     "execa": "^2.0.4",
-    "xo": "^0.24.0"
+    "xo": "^0.25.0"
   },
   "xo": {
     "rules": {
