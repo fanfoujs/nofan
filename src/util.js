@@ -94,8 +94,14 @@ async function getTempImagePath_Windows() {
 	try {
 		await ps.invoke();
 	} catch (err) {
-		console.log(err);
-		process.exit(1);
+		if (err.message && err.message.match('You cannot call a method on a null-valued expression.')) {
+			process.spinner.fail('No image data found on the clipboard');
+		} else {
+			console.log(err && err.message);
+			process.exit(1);
+		}
+	} finally {
+		ps.dispose();
 	}
 
 	return filepath;
