@@ -9,6 +9,7 @@ const importLazy = require('import-lazy')(require);
 const chalk = importLazy('chalk');
 const boxen = importLazy('boxen');
 const execa = importLazy('execa');
+const Shell = importLazy('node-powershell');
 
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
 const homedir = os.homedir();
@@ -74,13 +75,42 @@ function setAccount(account) {
 	return createJsonFile('account', account);
 }
 
-async function getTempImagePath() {
+async function getTempImagePath_Windows() {
 	const tempPath = homedir + configPath + 'temp';
 	const filepath = path.join(tempPath, 'temp.png');
-	if (process.platform !== 'darwin') {
-		process.spinner.fail('Upload from clipboard only available in macOS');
-		process.exit(1);
+
+	try {
+		fs.mkdirSync(tempPath);
+	} catch (_) { }
+
+	const ps = new Shell({
+		executionPolicy: 'Bypass',
+		noProfile: true
+	});
+
+	ps.addCommand('$img = Get-Clipboard -Format Image');
+	ps.addCommand(`$img.save("${filepath}")`);
+
+	try {
+		await ps.invoke();
+	} catch (err) {
+		if (err.message && err.message.match('You cannot call a method on a null-valued expression.')) {
+			process.spinner.fail('No image data found on the clipboard');
+			process.exit(1);
+		} else {
+			console.log(err && err.message);
+			process.exit(1);
+		}
+	} finally {
+		ps.dispose();
 	}
+
+	return filepath;
+}
+
+async function getTempImagePath_macOS() {
+	const tempPath = homedir + configPath + 'temp';
+	const filepath = path.join(tempPath, 'temp.png');
 
 	try {
 		fs.mkdirSync(tempPath);
@@ -109,5 +139,6 @@ module.exports = {
 	getAccount,
 	setConfig,
 	setAccount,
-	getTempImagePath
+	getTempImagePath_macOS,
+	getTempImagePath_Windows
 };
