@@ -222,8 +222,24 @@ class Nofan {
 		if (photo) {
 			await this._upload(photo, text);
 		} else if (clipboard) {
-			const tempFilepath = await util.getTempImagePath();
-			await this._upload(tempFilepath, text);
+			switch (process.platform) {
+				case 'darwin': {
+					const tempFilepath = await util.getTempImagePath_macOS();
+					await this._upload(tempFilepath, text);
+					break;
+				}
+
+				case 'win32': {
+					const tempFilepath = await util.getTempImagePath_Windows();
+					await this._upload(tempFilepath, text);
+					break;
+				}
+
+				default: {
+					process.spinner.fail('Upload from clipboard only available in macOS or Windows');
+					process.exit(1);
+				}
+			}
 		}
 
 		process.spinner.succeed('Sent!');
