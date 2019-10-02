@@ -112,7 +112,7 @@ Nofan support post a photo from a local path or clipboard:
 # Post a photo from local path, use `-p` or `--photo`
 $ nofan unicorn -p ~/Desktop/heart.png
 
-# Post a photo from clipboard (macOS only), use `-c` or `--clipboard`
+# Post a photo from clipboard (macOS or Windows), use `-c` or `--clipboard`
 $ nofan hi my love -c
 ```
 
