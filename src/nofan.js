@@ -72,6 +72,7 @@ class Nofan {
 				};
 				util.setAccount(account);
 				process.spinner.succeed('Login succeed!');
+				process.exit(0);
 			} catch (err) {
 				process.spinner.fail(err.message);
 				process.exit(1);
@@ -200,6 +201,7 @@ class Nofan {
 			const {trends: trend} = await inquirer.prompt(trendsPrompt(hotTrends, savedTrends));
 			process.spinner.start('Fetching');
 			await this.searchTimeline(trend);
+			process.exit(0);
 		} else {
 			process.spinner.fail('No trends exist');
 			process.exit(1);
