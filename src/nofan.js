@@ -7,7 +7,7 @@ const importLazy = require('import-lazy')(require);
 const justSnakeCase = importLazy('just-snake-case');
 const terminalLink = importLazy('terminal-link');
 const chalkPipe = importLazy('chalk-pipe');
-const TimeAgo = importLazy('timeago.js');
+const timeago = importLazy('timeago.js');
 const Fanfou = importLazy('fanfou-sdk');
 const inquirer = importLazy('inquirer');
 const moment = importLazy('moment');
@@ -481,7 +481,7 @@ class Nofan {
 						`${moment(new Date(status.created_at))
 							.local()
 							.format('YYYY-MM-DD HH:mm:ss')}` :
-						new TimeAgo().format(status.created_at)})`
+						timeago.format(status.created_at)})`
 				);
 				console.log(`${name} ${text} ${statusTimeAgo}`);
 			} else {
