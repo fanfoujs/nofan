@@ -21,7 +21,6 @@
   "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
     "boxen": "^4.0.0",
-    "chalk": "^3.0.0",
     "chalk-pipe": "^3.0.0",
     "chalk": "^3.0.0",
     "chalk-pipe": "^2.0.0",
