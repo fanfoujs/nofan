@@ -20,7 +20,7 @@ const defaultConfig = {
 	DISPLAY_COUNT: 10,
 	TIME_TAG: true,
 	PHOTO_TAG: true,
-	SSL: false,
+	SSL: true,
 	API_DOMAIN: 'api.fanfou.com',
 	OAUTH_DOMAIN: 'fanfou.com',
 	COLORS: {
