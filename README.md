@@ -1,8 +1,7 @@
 # Nofan
 
 [![](https://badges.greenkeeper.io/fanfoujs/nofan.svg)](https://greenkeeper.io/)
-[![](https://img.shields.io/travis/fanfoujs/nofan/master.svg)](https://travis-ci.org/fanfoujs/nofan)
-[![](https://img.shields.io/appveyor/ci/LitoMore/nofan/master.svg)](https://ci.appveyor.com/project/LitoMore/nofan)
+[![](https://github.com/fanfoujs/nofan/workflows/Node/badge.svg)](https://github.com/fanfoujs/nofan/actions)
 [![](https://img.shields.io/npm/v/nofan.svg)](https://www.npmjs.com/package/nofan)
 [![](https://img.shields.io/npm/l/nofan.svg)](https://github.com/fanfoujs/nofan/blob/master/LICENSE)
 [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://www.youtube.com/watch?v=9auOCbH5Ns4)
