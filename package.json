@@ -33,7 +33,7 @@
     "ora": "^4.0.0",
     "terminal-link": "^2.0.0",
     "timeago.js": "^4.0.1",
-    "update-notifier": "^3.0.1"
+    "update-notifier": "^4.0.0"
   },
   "devDependencies": {
     "ava": "^2.3.0",
