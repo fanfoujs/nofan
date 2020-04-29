@@ -1,6 +1,5 @@
 # Nofan
 
-[![](https://badges.greenkeeper.io/fanfoujs/nofan.svg)](https://greenkeeper.io/)
 [![](https://github.com/fanfoujs/nofan/workflows/Node/badge.svg)](https://github.com/fanfoujs/nofan/actions)
 [![](https://img.shields.io/npm/v/nofan.svg)](https://www.npmjs.com/package/nofan)
 [![](https://img.shields.io/npm/l/nofan.svg)](https://github.com/fanfoujs/nofan/blob/master/LICENSE)
