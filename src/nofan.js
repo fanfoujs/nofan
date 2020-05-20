@@ -247,6 +247,7 @@ class Nofan {
 					}
 				}
 
+				// eslint-disable no-fallthrough
 				default: {
 					process.spinner.fail('Upload from clipboard only available on macOS, Windows and WSL');
 					process.exit(1);
