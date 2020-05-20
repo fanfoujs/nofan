@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs');
+const isWsl = require('is-wsl');
 const importLazy = require('import-lazy')(require);
 
 const justSnakeCase = importLazy('just-snake-case');
@@ -237,8 +238,17 @@ class Nofan {
 					break;
 				}
 
+				case 'linux': {
+					if (isWsl) {
+						process.env.NPS = 'powershell.exe';
+						const tempFilepath = await util.getTempImagePath_Windows();
+						await this._upload(tempFilepath, text);
+						break;
+					}
+				}
+
 				default: {
-					process.spinner.fail('Upload from clipboard only available in macOS or Windows');
+					process.spinner.fail('Upload from clipboard only available on macOS, Windows and WSL');
 					process.exit(1);
 				}
 			}
