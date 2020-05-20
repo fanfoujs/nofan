@@ -190,9 +190,9 @@ switch (commands[0]) {
 
 		(async () => {
 			try {
-				const res = await nofan[method](uriPath);
+				const result = await nofan[method](uriPath);
 				process.spinner.succeed();
-				nofan.consoleDisplay(res);
+				nofan.consoleDisplay(result);
 			} catch (err) {
 				process.spinner.fail();
 				nofan.consoleDisplay(err);

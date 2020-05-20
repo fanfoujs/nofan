@@ -75,12 +75,12 @@ function setAccount(account) {
 	return createJsonFile('account', account);
 }
 
-async function getTempImagePath_Windows() {
-	const tempPath = homedir + configPath + 'temp';
-	const filepath = path.join(tempPath, 'temp.png');
+async function getTemporaryImagePath_Windows() {
+	const temporaryPath = homedir + configPath + 'temp';
+	const filepath = path.join(temporaryPath, 'temp.png');
 
 	try {
-		fs.mkdirSync(tempPath);
+		fs.mkdirSync(temporaryPath);
 	} catch (_) { }
 
 	const ps = new Shell({
@@ -108,12 +108,12 @@ async function getTempImagePath_Windows() {
 	return filepath;
 }
 
-async function getTempImagePath_macOS() {
-	const tempPath = homedir + configPath + 'temp';
-	const filepath = path.join(tempPath, 'temp.png');
+async function getTemporaryImagePath_macOS() {
+	const temporaryPath = homedir + configPath + 'temp';
+	const filepath = path.join(temporaryPath, 'temp.png');
 
 	try {
-		fs.mkdirSync(tempPath);
+		fs.mkdirSync(temporaryPath);
 	} catch (_) { }
 
 	try {
@@ -139,6 +139,6 @@ module.exports = {
 	getAccount,
 	setConfig,
 	setAccount,
-	getTempImagePath_macOS,
-	getTempImagePath_Windows
+	getTempImagePath_macOS: getTemporaryImagePath_macOS,
+	getTempImagePath_Windows: getTemporaryImagePath_Windows
 };

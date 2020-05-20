@@ -2,9 +2,9 @@
 
 const repl = require('repl');
 
-const showInRepl = (params = {}) => {
+const showInRepl = (parameters = {}) => {
 	const r = repl.start('> ');
-	r.context.result = params;
+	r.context.result = parameters;
 };
 
 module.exports = {

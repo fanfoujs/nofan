@@ -24,15 +24,15 @@ const trendsPrompt = importLazy('./prompts/trends');
 
 class Nofan {
 	constructor(opt = {}) {
-		const {verbose, photo, clipboard, repl, consoleType = 'log', ...params} = opt;
+		const {verbose, photo, clipboard, repl, consoleType = 'log', ...parameters} = opt;
 		this.verbose = verbose;
 		this.photo = photo;
 		this.clipboard = clipboard;
 		this.repl = repl;
 		this.consoleType = consoleType;
 		this.params = {};
-		Object.keys(params).forEach(key => {
-			this.params[justSnakeCase(key)] = params[key];
+		Object.keys(parameters).forEach(key => {
+			this.params[justSnakeCase(key)] = parameters[key];
 		});
 
 		try {
@@ -55,7 +55,7 @@ class Nofan {
 				apiDomain: config.API_DOMAIN,
 				oauthDomain: config.OAUTH_DOMAIN,
 				hooks: {
-					baseString: str => config.SSL ? str.replace('https', 'http') : str
+					baseString: string => config.SSL ? string.replace('https', 'http') : string
 				}
 			});
 
@@ -227,22 +227,22 @@ class Nofan {
 		} else if (clipboard) {
 			switch (process.platform) {
 				case 'darwin': {
-					const tempFilepath = await util.getTempImagePath_macOS();
-					await this._upload(tempFilepath, text);
+					const temporaryFilepath = await util.getTempImagePath_macOS();
+					await this._upload(temporaryFilepath, text);
 					break;
 				}
 
 				case 'win32': {
-					const tempFilepath = await util.getTempImagePath_Windows();
-					await this._upload(tempFilepath, text);
+					const temporaryFilepath = await util.getTempImagePath_Windows();
+					await this._upload(temporaryFilepath, text);
 					break;
 				}
 
 				case 'linux': {
 					if (isWsl) {
 						process.env.NPS = 'powershell.exe';
-						const tempFilepath = await util.getTempImagePath_Windows();
-						await this._upload(tempFilepath, text);
+						const temporaryFilepath = await util.getTempImagePath_Windows();
+						await this._upload(temporaryFilepath, text);
 						break;
 					}
 				}
@@ -303,7 +303,7 @@ class Nofan {
 		return this._post(uri, this.params);
 	}
 
-	async _get(uri, params) {
+	async _get(uri, parameters) {
 		const {config} = this;
 		const account = util.getAccount();
 		let user = account[config.USER];
@@ -326,14 +326,14 @@ class Nofan {
 
 		const ff = this.initFanfou(user, config);
 		try {
-			const res = await ff.get(uri, params);
-			return res;
+			const result = await ff.get(uri, parameters);
+			return result;
 		} catch (err) {
 			this._handleError(err);
 		}
 	}
 
-	async _post(uri, params) {
+	async _post(uri, parameters) {
 		const {config} = this;
 		const account = util.getAccount();
 		let user = account[config.USER];
@@ -357,8 +357,8 @@ class Nofan {
 
 		const ff = this.initFanfou(user, config);
 		try {
-			const res = await ff.post(uri, params);
-			return res;
+			const result = await ff.post(uri, parameters);
+			return result;
 		} catch (err) {
 			this._handleError(err);
 		}
@@ -391,8 +391,8 @@ class Nofan {
 		const ff = this.initFanfou(user, config);
 
 		try {
-			const res = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
-			return res;
+			const result = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
+			return result;
 		} catch (err) {
 			this._handleError(err);
 		}
@@ -521,7 +521,7 @@ class Nofan {
 			apiDomain: config.API_DOMAIN,
 			oauthDomain: config.OAUTH_DOMAIN,
 			hooks: {
-				baseString: str => config.SSL ? str.replace('https', 'http') : str
+				baseString: string => config.SSL ? string.replace('https', 'http') : string
 			}
 		});
 	}
