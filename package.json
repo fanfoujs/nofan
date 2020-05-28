@@ -23,6 +23,7 @@
     "boxen": "^4.0.0",
     "chalk": "^4.0.0",
     "chalk-pipe": "^3.0.0",
+    "execa": "^4.0.2",
     "fanfou-sdk": "^4.0.5",
     "import-lazy": "^4.0.0",
     "inquirer": "^7.0.0",
@@ -38,7 +39,6 @@
   },
   "devDependencies": {
     "ava": "^3.0.0",
-    "execa": "^4.0.0",
     "xo": "^0.30.0"
   },
   "xo": {
