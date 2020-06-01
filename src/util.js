@@ -23,6 +23,7 @@ const defaultConfig = {
 	SSL: true,
 	API_DOMAIN: 'api.fanfou.com',
 	OAUTH_DOMAIN: 'fanfou.com',
+	VERBOSE: false,
 	COLORS: {
 		name: 'green',
 		text: '#cccccc',

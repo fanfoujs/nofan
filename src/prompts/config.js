@@ -22,6 +22,9 @@ module.exports = config => {
 				}, {
 					name: 'use_https',
 					checked: config.SSL || false
+				}, {
+					name: 'verbose_mode',
+					checked: config.VERBOSE || false
 				}
 			]
 		},

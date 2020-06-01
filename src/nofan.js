@@ -25,7 +25,6 @@ const trendsPrompt = importLazy('./prompts/trends');
 class Nofan {
 	constructor(opt = {}) {
 		const {verbose, photo, clipboard, repl, consoleType = 'log', ...parameters} = opt;
-		this.verbose = verbose;
 		this.photo = photo;
 		this.clipboard = clipboard;
 		this.repl = repl;
@@ -37,6 +36,7 @@ class Nofan {
 
 		try {
 			this.config = util.getConfig();
+			this.verbose = this.config.VERBOSE || verbose;
 		} catch (err) {
 			process.spinner.fail(err.message);
 			process.exit();
@@ -117,6 +117,7 @@ class Nofan {
 		config.TIME_TAG = settings.display.includes('time_tag');
 		config.PHOTO_TAG = settings.display.includes('photo_tag');
 		config.SSL = settings.display.includes('use_https');
+		config.VERBOSE = settings.display.includes('verbose_mode');
 
 		if (settings.api_domain) {
 			config.API_DOMAIN = settings.api_domain;
