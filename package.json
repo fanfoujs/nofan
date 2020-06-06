@@ -22,7 +22,7 @@
   "dependencies": {
     "boxen": "^4.0.0",
     "chalk": "^4.0.0",
-    "chalk-pipe": "^3.0.0",
+    "chalk-pipe": "^4.0.0",
     "execa": "^4.0.2",
     "fanfou-sdk": "^4.0.5",
     "import-lazy": "^4.0.0",
