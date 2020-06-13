@@ -15,6 +15,7 @@ CLI for Fanfou
 - Fetch home-timeline
 - Fetch public-timeline
 - Fetch mentions-timeline
+- Fetch context-timeline
 - Fetch self-timeline
 - Fetch user-timeline
 - Fetch trends-timeline
@@ -65,6 +66,7 @@ $ nofan home|h                 # Fetch home timeline
 $ nofan mentions|m             # Fetch mentions timeline
 $ nofan me                     # Fetch self timeline
 $ nofan public|p               # Fetch public timeline
+$ nofan context|cont           # Fetch context timeline
 $ nofan trends|tr              # Fetch trends timeline
 $ nofan search|se <query>      # Search public timeline
 $ nofan user <id>              # Fetch user timeline

@@ -186,6 +186,11 @@ class Nofan {
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
+	async contextTimeline(id) {
+		const statuses = await this._get('/statuses/context_timeline', {id, format: 'html', ...this.params});
+		this._displayTimeline(statuses, {verbose: this.verbose});
+	}
+
 	async searchTimeline(q) {
 		const {DISPLAY_COUNT: count} = this.config;
 		const uri = this.params.id ? '/search/user_timeline' : '/search/public_timeline';

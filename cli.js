@@ -32,6 +32,7 @@ Commands:
   mentions|m                   Show mentions
   me                           Show my statuses
   public|p                     Show public timeline
+  context|cont                 Show context timeline
   search|se <query>            Search public or user timeline
   trends|tr                    Fetch trends
   user <id>                    Fetch user-timeline
@@ -120,6 +121,14 @@ switch (commands[0]) {
 	case 'p': {
 		spinner('Fetching');
 		nofan.publicTimeline();
+		break;
+	}
+
+	case 'context':
+	case 'cont': {
+		spinner('Fetch');
+		const [, id] = commands;
+		nofan.contextTimeline(id);
 		break;
 	}
 
