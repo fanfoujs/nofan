@@ -39,7 +39,7 @@ const defaultConfig = {
 function createNofanDir() {
 	try {
 		fs.mkdirSync(`${homedir}${configPath}`);
-	} catch (_) {}
+	} catch {}
 }
 
 function createJsonFile(filename, content) {
@@ -55,7 +55,7 @@ function readJsonFile(filename) {
 function getConfig() {
 	try {
 		return readJsonFile('config');
-	} catch (_) {
+	} catch {
 		return defaultConfig;
 	}
 }
@@ -63,7 +63,7 @@ function getConfig() {
 function getAccount() {
 	try {
 		return readJsonFile('account');
-	} catch (_) {
+	} catch {
 		return {};
 	}
 }
@@ -82,7 +82,7 @@ async function getTemporaryImagePath_Windows() {
 
 	try {
 		fs.mkdirSync(temporaryPath);
-	} catch (_) { }
+	} catch { }
 
 	const ps = new Shell({
 		executionPolicy: 'Bypass',
@@ -115,7 +115,7 @@ async function getTemporaryImagePath_macOS() {
 
 	try {
 		fs.mkdirSync(temporaryPath);
-	} catch (_) { }
+	} catch { }
 
 	try {
 		await execa('pngpaste', [filepath]);

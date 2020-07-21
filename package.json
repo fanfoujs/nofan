@@ -21,25 +21,25 @@
   "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
     "boxen": "^4.0.0",
-    "chalk": "^4.0.0",
+    "chalk": "^4.1.0",
     "chalk-pipe": "^4.0.0",
-    "execa": "^4.0.2",
+    "execa": "^4.0.3",
     "fanfou-sdk": "^4.0.5",
     "import-lazy": "^4.0.0",
-    "inquirer": "^7.0.0",
+    "inquirer": "^7.3.2",
     "is-wsl": "^2.2.0",
     "just-snake-case": "^1.1.0",
-    "meow": "^6.0.0",
-    "moment": "^2.23.0",
+    "meow": "^7.0.1",
+    "moment": "^2.27.0",
     "node-powershell": "^4.0.0",
-    "ora": "^4.0.0",
+    "ora": "^4.0.5",
     "terminal-link": "^2.0.0",
     "timeago.js": "^4.0.1",
     "update-notifier": "^4.0.0"
   },
   "devDependencies": {
-    "ava": "^3.0.0",
-    "xo": "^0.30.0"
+    "ava": "^3.10.1",
+    "xo": "^0.32.1"
   },
   "xo": {
     "rules": {
