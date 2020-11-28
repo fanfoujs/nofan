@@ -2,7 +2,9 @@
   "name": "nofan",
   "version": "1.11.0",
   "description": "CLI for Fanfou",
-  "bin": "cli.js",
+  "bin": {
+    "nofan": "cli.js"
+  },
   "engines": {
     "node": ">=10"
   },
@@ -39,7 +41,7 @@
   },
   "devDependencies": {
     "ava": "^3.10.1",
-    "xo": "^0.32.1"
+    "xo": "^0.35.0"
   },
   "xo": {
     "rules": {
