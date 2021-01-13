@@ -202,9 +202,9 @@ switch (commands[0]) {
 				const result = await nofan[method](uriPath);
 				process.spinner.succeed();
 				nofan.consoleDisplay(result);
-			} catch (err) {
+			} catch (error) {
 				process.spinner.fail();
-				nofan.consoleDisplay(err);
+				nofan.consoleDisplay(error);
 				if (!nofan.repl) {
 					process.exit(1);
 				}

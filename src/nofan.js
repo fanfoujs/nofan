@@ -37,8 +37,8 @@ class Nofan {
 		try {
 			this.config = util.getConfig();
 			this.verbose = this.config.VERBOSE || verbose;
-		} catch (err) {
-			process.spinner.fail(err.message);
+		} catch (error) {
+			process.spinner.fail(error.message);
 			process.exit();
 		}
 	}
@@ -74,8 +74,8 @@ class Nofan {
 				util.setAccount(account);
 				process.spinner.succeed('Login succeed!');
 				process.exit(0);
-			} catch (err) {
-				process.spinner.fail(err.message);
+			} catch (error) {
+				process.spinner.fail(error.message);
 				process.exit(1);
 			}
 		};
@@ -334,8 +334,8 @@ class Nofan {
 		try {
 			const result = await ff.get(uri, parameters);
 			return result;
-		} catch (err) {
-			this._handleError(err);
+		} catch (error) {
+			this._handleError(error);
 		}
 	}
 
@@ -365,8 +365,8 @@ class Nofan {
 		try {
 			const result = await ff.post(uri, parameters);
 			return result;
-		} catch (err) {
-			this._handleError(err);
+		} catch (error) {
+			this._handleError(error);
 		}
 	}
 
@@ -399,18 +399,18 @@ class Nofan {
 		try {
 			const result = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
 			return result;
-		} catch (err) {
-			this._handleError(err);
+		} catch (error) {
+			this._handleError(error);
 		}
 	}
 
-	_handleError(err) {
+	_handleError(error) {
 		if (this.repl) {
-			process.spinner.fail(err.message);
+			process.spinner.fail(error.message);
 			process.spinner.succeed = () => {};
-			nofanRepl.showInRepl(err);
+			nofanRepl.showInRepl(error);
 		} else {
-			process.spinner.fail(err.message);
+			process.spinner.fail(error.message);
 			process.exit(1);
 		}
 	}

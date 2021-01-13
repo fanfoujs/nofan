@@ -82,7 +82,7 @@ async function getTemporaryImagePath_Windows() {
 
 	try {
 		fs.mkdirSync(temporaryPath);
-	} catch { }
+	} catch {}
 
 	const ps = new Shell({
 		executionPolicy: 'Bypass',
@@ -94,12 +94,12 @@ async function getTemporaryImagePath_Windows() {
 
 	try {
 		await ps.invoke();
-	} catch (err) {
-		if (err.message && err.message.match('You cannot call a method on a null-valued expression.')) {
+	} catch (error) {
+		if (error.message && error.message.match('You cannot call a method on a null-valued expression.')) {
 			process.spinner.fail('No image data found on the clipboard');
 			process.exit(1);
 		} else {
-			console.log(err && err.message);
+			console.log(error && error.message);
 			process.exit(1);
 		}
 	} finally {
@@ -115,18 +115,18 @@ async function getTemporaryImagePath_macOS() {
 
 	try {
 		fs.mkdirSync(temporaryPath);
-	} catch { }
+	} catch {}
 
 	try {
 		await execa('pngpaste', [filepath]);
-	} catch (err) {
-		if (err.code === 'ENOENT') {
+	} catch (error) {
+		if (error.code === 'ENOENT') {
 			const tip = `Please use ${chalk.green('`brew install pngpaste`')} to solve`;
 			process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, {padding: 1}));
 			process.exit(1);
 		}
 
-		process.spinner.fail(err.stderr.trim());
+		process.spinner.fail(error.stderr.trim());
 		process.exit(1);
 	}
 

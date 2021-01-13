@@ -41,17 +41,11 @@
   },
   "devDependencies": {
     "ava": "^3.10.1",
-    "xo": "^0.35.0"
+    "xo": "^0.37.1"
   },
   "xo": {
     "rules": {
-      "camelcase": 0,
-      "unicorn/catch-error-name": [
-        "error",
-        {
-          "name": "err"
-        }
-      ]
+      "camelcase": 0
     }
   }
 }
