@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = config => {
+export const configPrompt = config => {
 	const promptList = [
 		{
 			type: 'input',

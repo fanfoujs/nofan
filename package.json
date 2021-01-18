@@ -2,11 +2,12 @@
   "name": "nofan",
   "version": "1.11.0",
   "description": "CLI for Fanfou",
+  "type": "module",
   "bin": {
     "nofan": "cli.js"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "scripts": {
     "test": "xo"

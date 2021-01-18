@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = opt => {
+export const loginPrompt = opt => {
 	const usernameInput = {
 		type: 'input',
 		name: 'username',

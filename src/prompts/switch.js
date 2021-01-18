@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = choices => {
+export const switchPrompt = choices => {
 	return [
 		{
 			type: 'list',
