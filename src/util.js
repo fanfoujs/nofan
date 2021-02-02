@@ -1,20 +1,17 @@
 #!/usr/bin/env node
-'use strict';
 
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const importLazy = require('import-lazy')(require);
-
-const chalk = importLazy('chalk');
-const boxen = importLazy('boxen');
-const execa = importLazy('execa');
-const Shell = importLazy('node-powershell');
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import chalk from 'chalk';
+import boxen from 'boxen';
+import execa from 'execa';
+import Shell from 'node-powershell';
 
 const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
 const homedir = os.homedir();
 
-const defaultConfig = {
+export const defaultConfig = {
 	CONSUMER_KEY: '13456aa784cdf7688af69e85d482e011',
 	CONSUMER_SECRET: 'f75c02df373232732b69354ecfbcabea',
 	DISPLAY_COUNT: 10,
@@ -36,47 +33,47 @@ const defaultConfig = {
 	}
 };
 
-function createNofanDir() {
+export const createNofanDir = () => {
 	try {
 		fs.mkdirSync(`${homedir}${configPath}`);
 	} catch {}
-}
+};
 
-function createJsonFile(filename, content) {
+export const createJsonFile = (filename, content) => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	return fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
-}
+};
 
-function readJsonFile(filename) {
+export const readJsonFile = filename => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-}
+};
 
-function getConfig() {
+export const getConfig = () => {
 	try {
 		return readJsonFile('config');
 	} catch {
 		return defaultConfig;
 	}
-}
+};
 
-function getAccount() {
+export const getAccount = () => {
 	try {
 		return readJsonFile('account');
 	} catch {
 		return {};
 	}
-}
+};
 
-function setConfig(config) {
+export const setConfig = config => {
 	return createJsonFile('config', config);
-}
+};
 
-function setAccount(account) {
+export const setAccount = account => {
 	return createJsonFile('account', account);
-}
+};
 
-async function getTemporaryImagePath_Windows() {
+export const getTemporaryImagePath_Windows = async () => {
 	const temporaryPath = homedir + configPath + 'temp';
 	const filepath = path.join(temporaryPath, 'temp.png');
 
@@ -107,9 +104,9 @@ async function getTemporaryImagePath_Windows() {
 	}
 
 	return filepath;
-}
+};
 
-async function getTemporaryImagePath_macOS() {
+export const getTemporaryImagePath_macOS = async () => {
 	const temporaryPath = homedir + configPath + 'temp';
 	const filepath = path.join(temporaryPath, 'temp.png');
 
@@ -131,15 +128,4 @@ async function getTemporaryImagePath_macOS() {
 	}
 
 	return filepath;
-}
-
-module.exports = {
-	defaultConfig,
-	createNofanDir,
-	getConfig,
-	getAccount,
-	setConfig,
-	setAccount,
-	getTempImagePath_macOS: getTemporaryImagePath_macOS,
-	getTempImagePath_Windows: getTemporaryImagePath_Windows
 };

@@ -1,15 +1,9 @@
 #!/usr/bin/env node
 
-const path = require('path');
-const meow = require('meow');
-const importLazy = require('import-lazy')(require);
-
-const ora = importLazy('ora');
-const updateNotifier = importLazy('update-notifier');
-const pkg = importLazy('./package');
-const Nofan = importLazy('./src/nofan');
-
-updateNotifier({pkg}).notify({isGlobal: true});
+import path from 'path';
+import meow from 'meow';
+import ora from 'ora';
+import Nofan from './src/nofan.js';
 
 const cli = meow(`
 Usage: nofan [options] [command] <status> [more...]

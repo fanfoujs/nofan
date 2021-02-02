@@ -1,28 +1,25 @@
 #!/usr/bin/env node
-'use strict';
 
-const fs = require('fs');
-const isWsl = require('is-wsl');
-const importLazy = require('import-lazy')(require);
+import fs from 'fs';
+import isWsl from 'is-wsl';
+import justSnakeCase from 'just-snake-case';
+import terminalLink from 'terminal-link';
+import chalkPipe from 'chalk-pipe';
+import timeago from 'timeago.js';
+import Fanfou from 'fanfou-sdk';
+import inquirer from 'inquirer';
+import moment from 'moment';
+import chalk from 'chalk';
+import ora from 'ora';
+import * as util from './util.js';
+import {showInRepl} from './repl.js';
+import {colorsPrompt} from './prompts/colors.js';
+import {configPrompt} from './prompts/config.js';
+import {loginPrompt} from './prompts/login.js';
+import {switchPrompt} from './prompts/switch.js';
+import {trendsPrompt} from './prompts/trends.js';
 
-const justSnakeCase = importLazy('just-snake-case');
-const terminalLink = importLazy('terminal-link');
-const chalkPipe = importLazy('chalk-pipe');
-const timeago = importLazy('timeago.js');
-const Fanfou = importLazy('fanfou-sdk');
-const inquirer = importLazy('inquirer');
-const moment = importLazy('moment');
-const chalk = importLazy('chalk');
-const ora = importLazy('ora');
-const util = importLazy('./util');
-const nofanRepl = importLazy('./repl');
-const colorsPrompt = importLazy('./prompts/colors');
-const configPrompt = importLazy('./prompts/config');
-const loginPrompt = importLazy('./prompts/login');
-const switchPrompt = importLazy('./prompts/switch');
-const trendsPrompt = importLazy('./prompts/trends');
-
-class Nofan {
+export default class Nofan {
 	constructor(opt = {}) {
 		const {verbose, photo, clipboard, repl, consoleType = 'log', ...parameters} = opt;
 		this.photo = photo;
@@ -233,13 +230,13 @@ class Nofan {
 		} else if (clipboard) {
 			switch (process.platform) {
 				case 'darwin': {
-					const temporaryFilepath = await util.getTempImagePath_macOS();
+					const temporaryFilepath = await util.getTemporaryImagePath_macOS();
 					await this._upload(temporaryFilepath, text);
 					break;
 				}
 
 				case 'win32': {
-					const temporaryFilepath = await util.getTempImagePath_Windows();
+					const temporaryFilepath = await util.getTemporaryImagePath_Windows();
 					await this._upload(temporaryFilepath, text);
 					break;
 				}
@@ -247,7 +244,7 @@ class Nofan {
 				case 'linux': {
 					if (isWsl) {
 						process.env.NPS = 'powershell.exe';
-						const temporaryFilepath = await util.getTempImagePath_Windows();
+						const temporaryFilepath = await util.getTemporaryImagePath_Windows();
 						await this._upload(temporaryFilepath, text);
 						break;
 					}
@@ -408,7 +405,7 @@ class Nofan {
 		if (this.repl) {
 			process.spinner.fail(error.message);
 			process.spinner.succeed = () => {};
-			nofanRepl.showInRepl(error);
+			showInRepl(error);
 		} else {
 			process.spinner.fail(error.message);
 			process.exit(1);
@@ -506,7 +503,7 @@ class Nofan {
 	consoleDisplay(item) {
 		const {repl, consoleType} = this;
 		if (repl) {
-			nofanRepl.showInRepl(item);
+			showInRepl(item);
 		} else {
 			console[consoleType](item);
 		}
@@ -528,5 +525,3 @@ class Nofan {
 		});
 	}
 }
-
-module.exports = Nofan;

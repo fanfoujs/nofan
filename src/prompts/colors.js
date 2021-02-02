@@ -1,8 +1,6 @@
-'use strict';
+import chalkPipe from 'chalk-pipe';
 
-const chalkPipe = require('chalk-pipe');
-
-module.exports = config => {
+export const colorsPrompt = config => {
 	const transformer = text => {
 		return chalkPipe(text)(text);
 	};

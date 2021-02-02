@@ -1,10 +1,6 @@
-'use strict';
+import inquirer from 'inquirer';
 
-const importLazy = require('import-lazy')(require);
-
-const inquirer = importLazy('inquirer');
-
-module.exports = (hotTrends, savedTrends) => {
+export const trendsPrompt = (hotTrends, savedTrends) => {
 	const hotList = hotTrends.map(item => item.query);
 	const savedList = savedTrends.map(item => item.query);
 	if (hotList.length > 0) {
