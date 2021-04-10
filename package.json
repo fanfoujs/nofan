@@ -40,7 +40,7 @@
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {
-    "xo": "^0.37.1"
+    "xo": "^0.38.2"
   },
   "xo": {
     "rules": {

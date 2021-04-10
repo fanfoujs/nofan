@@ -15,7 +15,7 @@ export const trendsPrompt = (hotTrends, savedTrends) => {
 		type: 'list',
 		name: 'trends',
 		message: 'Select trends',
-		choices: hotList.concat(savedList),
+		choices: [...hotList, ...savedList],
 		pageSize: 20
 	}];
 };

@@ -27,9 +27,9 @@ export default class Nofan {
 		this.repl = repl;
 		this.consoleType = consoleType;
 		this.params = {};
-		Object.keys(parameters).forEach(key => {
+		for (const key of Object.keys(parameters)) {
 			this.params[justSnakeCase(key)] = parameters[key];
-		});
+		}
 
 		try {
 			this.config = util.getConfig();
@@ -458,9 +458,9 @@ export default class Nofan {
 			return false;
 		};
 
-		timeline.forEach(status => {
+		for (const status of timeline) {
 			let text = '';
-			status.txt.forEach(item => {
+			for (const item of status.txt) {
 				switch (item.type) {
 					case 'at':
 						text += parseHighlight(atColor, item) || chalkPipe(atColor)(verbose ? `${item.text}:${item.id}` : item.text);
@@ -475,7 +475,7 @@ export default class Nofan {
 						text += parseHighlight(textColor, item) || chalkPipe(textColor)(item._text);
 						break;
 				}
-			});
+			}
 
 			const name = chalkPipe(textColor)('[') +
 				chalkPipe(nameColor)(verbose ? `${status.user.name}(${status.user.id}):${status.id}` : status.user.name) +
@@ -497,7 +497,7 @@ export default class Nofan {
 			} else {
 				console.log(`${name} ${text}`);
 			}
-		});
+		}
 	}
 
 	consoleDisplay(item) {
