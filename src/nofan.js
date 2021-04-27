@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
+import fs from 'node:fs';
 import isWsl from 'is-wsl';
 import justSnakeCase from 'just-snake-case';
 import terminalLink from 'terminal-link';
@@ -21,7 +21,14 @@ import {trendsPrompt} from './prompts/trends.js';
 
 export default class Nofan {
 	constructor(opt = {}) {
-		const {verbose, photo, clipboard, repl, consoleType = 'log', ...parameters} = opt;
+		const {
+			verbose,
+			photo,
+			clipboard,
+			repl,
+			consoleType = 'log',
+			...parameters
+		} = opt;
 		this.photo = photo;
 		this.clipboard = clipboard;
 		this.repl = repl;
@@ -52,7 +59,8 @@ export default class Nofan {
 				apiDomain: config.API_DOMAIN,
 				oauthDomain: config.OAUTH_DOMAIN,
 				hooks: {
-					baseString: string => config.SSL ? string.replace('https', 'http') : string
+					baseString: (string) =>
+						config.SSL ? string.replace('https', 'http') : string
 				}
 			});
 
@@ -81,7 +89,9 @@ export default class Nofan {
 			process.spinner = ora('Logging in...').start();
 			login(username, password);
 		} else {
-			const user = await inquirer.prompt(loginPrompt({hasName: Boolean(username)}));
+			const user = await inquirer.prompt(
+				loginPrompt({hasName: Boolean(username)})
+			);
 			if (username) {
 				user.username = username;
 			}
@@ -109,7 +119,8 @@ export default class Nofan {
 		const settings = await inquirer.prompt(configPrompt(config));
 
 		config.CONSUMER_KEY = settings.key || util.defaultConfig.CONSUMER_KEY;
-		config.CONSUMER_SECRET = settings.secret || util.defaultConfig.CONSUMER_SECRET;
+		config.CONSUMER_SECRET =
+			settings.secret || util.defaultConfig.CONSUMER_SECRET;
 		config.DISPLAY_COUNT = settings.display_count;
 		config.TIME_TAG = settings.display.includes('time_tag');
 		config.PHOTO_TAG = settings.display.includes('photo_tag');
@@ -142,20 +153,24 @@ export default class Nofan {
 		const account = util.getAccount();
 
 		if (id) {
-			const found = Object.keys(account).find(k => k.toLowerCase() === id.toLowerCase());
+			const found = Object.keys(account).find(
+				(k) => k.toLowerCase() === id.toLowerCase()
+			);
 			if (found) {
 				config.USER = found;
 				util.setConfig(config);
-				process.spinner = ora().succeed(`Switch account to ${chalk.blue.bold(found)}`);
+				process.spinner = ora().succeed(
+					`Switch account to ${chalk.blue.bold(found)}`
+				);
 			} else {
 				process.spinner = ora().info(`${chalk.blue.bold(id)} needs login`);
 				process.exit(1);
 			}
 		} else {
 			const currentName = config.USER;
-			const choices = Object.keys(account).map(name => {
+			const choices = Object.keys(account).map((name) => {
 				if (name === currentName) {
-					return ({name, disabled: chalk.green('current')});
+					return {name, disabled: chalk.green('current')};
 				}
 
 				return name;
@@ -173,25 +188,44 @@ export default class Nofan {
 
 	async homeTimeline() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/home_timeline', {count, format: 'html', ...this.params});
+		const statuses = await this._get('/statuses/home_timeline', {
+			count,
+			format: 'html',
+			...this.params
+		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async publicTimeline() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/public_timeline', {count, format: 'html', ...this.params});
+		const statuses = await this._get('/statuses/public_timeline', {
+			count,
+			format: 'html',
+			...this.params
+		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async contextTimeline(id) {
-		const statuses = await this._get('/statuses/context_timeline', {id, format: 'html', ...this.params});
+		const statuses = await this._get('/statuses/context_timeline', {
+			id,
+			format: 'html',
+			...this.params
+		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async searchTimeline(q) {
 		const {DISPLAY_COUNT: count} = this.config;
-		const uri = this.params.id ? '/search/user_timeline' : '/search/public_timeline';
-		const statuses = await this._get(uri, {q, count, format: 'html', ...this.params});
+		const uri = this.params.id
+			? '/search/user_timeline'
+			: '/search/public_timeline';
+		const statuses = await this._get(uri, {
+			q,
+			count,
+			format: 'html',
+			...this.params
+		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
@@ -202,7 +236,9 @@ export default class Nofan {
 		];
 		if (hotTrends.length + savedTrends.length > 0) {
 			process.spinner.stop();
-			const {trends: trend} = await inquirer.prompt(trendsPrompt(hotTrends, savedTrends));
+			const {trends: trend} = await inquirer.prompt(
+				trendsPrompt(hotTrends, savedTrends)
+			);
 			process.spinner.start('Fetching');
 			await this.searchTimeline(trend);
 			process.exit(0);
@@ -214,7 +250,12 @@ export default class Nofan {
 
 	async userTimeline(id) {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/user_timeline', {id, count, format: 'html', ...this.params});
+		const statuses = await this._get('/statuses/user_timeline', {
+			id,
+			count,
+			format: 'html',
+			...this.params
+		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
@@ -252,7 +293,9 @@ export default class Nofan {
 
 				// eslint-disable no-fallthrough
 				default: {
-					process.spinner.fail('Upload from clipboard only available on macOS, Windows and WSL');
+					process.spinner.fail(
+						'Upload from clipboard only available on macOS, Windows and WSL'
+					);
 					process.exit(1);
 				}
 			}
@@ -269,27 +312,43 @@ export default class Nofan {
 
 	async mentions() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/mentions', {count, format: 'html', ...this.params});
+		const statuses = await this._get('/statuses/mentions', {
+			count,
+			format: 'html',
+			...this.params
+		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async me() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/user_timeline', {count, format: 'html', ...this.params});
+		const statuses = await this._get('/statuses/user_timeline', {
+			count,
+			format: 'html',
+			...this.params
+		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async reply(id, text) {
 		const status = await this._getStatus(id);
 		const replyText = `@${status.user.name} ${text}`.trim();
-		await this._post('/statuses/update', {in_reply_to_status_id: id, status: replyText, ...this.params});
+		await this._post('/statuses/update', {
+			in_reply_to_status_id: id,
+			status: replyText,
+			...this.params
+		});
 		process.spinner.succeed('Sent!');
 	}
 
 	async repost(id, text) {
 		const status = await this._getStatus(id);
-		const repostText = `${text} 转@${status.user.name} ${status.plain_text}`.trim();
-		await this._post('/statuses/update', {repost_status_id: id, status: repostText, ...this.params});
+		const repostText = `${text} 转@${status.user.name} ${status.plainText}`.trim();
+		await this._post('/statuses/update', {
+			repost_status_id: id,
+			status: repostText,
+			...this.params
+		});
 		process.spinner.succeed('Sent!');
 	}
 
@@ -394,7 +453,10 @@ export default class Nofan {
 		const ff = this.initFanfou(user, config);
 
 		try {
-			const result = await ff.post('/photos/upload', {photo: fs.createReadStream(path), status});
+			const result = await ff.post('/photos/upload', {
+				photo: fs.createReadStream(path),
+				status
+			});
 			return result;
 		} catch (error) {
 			this._handleError(error);
@@ -442,15 +504,17 @@ export default class Nofan {
 				appendText = chalkPipe(style)(`:${item.id}`);
 			}
 
-			if (item.bold_arr) {
-				const highlightText = item.bold_arr.map(keyword => {
-					if (keyword.bold) {
-						const boldColor = `${style}.${highlightColor}`;
-						return chalkPipe(boldColor)(keyword.text);
-					}
+			if (item.boldTexts) {
+				const highlightText = item.boldTexts
+					.map((keyword) => {
+						if (keyword.isBold) {
+							const boldColor = `${style}.${highlightColor}`;
+							return chalkPipe(boldColor)(keyword.text);
+						}
 
-					return chalkPipe(style)(keyword.text);
-				}).join('');
+						return chalkPipe(style)(keyword.text);
+					})
+					.join('');
 
 				return highlightText + appendText;
 			}
@@ -460,38 +524,58 @@ export default class Nofan {
 
 		for (const status of timeline) {
 			let text = '';
-			for (const item of status.txt) {
+			for (const item of status.entities) {
 				switch (item.type) {
 					case 'at':
-						text += parseHighlight(atColor, item) || chalkPipe(atColor)(verbose ? `${item.text}:${item.id}` : item.text);
+						text +=
+							parseHighlight(atColor, item) ||
+							chalkPipe(atColor)(
+								verbose ? `${item.text}:${item.id}` : item.text
+							);
 						break;
 					case 'link':
-						text += parseHighlight(linkColor, item) || chalkPipe(linkColor)(item.text);
+						text +=
+							parseHighlight(linkColor, item) ||
+							chalkPipe(linkColor)(item.text);
 						break;
 					case 'tag':
-						text += parseHighlight(tagColor, item) || chalkPipe(tagColor)(item._text);
+						text +=
+							parseHighlight(tagColor, item) || chalkPipe(tagColor)(item.text);
 						break;
 					default:
-						text += parseHighlight(textColor, item) || chalkPipe(textColor)(item._text);
+						text +=
+							parseHighlight(textColor, item) ||
+							chalkPipe(textColor)(item.text);
 						break;
 				}
 			}
 
-			const name = chalkPipe(textColor)('[') +
-				chalkPipe(nameColor)(verbose ? `${status.user.name}(${status.user.id}):${status.id}` : status.user.name) +
+			const name =
+				chalkPipe(textColor)('[') +
+				chalkPipe(nameColor)(
+					verbose
+						? `${status.user.name}(${status.user.id}):${status.id}`
+						: status.user.name
+				) +
 				chalkPipe(textColor)(']');
 			if (status.photo && hasPhotoTag) {
-				const photoTag = chalkPipe(photoColor)(terminalLink('[图]', status.photo.originurl, {fallback: text => text}));
+				const photoTag = chalkPipe(photoColor)(
+					terminalLink('[图]', status.photo.originurl, {
+						fallback: (text) => text
+					})
+				);
 				text += text.length > 0 ? ` ${photoTag}` : photoTag;
 			}
 
 			if (hasTimeTag) {
 				const statusTimeAgo = chalkPipe(timeagoColor)(
-					`(${verbose ?
-						`${moment(new Date(status.created_at))
-							.local()
-							.format('YYYY-MM-DD HH:mm:ss')}` :
-						timeago.format(status.created_at)})`
+					`(${
+						verbose
+							? `${moment(new Date(status.createdAt))
+									.local()
+									.format('YYYY-MM-DD HH:mm:ss')}`
+							: timeago.format(status.createdAt)
+					})`
 				);
 				console.log(`${name} ${text} ${statusTimeAgo}`);
 			} else {
@@ -520,7 +604,8 @@ export default class Nofan {
 			apiDomain: config.API_DOMAIN,
 			oauthDomain: config.OAUTH_DOMAIN,
 			hooks: {
-				baseString: string => config.SSL ? string.replace('https', 'http') : string
+				baseString: (string) =>
+					config.SSL ? string.replace('https', 'http') : string
 			}
 		});
 	}

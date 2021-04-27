@@ -1,4 +1,4 @@
-export const configPrompt = config => {
+export const configPrompt = (config) => {
 	const promptList = [
 		{
 			type: 'input',
@@ -14,13 +14,16 @@ export const configPrompt = config => {
 				{
 					name: 'time_tag',
 					checked: config.TIME_TAG
-				}, {
+				},
+				{
 					name: 'photo_tag',
 					checked: config.PHOTO_TAG
-				}, {
+				},
+				{
 					name: 'use_https',
 					checked: config.SSL || false
-				}, {
+				},
+				{
 					name: 'verbose_mode',
 					checked: config.VERBOSE || false
 				}

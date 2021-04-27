@@ -1,4 +1,4 @@
-export const switchPrompt = choices => {
+export const switchPrompt = (choices) => {
 	return [
 		{
 			type: 'list',

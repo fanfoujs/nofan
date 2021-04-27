@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-import path from 'path';
+import path from 'node:path';
 import meow from 'meow';
 import ora from 'ora';
 import Nofan from './src/nofan.js';
 
-const cli = meow(`
+const cli = meow(
+	`
 Usage: nofan [options] [command] <status> [more...]
 
 Options:
@@ -37,28 +38,30 @@ Commands:
   <text> [more...]             Post status
   get <uri>                    Create GET request
   post <uri>                   Create POST request
-`, {
-	flags: {
-		help: {
-			alias: 'h'
-		},
-		clipboard: {
-			alias: 'c'
-		},
-		photo: {
-			alias: 'p'
-		},
-		verbose: {
-			alias: 'v'
+`,
+	{
+		flags: {
+			help: {
+				alias: 'h'
+			},
+			clipboard: {
+				alias: 'c'
+			},
+			photo: {
+				alias: 'p'
+			},
+			verbose: {
+				alias: 'v'
+			}
 		}
 	}
-});
+);
 
 const commands = cli.input;
 const {clipboard, photo} = cli.flags;
 const nofan = new Nofan(cli.flags);
 
-const spinner = text => {
+const spinner = (text) => {
 	process.spinner = ora(text).start();
 };
 

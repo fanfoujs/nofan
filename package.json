@@ -23,12 +23,10 @@
   },
   "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
-    "boxen": "^5.0.0",
-    "chalk": "^4.1.0",
-    "chalk-pipe": "^5.0.0",
+    "boxen": "^5.0.1",
+    "chalk-pipe": "^5.1.1",
     "execa": "^5.0.0",
-    "fanfou-sdk": "^4.2.0",
-    "import-lazy": "^4.0.0",
+    "fanfou-sdk": "^5.0.0-beta.3",
     "inquirer": "^7.3.3",
     "is-wsl": "^2.2.0",
     "just-snake-case": "^1.1.0",
@@ -43,6 +41,7 @@
     "xo": "^0.38.2"
   },
   "xo": {
+    "prettier": true,
     "rules": {
       "camelcase": 0
     }

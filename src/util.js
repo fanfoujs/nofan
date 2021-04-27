@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import chalk from 'chalk';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import chalkPipe from 'chalk-pipe';
 import boxen from 'boxen';
 import execa from 'execa';
 import Shell from 'node-powershell';
 
-const configPath = process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
+const configPath =
+	process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
 const homedir = os.homedir();
 
 export const defaultConfig = {
@@ -44,7 +45,7 @@ export const createJsonFile = (filename, content) => {
 	return fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
 };
 
-export const readJsonFile = filename => {
+export const readJsonFile = (filename) => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 };
@@ -65,11 +66,11 @@ export const getAccount = () => {
 	}
 };
 
-export const setConfig = config => {
+export const setConfig = (config) => {
 	return createJsonFile('config', config);
 };
 
-export const setAccount = account => {
+export const setAccount = (account) => {
 	return createJsonFile('account', account);
 };
 
@@ -92,7 +93,12 @@ export const getTemporaryImagePath_Windows = async () => {
 	try {
 		await ps.invoke();
 	} catch (error) {
-		if (error.message && error.message.match('You cannot call a method on a null-valued expression.')) {
+		if (
+			error.message &&
+			error.message.match(
+				'You cannot call a method on a null-valued expression.'
+			)
+		) {
 			process.spinner.fail('No image data found on the clipboard');
 			process.exit(1);
 		} else {
@@ -118,8 +124,13 @@ export const getTemporaryImagePath_macOS = async () => {
 		await execa('pngpaste', [filepath]);
 	} catch (error) {
 		if (error.code === 'ENOENT') {
-			const tip = `Please use ${chalk.green('`brew install pngpaste`')} to solve`;
-			process.spinner.fail(`Required ${chalk.green('`pngpaste`')}\n\n` + boxen(tip, {padding: 1}));
+			const tip = `Please use ${chalkPipe('green')(
+				'`brew install pngpaste`'
+			)} to solve`;
+			process.spinner.fail(
+				`Required ${chalkPipe('green')('`pngpaste`')}\n\n` +
+					boxen(tip, {padding: 1})
+			);
 			process.exit(1);
 		}
 
