@@ -40,6 +40,7 @@ Commands:
   post <uri>                   Create POST request
 `,
 	{
+		importMeta: import.meta,
 		flags: {
 			help: {
 				alias: 'h'
