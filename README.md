@@ -33,8 +33,8 @@ CLI for Fanfou
 
 ## Install
 
-```bash
-$ npm i -g nofan
+```sh
+npm i -g nofan
 ```
 
 ---
@@ -45,38 +45,38 @@ $ npm i -g nofan
 
 ## Login
 
-```bash
+```sh
 # Login fanfou account
-$ nofan login
+nofan login
 ```
 
 ## Usage
 
 ### Commands
 
-```bash
-$ nofan -h                     # Show help
-$ nofan config                 # Config nofan
-$ nofan colors                 # Customize color style
-$ nofan login                  # Login fanfou account
-$ nofan logout                 # Logout current account
-$ nofan switch                 # Switch fanfou account
-$ nofan                        # Fetch home timeline
-$ nofan home|h                 # Fetch home timeline
-$ nofan mentions|m             # Fetch mentions timeline
-$ nofan me                     # Fetch self timeline
-$ nofan public|p               # Fetch public timeline
-$ nofan context|cont           # Fetch context timeline
-$ nofan trends|tr              # Fetch trends timeline
-$ nofan search|se <query>      # Search public timeline
-$ nofan user <id>              # Fetch user timeline
-$ nofan show <id>              # Fetch status item
-$ nofan reply|re <id> [text]   # Reply status
-$ nofan repost|rt <id> [text]  # Repost status
-$ nofan undo                   # Delete last status
-$ nofan <text> [more...]       # Post status
-$ nofan get <uri>              # Create GET request
-$ nofan post <uri>             # Create POST request
+```sh
+nofan -h                     # Show help
+nofan config                 # Config nofan
+nofan colors                 # Customize color style
+nofan login                  # Login fanfou account
+nofan logout                 # Logout current account
+nofan switch                 # Switch fanfou account
+nofan                        # Fetch home timeline
+nofan home|h                 # Fetch home timeline
+nofan mentions|m             # Fetch mentions timeline
+nofan me                     # Fetch self timeline
+nofan public|p               # Fetch public timeline
+nofan context|cont           # Fetch context timeline
+nofan trends|tr              # Fetch trends timeline
+nofan search|se <query>      # Search public timeline
+nofan user <id>              # Fetch user timeline
+nofan show <id>              # Fetch status item
+nofan reply|re <id> [text]   # Reply status
+nofan repost|rt <id> [text]  # Repost status
+nofan undo                   # Delete last status
+nofan <text> [more...]       # Post status
+nofan get <uri>              # Create GET request
+nofan post <uri>             # Create POST request
 ```
 
 ## Tips
@@ -108,12 +108,12 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 
 Nofan support post a photo from a local path or clipboard:
 
-```bash
+```sh
 # Post a photo from local path, use `-p` or `--photo`
-$ nofan unicorn -p ~/Desktop/heart.png
+nofan unicorn -p ~/Desktop/heart.png
 
 # Post a photo from clipboard (only support macOS, Windows and WSL), use `-c` or `--clipboard`
-$ nofan hi my love -c
+nofan hi my love -c
 ```
 
 ### Verbose Mode
@@ -126,12 +126,12 @@ Now we have a verbose mode for the timeline.
 
 You could do a quick action by use `reply` and `repost` command:
 
-```bash
+```sh
 # Reply
-$ nofan re _5gqZTpjAlM hi litomore
+nofan re _5gqZTpjAlM hi litomore
 
 # Repost
-$ nofan rt _5gqZTpjAlM hi litomore
+nofan rt _5gqZTpjAlM hi litomore
 ```
 
 ### API Parameter Flags
@@ -140,33 +140,33 @@ Nofan is very easy to use, but also very powerful. You could pass to [API](https
 
 You could do something like this:
 
-```bash
-$ nofan --page=2 --count=30
-$ nofan se unicron --count=60
+```sh
+nofan --page=2 --count=30
+nofan se unicron --count=60
 ```
 
 ### Customizable GET/POST Request
 
 Use `nofan get` or `nofan post` to create a GET/POST request:
 
-```bash
-$ nofan get account/notification
-$ nofan get statuses/home_timeline --mode=lite
-$ nofan post statuses/update --status=hi
+```sh
+nofan get account/notification
+nofan get statuses/home_timeline --mode=lite
+nofan post statuses/update --status=hi
 ```
 
 You could specify a [console type](https://nodejs.org/dist/latest/docs/api/console.html) for output, default is `console.log`:
 
-```bash
-$ nofan get account/notification --console-type=table
+```sh
+nofan get account/notification --console-type=table
 ```
 
 You could use `--repl` option to inspect the result in [REPL](https://nodejs.org/dist/latest/docs/api/repl.html):
 
-```bash
-$ nofan get users/show --id=litomore --repl
+```sh
+nofan get users/show --id=litomore --repl
 
-> result.name
+#=> result.name
 #=> 'LitoMore' 
 ```
 
