@@ -1,14 +1,14 @@
-export const loginPrompt = (opt) => {
+export const loginPrompt = (opt: {hasName: boolean}) => {
 	const usernameInput = {
 		type: 'input',
 		name: 'username',
-		message: 'Enter your username'
+		message: 'Enter your username',
 	};
 	const passwordInput = {
 		type: 'password',
 		name: 'password',
 		message: 'Enter your password',
-		mask: '*'
+		mask: '*',
 	};
 	if (opt.hasName) {
 		return [passwordInput];

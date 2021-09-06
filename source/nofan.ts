@@ -1,26 +1,42 @@
-#!/usr/bin/env node
-
 import fs from 'node:fs';
+import process from 'node:process';
 import isWsl from 'is-wsl';
 import justSnakeCase from 'just-snake-case';
 import terminalLink from 'terminal-link';
 import chalkPipe from 'chalk-pipe';
 import timeago from 'timeago.js';
-import Fanfou from 'fanfou-sdk';
+import Fanfou, {Status, StatusEntity, GetTrendsResult} from 'fanfou-sdk';
+import {Trend} from 'fanfou-sdk/dist/api';
 import inquirer from 'inquirer';
 import moment from 'moment';
-import chalk from 'chalk';
 import ora from 'ora';
-import * as util from './util.js';
-import {showInRepl} from './repl.js';
-import {colorsPrompt} from './prompts/colors.js';
-import {configPrompt} from './prompts/config.js';
-import {loginPrompt} from './prompts/login.js';
-import {switchPrompt} from './prompts/switch.js';
-import {trendsPrompt} from './prompts/trends.js';
+import * as util from './util';
+import {showInRepl} from './repl';
+import {colorsPrompt} from './prompts/colors';
+import {configPrompt} from './prompts/config';
+import {loginPrompt} from './prompts/login';
+import {switchPrompt} from './prompts/switch';
+import {trendsPrompt} from './prompts/trends';
+import {Account, Config, ConsoleType, Settings} from './types';
 
-export default class Nofan {
-	constructor(opt = {}) {
+type NofanOptions = {
+	verbose?: boolean;
+	photo?: string;
+	clipboard?: boolean;
+	repl?: boolean;
+	consoleType?: ConsoleType;
+};
+
+class Nofan {
+	photo?: string;
+	clipboard?: boolean;
+	repl?: boolean;
+	consoleType?: string;
+	params?: any;
+	config: Config;
+	verbose?: boolean;
+
+	constructor(options: NofanOptions = {}) {
 		const {
 			verbose,
 			photo,
@@ -28,28 +44,31 @@ export default class Nofan {
 			repl,
 			consoleType = 'log',
 			...parameters
-		} = opt;
+		} = options;
+
 		this.photo = photo;
 		this.clipboard = clipboard;
 		this.repl = repl;
 		this.consoleType = consoleType;
 		this.params = {};
+
 		for (const key of Object.keys(parameters)) {
+			// @ts-expect-error: Accept any fanfou query
 			this.params[justSnakeCase(key)] = parameters[key];
 		}
 
 		try {
 			this.config = util.getConfig();
-			this.verbose = this.config.VERBOSE || verbose;
-		} catch (error) {
+			this.verbose = this.config.VERBOSE ?? verbose;
+		} catch (error: any) {
 			process.spinner.fail(error.message);
 			process.exit();
 		}
 	}
 
-	async login(username, password) {
+	async login(username: string, password: string) {
 		const {config} = this;
-		const login = async (username, password) => {
+		const login = async (username: string, password: string) => {
 			const ff = new Fanfou({
 				consumerKey: config.CONSUMER_KEY,
 				consumerSecret: config.CONSUMER_SECRET,
@@ -60,8 +79,8 @@ export default class Nofan {
 				oauthDomain: config.OAUTH_DOMAIN,
 				hooks: {
 					baseString: (string) =>
-						config.SSL ? string.replace('https', 'http') : string
-				}
+						config.SSL ? string.replace('https', 'http') : string,
+				},
 			});
 
 			try {
@@ -74,30 +93,30 @@ export default class Nofan {
 					CONSUMER_KEY: config.CONSUMER_KEY,
 					CONSUMER_SECRET: config.CONSUMER_SECRET,
 					OAUTH_TOKEN: token.oauthToken,
-					OAUTH_TOKEN_SECRET: token.oauthTokenSecret
+					OAUTH_TOKEN_SECRET: token.oauthTokenSecret,
 				};
 				util.setAccount(account);
 				process.spinner.succeed('Login succeed!');
 				process.exit(0);
-			} catch (error) {
+			} catch (error: any) {
 				process.spinner.fail(error.message);
 				process.exit(1);
 			}
 		};
 
 		if (username && password) {
-			process.spinner = ora('Logging in...').start();
-			login(username, password);
+			(process as any).spinner = ora('Logging in...').start();
+			void login(username, password);
 		} else {
 			const user = await inquirer.prompt(
-				loginPrompt({hasName: Boolean(username)})
+				loginPrompt({hasName: Boolean(username)}),
 			);
 			if (username) {
 				user.username = username;
 			}
 
 			process.spinner = ora('Logging in').start();
-			login(user.username, user.password);
+			void login(user.username, user.password);
 		}
 	}
 
@@ -106,8 +125,9 @@ export default class Nofan {
 		const {config} = this;
 		if (config.USER) {
 			const account = util.getAccount();
+			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 			delete account[config.USER];
-			config.USER = Object.keys(account)[0] || '';
+			config.USER = Object.keys(account)[0] ?? '';
 			util.setConfig(config);
 			util.setAccount(account);
 			process.spinner.succeed('Logout succeed!');
@@ -116,12 +136,12 @@ export default class Nofan {
 
 	async configure() {
 		const {config} = this;
-		const settings = await inquirer.prompt(configPrompt(config));
+		const settings: Settings = await inquirer.prompt(configPrompt(config));
 
 		config.CONSUMER_KEY = settings.key || util.defaultConfig.CONSUMER_KEY;
 		config.CONSUMER_SECRET =
 			settings.secret || util.defaultConfig.CONSUMER_SECRET;
-		config.DISPLAY_COUNT = settings.display_count;
+		config.DISPLAY_COUNT = Number(settings.display_count);
 		config.TIME_TAG = settings.display.includes('time_tag');
 		config.PHOTO_TAG = settings.display.includes('photo_tag');
 		config.SSL = settings.display.includes('use_https');
@@ -148,29 +168,31 @@ export default class Nofan {
 		util.setConfig(config);
 	}
 
-	async switchUser(id) {
+	async switchUser(id?: string) {
 		const {config} = this;
 		const account = util.getAccount();
 
 		if (id) {
 			const found = Object.keys(account).find(
-				(k) => k.toLowerCase() === id.toLowerCase()
+				(k) => k.toLowerCase() === id.toLowerCase(),
 			);
 			if (found) {
 				config.USER = found;
 				util.setConfig(config);
-				process.spinner = ora().succeed(
-					`Switch account to ${chalk.blue.bold(found)}`
+				(process as any).spinner = ora().succeed(
+					`Switch account to ${chalkPipe('blue.bold')(found)}`,
 				);
 			} else {
-				process.spinner = ora().info(`${chalk.blue.bold(id)} needs login`);
+				(process as any).spinner = ora().info(
+					`${chalkPipe('blue.bold')(id)} needs login`,
+				);
 				process.exit(1);
 			}
 		} else {
 			const currentName = config.USER;
 			const choices = Object.keys(account).map((name) => {
 				if (name === currentName) {
-					return {name, disabled: chalk.green('current')};
+					return {name, disabled: chalkPipe('green')('current')};
 				}
 
 				return name;
@@ -180,7 +202,7 @@ export default class Nofan {
 				config.USER = user.username;
 				util.setConfig(config);
 			} else {
-				process.spinner = ora().info('No more account');
+				(process as any).spinner = ora().info('No more account');
 				process.exit(1);
 			}
 		}
@@ -191,7 +213,7 @@ export default class Nofan {
 		const statuses = await this._get('/statuses/home_timeline', {
 			count,
 			format: 'html',
-			...this.params
+			...this.params,
 		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
@@ -201,21 +223,21 @@ export default class Nofan {
 		const statuses = await this._get('/statuses/public_timeline', {
 			count,
 			format: 'html',
-			...this.params
+			...this.params,
 		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	async contextTimeline(id) {
+	async contextTimeline(id: string) {
 		const statuses = await this._get('/statuses/context_timeline', {
 			id,
 			format: 'html',
-			...this.params
+			...this.params,
 		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	async searchTimeline(q) {
+	async searchTimeline(q: string) {
 		const {DISPLAY_COUNT: count} = this.config;
 		const uri = this.params.id
 			? '/search/user_timeline'
@@ -224,20 +246,21 @@ export default class Nofan {
 			q,
 			count,
 			format: 'html',
-			...this.params
+			...this.params,
 		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async trendsTimeline() {
-		const [{trends: hotTrends}, savedTrends] = [
+		const [{trends: hotTrends}, savedTrends]: [GetTrendsResult, Trend[]] = [
 			await this._get('/trends/list'),
-			await this._get('/saved_searches/list')
+			await this._get('/saved_searches/list'),
 		];
+
 		if (hotTrends.length + savedTrends.length > 0) {
 			process.spinner.stop();
 			const {trends: trend} = await inquirer.prompt(
-				trendsPrompt(hotTrends, savedTrends)
+				trendsPrompt(hotTrends, savedTrends),
 			);
 			process.spinner.start('Fetching');
 			await this.searchTimeline(trend);
@@ -248,23 +271,23 @@ export default class Nofan {
 		}
 	}
 
-	async userTimeline(id) {
+	async userTimeline(id: string) {
 		const {DISPLAY_COUNT: count} = this.config;
 		const statuses = await this._get('/statuses/user_timeline', {
 			id,
 			count,
 			format: 'html',
-			...this.params
+			...this.params,
 		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	async update(text) {
+	async update(text: string) {
 		await this._post('/statuses/update', {status: text, ...this.params});
 		process.spinner.succeed('Sent!');
 	}
 
-	async upload(text) {
+	async upload(text: string) {
 		const {photo, clipboard} = this;
 		if (photo) {
 			await this._upload(photo, text);
@@ -282,10 +305,12 @@ export default class Nofan {
 					break;
 				}
 
+				// @ts-expect-error: Only support WSL
 				case 'linux': {
 					if (isWsl) {
-						process.env.NPS = 'powershell.exe';
-						const temporaryFilepath = await util.getTemporaryImagePath_Windows();
+						process.env['NPS'] = 'powershell.exe';
+						const temporaryFilepath =
+							await util.getTemporaryImagePath_Windows();
 						await this._upload(temporaryFilepath, text);
 						break;
 					}
@@ -294,7 +319,7 @@ export default class Nofan {
 				// eslint-disable no-fallthrough
 				default: {
 					process.spinner.fail(
-						'Upload from clipboard only available on macOS, Windows and WSL'
+						'Upload from clipboard only available on macOS, Windows and WSL',
 					);
 					process.exit(1);
 				}
@@ -315,7 +340,7 @@ export default class Nofan {
 		const statuses = await this._get('/statuses/mentions', {
 			count,
 			format: 'html',
-			...this.params
+			...this.params,
 		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
@@ -325,53 +350,55 @@ export default class Nofan {
 		const statuses = await this._get('/statuses/user_timeline', {
 			count,
 			format: 'html',
-			...this.params
+			...this.params,
 		});
 		this._displayTimeline(statuses, {verbose: this.verbose});
 	}
 
-	async reply(id, text) {
-		const status = await this._getStatus(id);
-		const replyText = `@${status.user.name} ${text}`.trim();
+	async reply(id: string, text: string) {
+		const status: Status = await this._getStatus(id);
+		const replyText = `@${status?.user?.name ?? ''} ${text}`.trim();
 		await this._post('/statuses/update', {
 			in_reply_to_status_id: id,
 			status: replyText,
-			...this.params
+			...this.params,
 		});
 		process.spinner.succeed('Sent!');
 	}
 
-	async repost(id, text) {
-		const status = await this._getStatus(id);
-		const repostText = `${text} 转@${status.user.name} ${status.plainText}`.trim();
+	async repost(id: string, text: string) {
+		const status: Status = await this._getStatus(id);
+		const repostText =
+			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+			`${text} 转@${status?.user?.name} ${status.plainText}`.trim();
 		await this._post('/statuses/update', {
 			repost_status_id: id,
 			status: repostText,
-			...this.params
+			...this.params,
 		});
 		process.spinner.succeed('Sent!');
 	}
 
-	async show(id) {
+	async show(id: string) {
 		const status = await this._getStatus(id);
 		this._displayTimeline([status], {verbose: this.verbose});
 	}
 
-	async get(uri) {
+	async get(uri: string) {
 		return this._get(uri, this.params);
 	}
 
-	async post(uri) {
+	async post(uri: string) {
 		return this._post(uri, this.params);
 	}
 
-	async _get(uri, parameters) {
+	async _get(uri: string, parameters?: any) {
 		const {config} = this;
 		const account = util.getAccount();
-		let user = account[config.USER];
+		let user = account[config.USER ?? ''];
 		if (!user) {
 			for (const name in account) {
-				if (account.name) {
+				if (account[name]) {
 					user = account[name];
 					config.USER = name;
 					break;
@@ -386,23 +413,25 @@ export default class Nofan {
 
 		util.setConfig(config);
 
-		const ff = this.initFanfou(user, config);
+		const ff = this.initFanfou(user);
 		try {
 			const result = await ff.get(uri, parameters);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 			return result;
 		} catch (error) {
 			this._handleError(error);
 		}
 	}
 
-	async _post(uri, parameters) {
+	// @ts-expect-error: Exit when error eccorred
+	async _post(uri: string, parameters: any) {
 		const {config} = this;
 		const account = util.getAccount();
-		let user = account[config.USER];
+		let user = account[config.USER ?? ''];
 
 		if (!user) {
 			for (const name in account) {
-				if (account.name) {
+				if (account[name]) {
 					user = account[name];
 					config.USER = name;
 					break;
@@ -417,26 +446,27 @@ export default class Nofan {
 
 		util.setConfig(config);
 
-		const ff = this.initFanfou(user, config);
+		const ff = this.initFanfou(user);
 		try {
-			const result = await ff.post(uri, parameters);
+			const result: Status = await ff.post(uri, parameters);
 			return result;
-		} catch (error) {
+		} catch (error: any) {
 			this._handleError(error);
 		}
 	}
 
-	async _getStatus(id) {
+	async _getStatus(id: string) {
 		return this._get('/statuses/show', {id, format: 'html'});
 	}
 
-	async _upload(path, status) {
+	// @ts-expect-error: Exit when error occurred
+	async _upload(path: string, status: string) {
 		const {config} = this;
 		const account = util.getAccount();
-		let user = account[config.USER];
+		let user = account[config.USER ?? ''];
 		if (!user) {
 			for (const name in account) {
-				if (account.name) {
+				if (account[name]) {
 					user = account[name];
 					config.USER = name;
 					break;
@@ -450,23 +480,24 @@ export default class Nofan {
 		}
 
 		util.setConfig(config);
-		const ff = this.initFanfou(user, config);
+		const ff = this.initFanfou(user);
 
 		try {
-			const result = await ff.post('/photos/upload', {
+			const result: Status = await ff.post('/photos/upload', {
 				photo: fs.createReadStream(path),
-				status
+				status,
 			});
 			return result;
-		} catch (error) {
+		} catch (error: any) {
 			this._handleError(error);
 		}
 	}
 
-	_handleError(error) {
+	_handleError(error: any) {
 		if (this.repl) {
 			process.spinner.fail(error.message);
-			process.spinner.succeed = () => {};
+			// @ts-expect-error: Mute succeed function
+			process.spinner.succeed = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 			showInRepl(error);
 		} else {
 			process.spinner.fail(error.message);
@@ -474,7 +505,7 @@ export default class Nofan {
 		}
 	}
 
-	_displayTimeline(timeline, opt) {
+	_displayTimeline(timeline: any, opt: any) {
 		const {config} = this;
 
 		if (process.spinner) {
@@ -484,7 +515,8 @@ export default class Nofan {
 		const {verbose = false} = opt;
 		const hasTimeTag = config.TIME_TAG;
 		const hasPhotoTag = config.PHOTO_TAG;
-		const {COLORS: colors} = config || util.defaultConfig;
+		const {COLORS: defaultColors} = util.defaultConfig;
+		const {COLORS: colors = defaultColors} = config ?? {};
 
 		const {
 			name: nameColor,
@@ -494,10 +526,10 @@ export default class Nofan {
 			tag: tagColor,
 			photo: photoColor,
 			timeago: timeagoColor,
-			highlight: highlightColor
+			highlight: highlightColor,
 		} = colors;
 
-		const parseHighlight = (style, item) => {
+		const parseHighlight = (style: string, item: StatusEntity) => {
 			let appendText = '';
 
 			if (verbose && item.type === 'at') {
@@ -522,15 +554,15 @@ export default class Nofan {
 			return false;
 		};
 
-		for (const status of timeline) {
+		for (const status of timeline as Status[]) {
 			let text = '';
-			for (const item of status.entities) {
+			for (const item of status.entities!) {
 				switch (item.type) {
 					case 'at':
 						text +=
 							parseHighlight(atColor, item) ||
 							chalkPipe(atColor)(
-								verbose ? `${item.text}:${item.id}` : item.text
+								verbose ? `${item.text}:${item.id}` : item.text,
 							);
 						break;
 					case 'link':
@@ -554,15 +586,15 @@ export default class Nofan {
 				chalkPipe(textColor)('[') +
 				chalkPipe(nameColor)(
 					verbose
-						? `${status.user.name}(${status.user.id}):${status.id}`
-						: status.user.name
+						? `${status?.user?.name}(${status?.user?.id}):${status.id}` // eslint-disable-line @typescript-eslint/restrict-template-expressions
+						: status?.user?.name,
 				) +
 				chalkPipe(textColor)(']');
 			if (status.photo && hasPhotoTag) {
 				const photoTag = chalkPipe(photoColor)(
-					terminalLink('[图]', status.photo.originurl, {
-						fallback: (text) => text
-					})
+					terminalLink('[图]', status?.photo?.originurl ?? '', {
+						fallback: (text) => text,
+					}),
 				);
 				text += text.length > 0 ? ` ${photoTag}` : photoTag;
 			}
@@ -575,7 +607,7 @@ export default class Nofan {
 									.local()
 									.format('YYYY-MM-DD HH:mm:ss')}`
 							: timeago.format(status.createdAt)
-					})`
+					})`,
 				);
 				console.log(`${name} ${text} ${statusTimeAgo}`);
 			} else {
@@ -584,16 +616,17 @@ export default class Nofan {
 		}
 	}
 
-	consoleDisplay(item) {
-		const {repl, consoleType} = this;
+	consoleDisplay(item: any) {
+		const {repl, consoleType = 'log'} = this;
 		if (repl) {
 			showInRepl(item);
 		} else {
-			console[consoleType](item);
+			// @ts-expect-error: Allow use specific console type
+			console[consoleType](item); // eslint-disable-line @typescript-eslint/no-unsafe-call
 		}
 	}
 
-	initFanfou(user) {
+	initFanfou(user: Account) {
 		const {config} = this;
 		return new Fanfou({
 			consumerKey: user.CONSUMER_KEY,
@@ -605,8 +638,10 @@ export default class Nofan {
 			oauthDomain: config.OAUTH_DOMAIN,
 			hooks: {
 				baseString: (string) =>
-					config.SSL ? string.replace('https', 'http') : string
-			}
+					config.SSL ? string.replace('https', 'http') : string,
+			},
 		});
 	}
 }
+
+export default Nofan;

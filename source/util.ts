@@ -1,15 +1,15 @@
-#!/usr/bin/env node
-
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import process from 'node:process';
 import chalkPipe from 'chalk-pipe';
 import boxen from 'boxen';
 import execa from 'execa';
 import Shell from 'node-powershell';
+import {Account, AccountDict, Config} from './types';
 
 const configPath =
-	process.env.NODE_ENV === 'test' ? '/.nofan-test/' : '/.nofan/';
+	process.env['NODE_ENV'] === 'test' ? '/.nofan-test/' : '/.nofan/';
 const homedir = os.homedir();
 
 export const defaultConfig = {
@@ -30,8 +30,8 @@ export const defaultConfig = {
 		tag: 'orange.bold',
 		photo: 'grey',
 		timeago: 'dim.green.italic',
-		highlight: 'bgYellow.black'
-	}
+		highlight: 'bgYellow.black',
+	},
 };
 
 export const createNofanDir = () => {
@@ -40,19 +40,19 @@ export const createNofanDir = () => {
 	} catch {}
 };
 
-export const createJsonFile = (filename, content) => {
+export const createJsonFile = (filename: string, content: any) => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
-	return fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
+	fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
 };
 
-export const readJsonFile = (filename) => {
+export const readJsonFile = (filename: string): any => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 };
 
 export const getConfig = () => {
 	try {
-		return readJsonFile('config');
+		return readJsonFile('config') as Config;
 	} catch {
 		return defaultConfig;
 	}
@@ -60,18 +60,18 @@ export const getConfig = () => {
 
 export const getAccount = () => {
 	try {
-		return readJsonFile('account');
+		return readJsonFile('account') as AccountDict;
 	} catch {
 		return {};
 	}
 };
 
-export const setConfig = (config) => {
-	return createJsonFile('config', config);
+export const setConfig = (config: Config) => {
+	createJsonFile('config', config);
 };
 
-export const setAccount = (account) => {
-	return createJsonFile('account', account);
+export const setAccount = (account: Account) => {
+	createJsonFile('account', account);
 };
 
 export const getTemporaryImagePath_Windows = async () => {
@@ -84,29 +84,29 @@ export const getTemporaryImagePath_Windows = async () => {
 
 	const ps = new Shell({
 		executionPolicy: 'Bypass',
-		noProfile: true
+		noProfile: true,
 	});
 
-	ps.addCommand('$img = Get-Clipboard -Format Image');
-	ps.addCommand(`$img.save("${filepath}")`);
+	void ps.addCommand('$img = Get-Clipboard -Format Image');
+	void ps.addCommand(`$img.save("${filepath}")`);
 
 	try {
 		await ps.invoke();
-	} catch (error) {
+	} catch (error: any) {
 		if (
-			error.message &&
-			error.message.match(
-				'You cannot call a method on a null-valued expression.'
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+			error?.message.match(
+				'You cannot call a method on a null-valued expression.',
 			)
 		) {
 			process.spinner.fail('No image data found on the clipboard');
 			process.exit(1);
 		} else {
-			console.log(error && error.message);
+			console.log(error?.message);
 			process.exit(1);
 		}
 	} finally {
-		ps.dispose();
+		void ps.dispose();
 	}
 
 	return filepath;
@@ -122,18 +122,19 @@ export const getTemporaryImagePath_macOS = async () => {
 
 	try {
 		await execa('pngpaste', [filepath]);
-	} catch (error) {
+	} catch (error: any) {
 		if (error.code === 'ENOENT') {
 			const tip = `Please use ${chalkPipe('green')(
-				'`brew install pngpaste`'
+				'`brew install pngpaste`',
 			)} to solve`;
 			process.spinner.fail(
 				`Required ${chalkPipe('green')('`pngpaste`')}\n\n` +
-					boxen(tip, {padding: 1})
+					boxen(tip, {padding: 1}),
 			);
 			process.exit(1);
 		}
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		process.spinner.fail(error.stderr.trim());
 		process.exit(1);
 	}

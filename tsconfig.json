@@ -1,0 +1,11 @@
+{
+	"extends": "@sindresorhus/tsconfig",
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"outDir": "dist"
+	},
+	"include": ["source"],
+	"files": [
+		"source/global.d.ts"
+	]
+}

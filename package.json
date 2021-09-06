@@ -7,9 +7,14 @@
     "nofan": "cli.js"
   },
   "engines": {
-    "node": ">=12.17"
+    "node": ">=14"
   },
+  "files": [
+    "dist",
+    "global.d.ts"
+  ],
   "scripts": {
+    "build": "del-cli dist && tsc",
     "test": "xo"
   },
   "repository": {
@@ -33,17 +38,25 @@
     "meow": "^10.0.0",
     "moment": "^2.29.1",
     "node-powershell": "^4.0.0",
-    "ora": "^5.3.0",
+    "ora": "^6.0.0",
     "terminal-link": "^2.1.1",
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {
-    "xo": "^0.39.1"
+    "@sindresorhus/tsconfig": "^2.0.0",
+    "@types/inquirer": "^7.3.1",
+    "@types/node-powershell": "^4.0.0",
+    "del-cli": "^4.0.1",
+    "xo": "^0.44.0"
   },
   "xo": {
     "prettier": true,
     "rules": {
-      "camelcase": 0
+      "camelcase": "off",
+      "unicorn/no-process-exit": "off",
+      "@typescript-eslint/no-implicit-any-catch": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off"
     }
   }
 }

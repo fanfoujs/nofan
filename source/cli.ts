@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-
 import path from 'node:path';
+import process from 'node:process';
 import meow from 'meow';
 import ora from 'ora';
-import Nofan from './src/nofan.js';
+import Nofan from './nofan';
 
 const cli = meow(
 	`
@@ -43,90 +43,94 @@ Commands:
 		importMeta: import.meta,
 		flags: {
 			help: {
-				alias: 'h'
+				type: 'boolean',
+				alias: 'h',
 			},
 			clipboard: {
-				alias: 'c'
+				type: 'boolean',
+				alias: 'c',
 			},
 			photo: {
-				alias: 'p'
+				type: 'string',
+				alias: 'p',
 			},
 			verbose: {
-				alias: 'v'
-			}
-		}
-	}
+				type: 'boolean',
+				alias: 'v',
+			},
+		},
+	},
 );
 
 const commands = cli.input;
 const {clipboard, photo} = cli.flags;
 const nofan = new Nofan(cli.flags);
 
-const spinner = (text) => {
+const spinner = (text: string) => {
 	process.spinner = ora(text).start();
 };
 
 switch (commands[0]) {
 	case 'config': {
-		nofan.configure();
+		void nofan.configure();
 		break;
 	}
 
 	case 'colors': {
-		nofan.colors();
+		void nofan.colors();
 		break;
 	}
 
 	case 'login': {
-		const [, username, password] = commands;
-		nofan.login(username, password);
+		const [, username = '', password = ''] = commands;
+		void nofan.login(username, password);
 		break;
 	}
 
 	case 'logout': {
-		nofan.logout();
+		void nofan.logout();
 		break;
 	}
 
 	case 'switch':
 	case 's': {
 		const [, id] = commands;
-		nofan.switchUser(id);
+		void nofan.switchUser(id);
 		break;
 	}
 
 	case 'home':
 	case 'h': {
 		spinner('Fetching');
-		nofan.homeTimeline();
+		void nofan.homeTimeline();
 		break;
 	}
 
 	case 'mentions':
 	case 'm': {
 		spinner('Fetching');
-		nofan.mentions();
+		void nofan.mentions();
 		break;
 	}
 
 	case 'me': {
 		spinner('Fetching');
-		nofan.me();
+		void nofan.me();
 		break;
 	}
 
 	case 'public':
 	case 'p': {
 		spinner('Fetching');
-		nofan.publicTimeline();
+		void nofan.publicTimeline();
 		break;
 	}
 
 	case 'context':
 	case 'cont': {
 		spinner('Fetch');
-		const [, id] = commands;
-		nofan.contextTimeline(id);
+		const [, id = ''] = commands;
+		void nofan.contextTimeline(id);
 		break;
 	}
 
@@ -135,52 +139,52 @@ switch (commands[0]) {
 		spinner('Fetching');
 		const [, ...cmd] = commands;
 		const query = cmd.join(' ');
-		nofan.searchTimeline(query);
+		void nofan.searchTimeline(query);
 		break;
 	}
 
 	case 'trends':
 	case 'tr': {
 		spinner('Fetching');
-		nofan.trendsTimeline();
+		void nofan.trendsTimeline();
 		break;
 	}
 
 	case 'user': {
 		spinner('Fetching');
-		const [, id] = commands;
-		nofan.userTimeline(id);
+		const [, id = ''] = commands;
+		void nofan.userTimeline(id);
 		break;
 	}
 
 	case 'undo': {
 		spinner('Deleting');
-		nofan.undo();
+		void nofan.undo();
 		break;
 	}
 
 	case 'reply':
 	case 're': {
 		spinner('Sending');
-		const [, id, ...cmd] = commands;
+		const [, id = '', ...cmd] = commands;
 		const text = cmd.join(' ');
-		nofan.reply(id, text);
+		void nofan.reply(id, text);
 		break;
 	}
 
 	case 'repost':
 	case 'rt': {
 		spinner('Sending');
-		const [, id, ...cmd] = commands;
+		const [, id = '', ...cmd] = commands;
 		const text = cmd.join(' ');
-		nofan.repost(id, text);
+		void nofan.repost(id, text);
 		break;
 	}
 
 	case 'show': {
 		spinner('Fetching');
-		const [, id] = commands;
-		nofan.show(id);
+		const [, id = ''] = commands;
+		void nofan.show(id);
 		break;
 	}
 
@@ -218,13 +222,13 @@ switch (commands[0]) {
 			const text = commands.join(' ');
 
 			if (photo || clipboard) {
-				nofan.upload(text);
+				void nofan.upload(text);
 			} else {
-				nofan.update(text);
+				void nofan.update(text);
 			}
 		} else {
 			spinner('Fetching');
-			nofan.homeTimeline();
+			void nofan.homeTimeline();
 		}
 
 		break;
