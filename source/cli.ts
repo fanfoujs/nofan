@@ -199,19 +199,17 @@ switch (commands[0]) {
 			process.exit(1);
 		}
 
-		(async () => {
-			try {
-				const result = await nofan[method](uriPath);
-				process.spinner.succeed();
-				nofan.consoleDisplay(result);
-			} catch (error) {
-				process.spinner.fail();
-				nofan.consoleDisplay(error);
-				if (!nofan.repl) {
-					process.exit(1);
-				}
+		try {
+			const result = await nofan[method](uriPath);
+			process.spinner.succeed();
+			nofan.consoleDisplay(result);
+		} catch (error) {
+			process.spinner.fail();
+			nofan.consoleDisplay(error);
+			if (!nofan.repl) {
+				process.exit(1);
 			}
-		})();
+		}
 
 		break;
 	}
