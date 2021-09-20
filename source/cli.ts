@@ -3,7 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 import meow from 'meow';
 import ora from 'ora';
-import Nofan from './nofan';
+import Nofan from './nofan.js';
 
 const cli = meow(
 	`

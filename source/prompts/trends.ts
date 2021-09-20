@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import {Trend} from 'fanfou-sdk/dist/api';
+import {Trend} from 'fanfou-sdk';
 
 export const trendsPrompt = (hotTrends: Trend[], savedTrends: Trend[]) => {
 	const hotList = hotTrends.map((item) => item.query);

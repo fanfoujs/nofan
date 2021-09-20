@@ -1,5 +1,5 @@
 import chalkPipe from 'chalk-pipe';
-import {Config} from '../types';
+import {Config} from '../types.js';
 
 export const colorsPrompt = (config: Config) => {
 	const transformer = (text: string) => chalkPipe(text)(text);

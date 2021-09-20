@@ -5,19 +5,25 @@ import justSnakeCase from 'just-snake-case';
 import terminalLink from 'terminal-link';
 import chalkPipe from 'chalk-pipe';
 import timeago from 'timeago.js';
-import Fanfou, {Status, StatusEntity, GetTrendsResult} from 'fanfou-sdk';
-import {Trend} from 'fanfou-sdk/dist/api';
+import Fanfou, {
+	getPlainText,
+	getEntities,
+	Status,
+	StatusEntity,
+	GetTrendsResult,
+	Trend,
+} from 'fanfou-sdk';
 import inquirer from 'inquirer';
 import moment from 'moment';
 import ora from 'ora';
-import * as util from './util';
-import {showInRepl} from './repl';
-import {colorsPrompt} from './prompts/colors';
-import {configPrompt} from './prompts/config';
-import {loginPrompt} from './prompts/login';
-import {switchPrompt} from './prompts/switch';
-import {trendsPrompt} from './prompts/trends';
-import {Account, Config, ConsoleType, Settings} from './types';
+import * as util from './util.js';
+import {showInRepl} from './repl.js';
+import {colorsPrompt} from './prompts/colors.js';
+import {configPrompt} from './prompts/config.js';
+import {loginPrompt} from './prompts/login.js';
+import {switchPrompt} from './prompts/switch.js';
+import {trendsPrompt} from './prompts/trends.js';
+import {Account, Config, ConsoleType, Settings} from './types.js';
 
 type NofanOptions = {
 	verbose?: boolean;
@@ -370,7 +376,9 @@ class Nofan {
 		const status: Status = await this._getStatus(id);
 		const repostText =
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			`${text} 转@${status?.user?.name} ${status.plainText}`.trim();
+			`${text} 转@${status?.user?.name} ${getPlainText(
+				getEntities(status.text),
+			)}`.trim();
 		await this._post('/statuses/update', {
 			repost_status_id: id,
 			status: repostText,
@@ -556,7 +564,7 @@ class Nofan {
 
 		for (const status of timeline as Status[]) {
 			let text = '';
-			for (const item of status.entities!) {
+			for (const item of getEntities(status.text)) {
 				switch (item.type) {
 					case 'at':
 						text +=
@@ -592,9 +600,13 @@ class Nofan {
 				chalkPipe(textColor)(']');
 			if (status.photo && hasPhotoTag) {
 				const photoTag = chalkPipe(photoColor)(
-					terminalLink('[图]', status?.photo?.originurl ?? '', {
-						fallback: (text) => text,
-					}),
+					terminalLink(
+						'[图]',
+						status?.photo?.largeurl.replace(/@.+\..+$/g, '') ?? '',
+						{
+							fallback: (text) => text,
+						},
+					),
 				);
 				text += text.length > 0 ? ` ${photoTag}` : photoTag;
 			}
