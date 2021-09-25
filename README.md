@@ -46,7 +46,6 @@ npm i -g nofan
 ## Login
 
 ```sh
-# Login fanfou account
 nofan login
 ```
 
@@ -108,11 +107,15 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 
 Nofan support post a photo from a local path or clipboard:
 
-```sh
-# Post a photo from local path, use `-p` or `--photo`
-nofan unicorn -p ~/Desktop/heart.png
+#### Use `-p` or `--photo` to post photo from local path
 
-# Post a photo from clipboard (only support macOS, Windows and WSL), use `-c` or `--clipboard`
+```sh
+nofan unicorn -p ~/Desktop/heart.png
+```
+
+#### Use `-c` or `--clipboard` to post photo from clipboard (only support macOS, Windows and WSL)
+
+```sh
 nofan hi my love -c
 ```
 
@@ -126,11 +129,15 @@ Now we have a verbose mode for the timeline.
 
 You could do a quick action by use `reply` and `repost` command:
 
-```sh
-# Reply
-nofan re _5gqZTpjAlM hi litomore
+#### Use `re` or `reply` to reply
 
-# Repost
+```sh
+nofan re _5gqZTpjAlM hi litomore
+```
+
+#### Use `rt` or `repost` to repost
+
+```sh
 nofan rt _5gqZTpjAlM hi litomore
 ```
 
@@ -138,28 +145,49 @@ nofan rt _5gqZTpjAlM hi litomore
 
 Nofan is very easy to use, but also very powerful. You could pass to [API](https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory) parameters as flags to the CLI.
 
-You could do something like this:
+#### Fetch home-timeline with pagination
 
 ```sh
-nofan --page=2 --count=30
-nofan se unicron --count=60
+nofan --page=2
+```
+
+#### Search statuses with specific page size
+
+```sh
+nofan search unicron --count=60
 ```
 
 ### Customizable GET/POST Request
 
-Use `nofan get` or `nofan post` to create a GET/POST request:
+Use `nofan get` or `nofan post` to make a GET/POST request:
+
+#### Make a GET request
 
 ```sh
 nofan get account/notification
+```
+
+#### Make a GET request with parameters
+
+```sh
 nofan get statuses/home_timeline --mode=lite
+```
+
+#### Make a POST request with parameters
+
+```sh
 nofan post statuses/update --status=hi
 ```
+
+#### Specify a console type
 
 You could specify a [console type](https://nodejs.org/dist/latest/docs/api/console.html) for output, default is `console.log`:
 
 ```sh
 nofan get account/notification --console-type=table
 ```
+
+#### REPL
 
 You could use `--repl` option to inspect the result in [REPL](https://nodejs.org/dist/latest/docs/api/repl.html):
 
