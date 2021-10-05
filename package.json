@@ -7,7 +7,7 @@
     "nofan": "dist/cli.js"
   },
   "engines": {
-    "node": ">=14"
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "files": [
     "dist",
