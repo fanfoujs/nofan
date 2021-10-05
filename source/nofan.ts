@@ -96,10 +96,12 @@ class Nofan {
 				util.setConfig(config);
 				const account = util.getAccount();
 				account[username] = {
+					/* eslint-disable @typescript-eslint/naming-convention */
 					CONSUMER_KEY: config.CONSUMER_KEY,
 					CONSUMER_SECRET: config.CONSUMER_SECRET,
 					OAUTH_TOKEN: token.oauthToken,
 					OAUTH_TOKEN_SECRET: token.oauthTokenSecret,
+					/* eslint-enable @typescript-eslint/naming-convention */
 				};
 				util.setAccount(account);
 				process.spinner.succeed('Login succeed!');
@@ -300,13 +302,13 @@ class Nofan {
 		} else if (clipboard) {
 			switch (process.platform) {
 				case 'darwin': {
-					const temporaryFilepath = await util.getTemporaryImagePath_macOS();
+					const temporaryFilepath = await util.getTemporaryImagePathMacos();
 					await this._upload(temporaryFilepath, text);
 					break;
 				}
 
 				case 'win32': {
-					const temporaryFilepath = await util.getTemporaryImagePath_Windows();
+					const temporaryFilepath = await util.getTemporaryImagePathWindows();
 					await this._upload(temporaryFilepath, text);
 					break;
 				}
@@ -315,8 +317,7 @@ class Nofan {
 				case 'linux': {
 					if (isWsl) {
 						process.env['NPS'] = 'powershell.exe';
-						const temporaryFilepath =
-							await util.getTemporaryImagePath_Windows();
+						const temporaryFilepath = await util.getTemporaryImagePathWindows();
 						await this._upload(temporaryFilepath, text);
 						break;
 					}
@@ -365,6 +366,7 @@ class Nofan {
 		const status: Status = await this._getStatus(id);
 		const replyText = `@${status?.user?.name ?? ''} ${text}`.trim();
 		await this._post('/statuses/update', {
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			in_reply_to_status_id: id,
 			status: replyText,
 			...this.params,
@@ -374,12 +376,11 @@ class Nofan {
 
 	async repost(id: string, text: string) {
 		const status: Status = await this._getStatus(id);
-		const repostText =
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			`${text} 转@${status?.user?.name} ${getPlainText(
-				getEntities(status.text),
-			)}`.trim();
+		const repostText = `${text} 转@${status?.user?.name ?? ''} ${getPlainText(
+			getEntities(status.text),
+		)}`.trim();
 		await this._post('/statuses/update', {
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			repost_status_id: id,
 			status: repostText,
 			...this.params,

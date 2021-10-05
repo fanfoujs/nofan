@@ -13,6 +13,7 @@ const configPath =
 const homedir = os.homedir();
 
 export const defaultConfig = {
+	/* eslint-disable @typescript-eslint/naming-convention */
 	CONSUMER_KEY: '13456aa784cdf7688af69e85d482e011',
 	CONSUMER_SECRET: 'f75c02df373232732b69354ecfbcabea',
 	DISPLAY_COUNT: 10,
@@ -32,6 +33,7 @@ export const defaultConfig = {
 		timeago: 'dim.green.italic',
 		highlight: 'bgYellow.black',
 	},
+	/* eslint-enable @typescript-eslint/naming-convention */
 };
 
 export const createNofanDir = () => {
@@ -74,7 +76,7 @@ export const setAccount = (account: Account) => {
 	createJsonFile('account', account);
 };
 
-export const getTemporaryImagePath_Windows = async () => {
+export const getTemporaryImagePathWindows = async () => {
 	const temporaryPath = homedir + configPath + 'temp';
 	const filepath = path.join(temporaryPath, 'temp.png');
 
@@ -112,7 +114,7 @@ export const getTemporaryImagePath_Windows = async () => {
 	return filepath;
 };
 
-export const getTemporaryImagePath_macOS = async () => {
+export const getTemporaryImagePathMacos = async () => {
 	const temporaryPath = homedir + configPath + 'temp';
 	const filepath = path.join(temporaryPath, 'temp.png');
 
