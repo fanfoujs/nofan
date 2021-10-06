@@ -15,7 +15,6 @@ import Fanfou, {
 } from 'fanfou-sdk';
 import inquirer from 'inquirer';
 import moment from 'moment';
-import ora from 'ora';
 import * as util from './util.js';
 import {showInRepl} from './repl.js';
 import {colorsPrompt} from './prompts/colors.js';
@@ -24,6 +23,7 @@ import {loginPrompt} from './prompts/login.js';
 import {switchPrompt} from './prompts/switch.js';
 import {trendsPrompt} from './prompts/trends.js';
 import {Account, Config, ConsoleType, Settings} from './types.js';
+import * as spinner from './spinner.js';
 
 type NofanOptions = {
 	verbose?: boolean;
@@ -67,7 +67,7 @@ class Nofan {
 			this.config = util.getConfig();
 			this.verbose = this.config.VERBOSE ?? verbose;
 		} catch (error: any) {
-			process.spinner.fail(error.message);
+			spinner.fail(error.message);
 			process.exit();
 		}
 	}
@@ -104,16 +104,16 @@ class Nofan {
 					/* eslint-enable @typescript-eslint/naming-convention */
 				};
 				util.setAccount(account);
-				process.spinner.succeed('Login succeed!');
+				spinner.succeed('Login succeed!');
 				process.exit(0);
 			} catch (error: any) {
-				process.spinner.fail(error.message);
+				spinner.fail(error.message);
 				process.exit(1);
 			}
 		};
 
 		if (username && password) {
-			(process as any).spinner = ora('Logging in...').start();
+			spinner.start('Logging in...');
 			void login(username, password);
 		} else {
 			const user = await inquirer.prompt(
@@ -123,13 +123,13 @@ class Nofan {
 				user.username = username;
 			}
 
-			process.spinner = ora('Logging in').start();
+			spinner.start('Logging in');
 			void login(user.username, user.password);
 		}
 	}
 
 	async logout() {
-		process.spinner = ora('Logging out').start();
+		spinner.start('Logging out');
 		const {config} = this;
 		if (config.USER) {
 			const account = util.getAccount();
@@ -138,7 +138,7 @@ class Nofan {
 			config.USER = Object.keys(account)[0] ?? '';
 			util.setConfig(config);
 			util.setAccount(account);
-			process.spinner.succeed('Logout succeed!');
+			spinner.succeed('Logout succeed!');
 		}
 	}
 
@@ -187,13 +187,9 @@ class Nofan {
 			if (found) {
 				config.USER = found;
 				util.setConfig(config);
-				(process as any).spinner = ora().succeed(
-					`Switch account to ${chalkPipe('blue.bold')(found)}`,
-				);
+				spinner.succeed(`Switch account to ${chalkPipe('blue.bold')(found)}`);
 			} else {
-				(process as any).spinner = ora().info(
-					`${chalkPipe('blue.bold')(id)} needs login`,
-				);
+				spinner.info(`${chalkPipe('blue.bold')(id)} needs login`);
 				process.exit(1);
 			}
 		} else {
@@ -210,7 +206,7 @@ class Nofan {
 				config.USER = user.username;
 				util.setConfig(config);
 			} else {
-				(process as any).spinner = ora().info('No more account');
+				spinner.info('No more account');
 				process.exit(1);
 			}
 		}
@@ -266,15 +262,15 @@ class Nofan {
 		];
 
 		if (hotTrends.length + savedTrends.length > 0) {
-			process.spinner.stop();
+			spinner.stop();
 			const {trends: trend} = await inquirer.prompt(
 				trendsPrompt(hotTrends, savedTrends),
 			);
-			process.spinner.start('Fetching');
+			spinner.start('Fetching');
 			await this.searchTimeline(trend);
 			process.exit(0);
 		} else {
-			process.spinner.fail('No trends exist');
+			spinner.fail('No trends exist');
 			process.exit(1);
 		}
 	}
@@ -292,7 +288,7 @@ class Nofan {
 
 	async update(text: string) {
 		await this._post('/statuses/update', {status: text, ...this.params});
-		process.spinner.succeed('Sent!');
+		spinner.succeed('Sent!');
 	}
 
 	async upload(text: string) {
@@ -325,7 +321,7 @@ class Nofan {
 
 				// eslint-disable no-fallthrough
 				default: {
-					process.spinner.fail(
+					spinner.fail(
 						'Upload from clipboard only available on macOS, Windows and WSL',
 					);
 					process.exit(1);
@@ -333,13 +329,13 @@ class Nofan {
 			}
 		}
 
-		process.spinner.succeed('Sent!');
+		spinner.succeed('Sent!');
 	}
 
 	async undo() {
 		const statuses = await this._get('/statuses/user_timeline', {});
 		await this._post('/statuses/destroy', {id: statuses[0].id});
-		process.spinner.succeed('Deleted!');
+		spinner.succeed('Deleted!');
 	}
 
 	async mentions() {
@@ -371,7 +367,7 @@ class Nofan {
 			status: replyText,
 			...this.params,
 		});
-		process.spinner.succeed('Sent!');
+		spinner.succeed('Sent!');
 	}
 
 	async repost(id: string, text: string) {
@@ -385,7 +381,7 @@ class Nofan {
 			status: repostText,
 			...this.params,
 		});
-		process.spinner.succeed('Sent!');
+		spinner.succeed('Sent!');
 	}
 
 	async show(id: string) {
@@ -415,7 +411,7 @@ class Nofan {
 			}
 
 			if (!user) {
-				process.spinner.fail('Not logged in');
+				spinner.fail('Not logged in');
 				process.exit(1);
 			}
 		}
@@ -448,7 +444,7 @@ class Nofan {
 			}
 
 			if (!user) {
-				process.spinner.fail('Not logged in');
+				spinner.fail('Not logged in');
 				process.exit(1);
 			}
 		}
@@ -483,7 +479,7 @@ class Nofan {
 			}
 
 			if (!user) {
-				process.spinner.fail('Not logged in');
+				spinner.fail('Not logged in');
 				process.exit(1);
 			}
 		}
@@ -504,12 +500,10 @@ class Nofan {
 
 	_handleError(error: any) {
 		if (this.repl) {
-			process.spinner.fail(error.message);
-			// @ts-expect-error: Mute succeed function
-			process.spinner.succeed = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+			spinner.fail(error.message);
 			showInRepl(error);
 		} else {
-			process.spinner.fail(error.message);
+			spinner.fail(error.message);
 			process.exit(1);
 		}
 	}
@@ -517,9 +511,7 @@ class Nofan {
 	_displayTimeline(timeline: any, opt: any) {
 		const {config} = this;
 
-		if (process.spinner) {
-			process.spinner.stop();
-		}
+		spinner.stop();
 
 		const {verbose = false} = opt;
 		const hasTimeTag = config.TIME_TAG;
@@ -595,7 +587,7 @@ class Nofan {
 				chalkPipe(textColor)('[') +
 				chalkPipe(nameColor)(
 					verbose
-						? `${status?.user?.name}(${status?.user?.id}):${status.id}` // eslint-disable-line @typescript-eslint/restrict-template-expressions
+						? `${status?.user?.name}(${status?.user?.id}):${status.id}`
 						: status?.user?.name,
 				) +
 				chalkPipe(textColor)(']');

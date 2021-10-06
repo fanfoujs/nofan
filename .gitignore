@@ -3,4 +3,5 @@ node_modules
 yarn.lock
 yarn-error.log*
 package-lock.json
-dist
+distribution
+coverage

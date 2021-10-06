@@ -6,11 +6,14 @@ import chalkPipe from 'chalk-pipe';
 import boxen from 'boxen';
 import execa from 'execa';
 import Shell from 'node-powershell';
-import {Account, AccountDict, Config} from './types';
+import {AccountDict, Config} from './types.js';
+import * as spinner from './spinner.js';
 
-const configPath =
-	process.env['NODE_ENV'] === 'test' ? '/.nofan-test/' : '/.nofan/';
-const homedir = os.homedir();
+export const configPath =
+	process.env['NODE_ENV'] === 'test'
+		? '/.nofan-test/'
+		: /* c8 ignore next */ '/.nofan/';
+export const homedir = os.homedir();
 
 export const defaultConfig = {
 	/* eslint-disable @typescript-eslint/naming-convention */
@@ -52,7 +55,7 @@ export const readJsonFile = (filename: string): any => {
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 };
 
-export const getConfig = () => {
+export const getConfig = (): Config => {
 	try {
 		return readJsonFile('config') as Config;
 	} catch {
@@ -72,10 +75,11 @@ export const setConfig = (config: Config) => {
 	createJsonFile('config', config);
 };
 
-export const setAccount = (account: Account) => {
+export const setAccount = (account: AccountDict) => {
 	createJsonFile('account', account);
 };
 
+/* c8 ignore start */
 export const getTemporaryImagePathWindows = async () => {
 	const temporaryPath = homedir + configPath + 'temp';
 	const filepath = path.join(temporaryPath, 'temp.png');
@@ -101,7 +105,7 @@ export const getTemporaryImagePathWindows = async () => {
 				'You cannot call a method on a null-valued expression.',
 			)
 		) {
-			process.spinner.fail('No image data found on the clipboard');
+			spinner.fail('No image data found on the clipboard');
 			process.exit(1);
 		} else {
 			console.log(error?.message);
@@ -129,7 +133,7 @@ export const getTemporaryImagePathMacos = async () => {
 			const tip = `Please use ${chalkPipe('green')(
 				'`brew install pngpaste`',
 			)} to solve`;
-			process.spinner.fail(
+			spinner.fail(
 				`Required ${chalkPipe('green')('`pngpaste`')}\n\n` +
 					boxen(tip, {padding: 1}),
 			);
@@ -137,9 +141,10 @@ export const getTemporaryImagePathMacos = async () => {
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-		process.spinner.fail(error.stderr.trim());
+		spinner.fail(error.stderr.trim());
 		process.exit(1);
 	}
 
 	return filepath;
 };
+/* c8 ignore stop */

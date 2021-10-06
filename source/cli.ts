@@ -2,7 +2,7 @@
 import path from 'node:path';
 import process from 'node:process';
 import meow from 'meow';
-import ora from 'ora';
+import * as spinner from './spinner.js';
 import Nofan from './nofan.js';
 
 const cli = meow(
@@ -66,10 +66,6 @@ const commands = cli.input;
 const {clipboard, photo} = cli.flags;
 const nofan = new Nofan(cli.flags);
 
-const spinner = (text: string) => {
-	process.spinner = ora(text).start();
-};
-
 switch (commands[0]) {
 	case 'config': {
 		void nofan.configure();
@@ -101,34 +97,34 @@ switch (commands[0]) {
 
 	case 'home':
 	case 'h': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		void nofan.homeTimeline();
 		break;
 	}
 
 	case 'mentions':
 	case 'm': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		void nofan.mentions();
 		break;
 	}
 
 	case 'me': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		void nofan.me();
 		break;
 	}
 
 	case 'public':
 	case 'p': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		void nofan.publicTimeline();
 		break;
 	}
 
 	case 'context':
 	case 'cont': {
-		spinner('Fetch');
+		spinner.start('Fetch');
 		const [, id = ''] = commands;
 		void nofan.contextTimeline(id);
 		break;
@@ -136,7 +132,7 @@ switch (commands[0]) {
 
 	case 'search':
 	case 'se': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		const [, ...cmd] = commands;
 		const query = cmd.join(' ');
 		void nofan.searchTimeline(query);
@@ -145,27 +141,27 @@ switch (commands[0]) {
 
 	case 'trends':
 	case 'tr': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		void nofan.trendsTimeline();
 		break;
 	}
 
 	case 'user': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		const [, id = ''] = commands;
 		void nofan.userTimeline(id);
 		break;
 	}
 
 	case 'undo': {
-		spinner('Deleting');
+		spinner.start('Deleting');
 		void nofan.undo();
 		break;
 	}
 
 	case 'reply':
 	case 're': {
-		spinner('Sending');
+		spinner.start('Sending');
 		const [, id = '', ...cmd] = commands;
 		const text = cmd.join(' ');
 		void nofan.reply(id, text);
@@ -174,7 +170,7 @@ switch (commands[0]) {
 
 	case 'repost':
 	case 'rt': {
-		spinner('Sending');
+		spinner.start('Sending');
 		const [, id = '', ...cmd] = commands;
 		const text = cmd.join(' ');
 		void nofan.repost(id, text);
@@ -182,7 +178,7 @@ switch (commands[0]) {
 	}
 
 	case 'show': {
-		spinner('Fetching');
+		spinner.start('Fetching');
 		const [, id = ''] = commands;
 		void nofan.show(id);
 		break;
@@ -192,19 +188,19 @@ switch (commands[0]) {
 	case 'post': {
 		const [method, uri = ''] = commands;
 		const uriPath = path.join('/', uri);
-		spinner(`${method.toUpperCase()} ${uriPath}`);
+		spinner.start(`${method.toUpperCase()} ${uriPath}`);
 
 		if (!uri) {
-			process.spinner.fail('Please specify the URI');
+			spinner.fail('Please specify the URI');
 			process.exit(1);
 		}
 
 		try {
 			const result = await nofan[method](uriPath);
-			process.spinner.succeed();
+			spinner.succeed();
 			nofan.consoleDisplay(result);
 		} catch (error) {
-			process.spinner.fail();
+			spinner.fail();
 			nofan.consoleDisplay(error);
 			if (!nofan.repl) {
 				process.exit(1);
@@ -216,7 +212,7 @@ switch (commands[0]) {
 
 	default: {
 		if (commands.length > 0) {
-			spinner('Sending');
+			spinner.start('Sending');
 			const text = commands.join(' ');
 
 			if (photo || clipboard) {
@@ -225,7 +221,7 @@ switch (commands[0]) {
 				void nofan.update(text);
 			}
 		} else {
-			spinner('Fetching');
+			spinner.start('Fetching');
 			void nofan.homeTimeline();
 		}
 

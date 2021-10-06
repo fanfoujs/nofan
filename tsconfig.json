@@ -2,11 +2,8 @@
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"module": "esnext",
-		"esModuleInterop": true,
-		"outDir": "dist"
+		"outDir": "distribution",
+		"declaration": false
 	},
-	"include": ["source"],
-	"files": [
-		"source/global.d.ts"
-	]
+	"include": ["source"]
 }
