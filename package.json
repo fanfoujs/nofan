@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "del-cli distribution && tsc && chmod +x distribution/cli.js",
-    "test": "xo && c8 ava -T 2m"
+    "test": "xo && c8 ava -T 10m"
   },
   "repository": {
     "type": "git",
