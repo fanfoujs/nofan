@@ -1,5 +1,6 @@
 import {Config} from '../types.js';
 
+/* c8 ignore start */
 export const configPrompt = (config: Config) => {
 	const promptList = [
 		{
@@ -59,3 +60,4 @@ export const configPrompt = (config: Config) => {
 
 	return promptList;
 };
+/* c8 ignore stop */

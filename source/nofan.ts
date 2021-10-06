@@ -142,6 +142,7 @@ class Nofan {
 		}
 	}
 
+	/* c8 ignore start */
 	async configure() {
 		const {config} = this;
 		const settings: Settings = await inquirer.prompt(configPrompt(config));
@@ -175,6 +176,7 @@ class Nofan {
 		util.createNofanDir();
 		util.setConfig(config);
 	}
+	/* c8 ignore stop */
 
 	async switchUser(id?: string) {
 		const {config} = this;

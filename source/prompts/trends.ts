@@ -1,6 +1,7 @@
 import inquirer from 'inquirer';
 import {Trend} from 'fanfou-sdk';
 
+/* c8 ignore start */
 export const trendsPrompt = (hotTrends: Trend[], savedTrends: Trend[]) => {
 	const hotList = hotTrends.map((item) => item.query);
 	const savedList = savedTrends.map((item) => item.query);
@@ -24,3 +25,4 @@ export const trendsPrompt = (hotTrends: Trend[], savedTrends: Trend[]) => {
 		},
 	];
 };
+/* c8 ignore stop */

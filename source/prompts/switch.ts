@@ -1,3 +1,4 @@
+/* c8 ignore start */
 export const switchPrompt = (
 	choices: Array<
 		| string
@@ -15,3 +16,4 @@ export const switchPrompt = (
 		pageSize: 20,
 	},
 ];
+/* c8 ignore stop */

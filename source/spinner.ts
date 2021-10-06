@@ -13,7 +13,11 @@ export const info = (text: string) => {
 };
 
 export const succeed = (text?: string) => {
-	spinner.succeed(text);
+	if (spinner) {
+		spinner.succeed(text);
+	} else {
+		ora().succeed(text);
+	}
 };
 
 export const fail = (text?: string) => {

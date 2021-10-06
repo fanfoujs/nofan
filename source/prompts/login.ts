@@ -1,3 +1,4 @@
+/* c8 ignore start */
 export const loginPrompt = (opt: {hasName: boolean}) => {
 	const usernameInput = {
 		type: 'input',
@@ -16,3 +17,4 @@ export const loginPrompt = (opt: {hasName: boolean}) => {
 
 	return [usernameInput, passwordInput];
 };
+/* c8 ignore stop */

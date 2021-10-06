@@ -1,6 +1,7 @@
 import chalkPipe from 'chalk-pipe';
 import {Config} from '../types.js';
 
+/* c8 ignore start */
 export const colorsPrompt = (config: Config) => {
 	const transformer = (text: string) => chalkPipe(text)(text);
 
@@ -63,3 +64,4 @@ export const colorsPrompt = (config: Config) => {
 		},
 	];
 };
+/* c8 ignore stop */

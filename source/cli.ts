@@ -67,6 +67,7 @@ const {clipboard, photo} = cli.flags;
 const nofan = new Nofan(cli.flags);
 
 switch (commands[0]) {
+	/* c8 ignore start */
 	case 'config': {
 		void nofan.configure();
 		break;
@@ -76,6 +77,7 @@ switch (commands[0]) {
 		void nofan.colors();
 		break;
 	}
+	/* c8 ignore stop */
 
 	case 'login': {
 		const [, username = '', password = ''] = commands;
@@ -139,12 +141,14 @@ switch (commands[0]) {
 		break;
 	}
 
+	/* c8 ignore start */
 	case 'trends':
 	case 'tr': {
 		spinner.start('Fetching');
 		void nofan.trendsTimeline();
 		break;
 	}
+	/* c8 ignore stop */
 
 	case 'user': {
 		spinner.start('Fetching');
@@ -199,6 +203,7 @@ switch (commands[0]) {
 			const result = await nofan[method](uriPath);
 			spinner.succeed();
 			nofan.consoleDisplay(result);
+			/* c8 ignore start */
 		} catch (error) {
 			spinner.fail();
 			nofan.consoleDisplay(error);
@@ -206,6 +211,7 @@ switch (commands[0]) {
 				process.exit(1);
 			}
 		}
+		/* c8 ignore stop */
 
 		break;
 	}
