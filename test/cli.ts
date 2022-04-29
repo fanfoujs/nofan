@@ -1,16 +1,21 @@
 import http, {Server} from 'node:http';
-import anyTest, {TestInterface} from 'ava';
-import execa from 'execa';
+import anyTest, {TestFn} from 'ava';
+import {execa} from 'execa';
 import listen from 'test-listen';
-import logSymbols from 'log-symbols';
 import * as util from '../source/util.js';
 import app from './fixtures/server.js';
 import cleanup from './fixtures/cleanup.js';
 
 const cli = (...parameters: string[]) =>
-	execa('node', ['--loader', 'ts-node/esm', './source/cli.ts', ...parameters]);
+	execa('node', [
+		'--no-warnings',
+		'--loader',
+		'ts-node/esm',
+		'./source/cli.ts',
+		...parameters,
+	]);
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
 	server: Server;
 }>;
 
@@ -46,7 +51,7 @@ test.after.always(async (t) => {
 
 test.serial('login', async (t) => {
 	const {stderr} = await cli('login', 'user1', 'password1');
-	t.true(stderr.endsWith(`${logSymbols.success} Login succeed!`));
+	t.true(stderr.endsWith('Login succeed!'));
 
 	const config = util.getConfig();
 	const account = util.getAccount();
@@ -56,7 +61,7 @@ test.serial('login', async (t) => {
 
 test.serial('login another account', async (t) => {
 	const {stderr} = await cli('login', 'user2', 'password2');
-	t.true(stderr.endsWith(`${logSymbols.success} Login succeed!`));
+	t.true(stderr.endsWith('Login succeed!'));
 
 	const config = util.getConfig();
 	const account = util.getAccount();
@@ -66,12 +71,12 @@ test.serial('login another account', async (t) => {
 
 test.serial('switch account', async (t) => {
 	const {stderr} = await cli('switch', 'user1');
-	t.true(stderr.endsWith(`${logSymbols.success} Switch account to user1`));
+	t.true(stderr.endsWith('Switch account to user1'));
 });
 
 test.serial('logout', async (t) => {
 	const {stderr} = await cli('logout');
-	t.true(stderr.endsWith(`${logSymbols.success} Logout succeed!`));
+	t.true(stderr.endsWith('Logout succeed!'));
 
 	const config = util.getConfig();
 	const account = util.getAccount();
@@ -122,22 +127,22 @@ test('fetch user-timeline', async (t) => {
 
 test('post status', async (t) => {
 	const {stderr} = await cli('hi', 'there');
-	t.true(stderr.endsWith(`${logSymbols.success} Sent!`));
+	t.true(stderr.endsWith('Sent!'));
 });
 
 test('delete previous status', async (t) => {
 	const {stderr} = await cli('undo');
-	t.true(stderr.endsWith(`${logSymbols.success} Deleted!`));
+	t.true(stderr.endsWith('Deleted!'));
 });
 
 test('reply', async (t) => {
 	const {stderr} = await cli('reply', 'statusesId', 'greetings');
-	t.true(stderr.endsWith(`${logSymbols.success} Sent!`));
+	t.true(stderr.endsWith('Sent!'));
 });
 
 test('repost', async (t) => {
 	const {stderr} = await cli('repost', 'statusesId', 'greetings');
-	t.true(stderr.endsWith(`${logSymbols.success} Sent!`));
+	t.true(stderr.endsWith('Sent!'));
 });
 
 test('show status', async (t) => {
@@ -159,16 +164,12 @@ test('get/post without uri', async (t) => {
 	const getError = await t.throwsAsync(async () => {
 		await cli('get');
 	});
-	t.true(
-		getError.message.endsWith(`${logSymbols.error} Please specify the URI`),
-	);
+	t.true(getError?.message.endsWith('Please specify the URI'));
 
 	const postError = await t.throwsAsync(async () => {
 		await cli('post');
 	});
-	t.true(
-		postError.message.endsWith(`${logSymbols.error} Please specify the URI`),
-	);
+	t.true(postError?.message.endsWith('Please specify the URI'));
 });
 
 test('post photo with invalid path', async (t) => {
@@ -176,8 +177,8 @@ test('post photo with invalid path', async (t) => {
 		await cli('hi', 'there', '-p', 'FILE_DOES_NOT_EXIST');
 	});
 	t.true(
-		error.message.endsWith(
-			`${logSymbols.error} ENOENT: no such file or directory, stat 'FILE_DOES_NOT_EXIST'`,
+		error?.message.endsWith(
+			`ENOENT: no such file or directory, stat 'FILE_DOES_NOT_EXIST'`,
 		),
 	);
 });

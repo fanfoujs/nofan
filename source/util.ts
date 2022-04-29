@@ -4,7 +4,7 @@ import path from 'node:path';
 import process from 'node:process';
 import chalkPipe from 'chalk-pipe';
 import boxen from 'boxen';
-import execa from 'execa';
+import {execa} from 'execa';
 import Shell from 'node-powershell';
 import {AccountDict, Config} from './types.js';
 import * as spinner from './spinner.js';
@@ -52,6 +52,7 @@ export const createJsonFile = (filename: string, content: any) => {
 
 export const readJsonFile = (filename: string): any => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
+	// eslint-disable-next-line unicorn/prefer-json-parse-buffer
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 };
 

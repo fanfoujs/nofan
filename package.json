@@ -27,37 +27,37 @@
   },
   "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
-    "boxen": "^5.0.1",
+    "boxen": "^6.2.1",
     "chalk-pipe": "^5.1.1",
     "fanfou-sdk": "^5.0.0-beta.7",
-    "inquirer": "^7.3.3",
+    "inquirer": "^8.2.4",
     "is-wsl": "^2.2.0",
-    "just-snake-case": "^1.1.0",
-    "meow": "^10.0.0",
-    "moment": "^2.29.1",
+    "just-snake-case": "^3.0.1",
+    "meow": "^10.1.2",
+    "moment": "^2.29.3",
     "node-powershell": "^4.0.0",
-    "ora": "^6.0.0",
-    "terminal-link": "^2.1.1",
+    "ora": "^6.1.0",
+    "terminal-link": "^3.0.0",
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@sindresorhus/tsconfig": "^2.0.0",
     "@types/express": "^4.17.13",
-    "@types/inquirer": "^7.3.1",
-    "@types/node": "^16.10.2",
-    "@types/node-powershell": "^4.0.0",
+    "@types/inquirer": "^8.2.1",
+    "@types/node": "^17.0.30",
+    "@types/node-powershell": "^4.0.1",
     "@types/test-listen": "^1.1.0",
-    "ava": "^3.15.0",
-    "c8": "^7.9.0",
+    "ava": "^4.2.0",
+    "c8": "^7.11.2",
     "del": "^6.0.0",
     "del-cli": "^4.0.1",
-    "execa": "^5.1.1",
-    "express": "^4.17.1",
-    "log-symbols": "^5.0.0",
+    "execa": "^6.1.0",
+    "express": "^4.18.1",
+    "log-symbols": "^5.1.0",
     "test-listen": "^1.1.0",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.3",
-    "xo": "^0.45.0"
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4",
+    "xo": "^0.48.0"
   },
   "xo": {
     "prettier": true,
@@ -75,9 +75,6 @@
     ],
     "extensions": {
       "ts": "module"
-    },
-    "nonSemVerExperiments": {
-      "configurableModuleFormat": true
     },
     "nodeArguments": [
       "--loader=ts-node/esm"

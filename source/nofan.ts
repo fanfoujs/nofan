@@ -65,7 +65,8 @@ class Nofan {
 
 		try {
 			this.config = util.getConfig();
-			this.verbose = this.config.VERBOSE ?? verbose;
+			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+			this.verbose = this.config.VERBOSE || verbose;
 		} catch (error: any) {
 			spinner.fail(error.message);
 			process.exit();
