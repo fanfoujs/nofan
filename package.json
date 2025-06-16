@@ -7,14 +7,14 @@
     "nofan": "distribution/cli.js"
   },
   "engines": {
-    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+    "node": ">=18"
   },
   "files": [
     "distribution"
   ],
   "scripts": {
     "build": "del-cli distribution && tsc && chmod +x distribution/cli.js",
-    "test": "xo && c8 ava -T 10m"
+    "test": "xo"
   },
   "repository": {
     "type": "git",
@@ -27,47 +27,33 @@
   },
   "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
-    "boxen": "^6.2.1",
-    "chalk-pipe": "^5.1.1",
-    "fanfou-sdk": "^5.0.0-beta.7",
-    "inquirer": "^8.2.4",
-    "is-wsl": "^2.2.0",
-    "just-snake-case": "^3.0.1",
-    "meow": "^10.1.2",
-    "moment": "^2.29.3",
+    "@inquirer/prompts": "^7.5.3",
+    "boxen": "^8.0.1",
+    "chalk-pipe": "^6.2.0",
+    "fanfou-sdk": "^5.0.0",
+    "inquirer": "^12.6.3",
+    "is-wsl": "^3.1.0",
+    "just-snake-case": "^3.2.0",
+    "meow": "^13.2.0",
+    "moment": "^2.30.1",
     "node-powershell": "^4.0.0",
-    "ora": "^6.1.0",
-    "terminal-link": "^3.0.0",
+    "ora": "^8.2.0",
+    "terminal-link": "^4.0.0",
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {
-    "@sindresorhus/tsconfig": "^2.0.0",
-    "@types/express": "^4.17.13",
-    "@types/inquirer": "^8.2.1",
-    "@types/node": "^17.0.30",
-    "@types/node-powershell": "^4.0.1",
-    "@types/test-listen": "^1.1.0",
-    "ava": "^4.2.0",
-    "c8": "^7.11.2",
-    "del": "^6.0.0",
-    "del-cli": "^4.0.1",
-    "execa": "^6.1.0",
-    "express": "^4.18.1",
-    "log-symbols": "^5.1.0",
-    "test-listen": "^1.1.0",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.4",
-    "xo": "^0.48.0"
-  },
-  "xo": {
-    "prettier": true,
-    "rules": {
-      "camelcase": "off",
-      "unicorn/no-process-exit": "off",
-      "@typescript-eslint/no-implicit-any-catch": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off"
-    }
+    "@sindresorhus/tsconfig": "^7.0.0",
+    "@types/express": "^5.0.3",
+    "@types/inquirer": "^9.0.8",
+    "@types/node": "^24.0.1",
+    "@types/node-powershell": "^4.0.3",
+    "del": "^8.0.0",
+    "del-cli": "^6.0.0",
+    "execa": "^9.6.0",
+    "log-symbols": "^7.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "xo": "^1.1.0"
   },
   "ava": {
     "files": [

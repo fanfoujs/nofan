@@ -1,5 +1,5 @@
 import process from 'node:process';
-import ora, {Ora} from 'ora';
+import ora, {type Ora} from 'ora';
 
 // @ts-expect-error: Ignroe global spinner
 let {spinner}: {spinner: Ora} = process;

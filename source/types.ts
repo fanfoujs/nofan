@@ -31,12 +31,12 @@ export type Config = {
 };
 
 export type Settings = {
-	display_count: string;
-	display: string[];
-	key: string;
-	secret: string;
-	api_domain: string;
-	oauth_domain: string;
+	displayCount: number;
+	displayConfigs: string[];
+	consumerKey: string;
+	consumerSecret: string;
+	apiDomain: string;
+	oauthDomain: string;
 };
 
 export type ConsoleType =

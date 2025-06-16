@@ -1,20 +1,17 @@
-/* c8 ignore start */
-export const loginPrompt = (opt: {hasName: boolean}) => {
-	const usernameInput = {
-		type: 'input',
-		name: 'username',
-		message: 'Enter your username',
-	};
-	const passwordInput = {
-		type: 'password',
-		name: 'password',
+import {input, password as pwd} from '@inquirer/prompts';
+
+export const loginPrompt = async (options?: {currentUsername?: string}) => {
+	const username =
+		// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+		options?.currentUsername ||
+		(await input({
+			message: 'Enter your username',
+		}));
+
+	const password = await pwd({
 		message: 'Enter your password',
 		mask: '*',
-	};
-	if (opt.hasName) {
-		return [passwordInput];
-	}
+	});
 
-	return [usernameInput, passwordInput];
+	return {username, password};
 };
-/* c8 ignore stop */

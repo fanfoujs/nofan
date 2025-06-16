@@ -2,8 +2,16 @@
 import path from 'node:path';
 import process from 'node:process';
 import meow from 'meow';
-import * as spinner from './spinner.js';
 import Nofan from './nofan.js';
+import * as spinner from './spinner.js';
+
+process.on('uncaughtException', (error) => {
+	if (error instanceof Error && error.name === 'ExitPromptError') {
+		console.log('Aborted');
+	} else {
+		throw error;
+	}
+});
 
 const cli = meow(
 	`
@@ -44,19 +52,19 @@ Commands:
 		flags: {
 			help: {
 				type: 'boolean',
-				alias: 'h',
+				shortFlag: 'h',
 			},
 			clipboard: {
 				type: 'boolean',
-				alias: 'c',
+				shortFlag: 'c',
 			},
 			photo: {
 				type: 'string',
-				alias: 'p',
+				shortFlag: 'p',
 			},
 			verbose: {
 				type: 'boolean',
-				alias: 'v',
+				shortFlag: 'v',
 			},
 		},
 	},
@@ -65,9 +73,10 @@ Commands:
 const commands = cli.input;
 const {clipboard, photo} = cli.flags;
 const nofan = new Nofan(cli.flags);
+await nofan.initConfig({verbose: cli.flags.verbose});
 
+// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 switch (commands[0]) {
-	/* c8 ignore start */
 	case 'config': {
 		void nofan.configure();
 		break;
@@ -77,7 +86,6 @@ switch (commands[0]) {
 		void nofan.colors();
 		break;
 	}
-	/* c8 ignore stop */
 
 	case 'login': {
 		const [, username = '', password = ''] = commands;
@@ -141,14 +149,12 @@ switch (commands[0]) {
 		break;
 	}
 
-	/* c8 ignore start */
 	case 'trends':
 	case 'tr': {
 		spinner.start('Fetching');
 		void nofan.trendsTimeline();
 		break;
 	}
-	/* c8 ignore stop */
 
 	case 'user': {
 		spinner.start('Fetching');
@@ -203,7 +209,6 @@ switch (commands[0]) {
 			const result = await nofan[method](uriPath);
 			spinner.succeed();
 			nofan.consoleDisplay(result);
-			/* c8 ignore start */
 		} catch (error) {
 			spinner.fail();
 			nofan.consoleDisplay(error);
@@ -211,7 +216,6 @@ switch (commands[0]) {
 				process.exit(1);
 			}
 		}
-		/* c8 ignore stop */
 
 		break;
 	}
@@ -221,7 +225,7 @@ switch (commands[0]) {
 			spinner.start('Sending');
 			const text = commands.join(' ');
 
-			if (photo || clipboard) {
+			if (photo ?? clipboard) {
 				void nofan.upload(text);
 			} else {
 				void nofan.update(text);

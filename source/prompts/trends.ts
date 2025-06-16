@@ -1,28 +1,34 @@
-import inquirer from 'inquirer';
-import {Trend} from 'fanfou-sdk';
+import {Separator, search} from '@inquirer/prompts';
+import {type Trend} from 'fanfou-sdk';
 
-/* c8 ignore start */
-export const trendsPrompt = (hotTrends: Trend[], savedTrends: Trend[]) => {
-	const hotList = hotTrends.map((item) => item.query);
-	const savedList = savedTrends.map((item) => item.query);
+type TrendChoice = string | Separator;
+
+export const trendsPrompt = async (
+	hotTrends: Trend[],
+	savedTrends: Trend[],
+) => {
+	const hotList: TrendChoice[] = hotTrends.map((item) => item.query);
+	const savedList: TrendChoice[] = savedTrends.map((item) => item.query);
+
 	if (hotList.length > 0) {
-		// @ts-expect-error: To be fixed
-		hotList.unshift(new inquirer.Separator('- Hot Trends -'));
+		hotList.unshift(new Separator('- Hot Trends -'));
 	}
 
 	if (savedList.length > 0) {
-		// @ts-expect-error: To be fixed
-		savedList.unshift(new inquirer.Separator('- Saved Trends -'));
+		savedList.unshift(new Separator('- Saved Trends -'));
 	}
 
-	return [
-		{
-			type: 'list',
-			name: 'trends',
-			message: 'Select trends',
-			choices: [...hotList, ...savedList],
-			pageSize: 20,
+	const choices = [...hotList, ...savedList];
+
+	return search<string>({
+		message: 'Select trends',
+		async source(term) {
+			if (!term) return choices;
+			return choices.filter((x) =>
+				typeof x === 'string'
+					? x.toLowerCase().includes(term.toLowerCase())
+					: false,
+			);
 		},
-	];
+	});
 };
-/* c8 ignore stop */
