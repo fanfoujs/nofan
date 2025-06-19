@@ -1,4 +1,4 @@
-import {search} from '@inquirer/prompts';
+import {select} from '@inquirer/prompts';
 
 export const switchPrompt = async (
 	choices: Array<{
@@ -6,14 +6,9 @@ export const switchPrompt = async (
 		disabled: string | boolean;
 	}>,
 ) => {
-	return search({
+	return select({
 		message: 'Switch account to',
-		async source(term) {
-			if (!term) return choices;
-			return choices.filter((x) =>
-				x.value.toLowerCase().includes(term.toLowerCase()),
-			);
-		},
+		choices,
 		pageSize: 20,
 	});
 };

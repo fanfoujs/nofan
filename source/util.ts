@@ -2,7 +2,6 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
-import boxen from 'boxen';
 import chalkPipe from 'chalk-pipe';
 import {ExecaError, execa} from 'execa';
 import Shell from 'node-powershell';
@@ -133,10 +132,7 @@ export const getTemporaryImagePathMacos = async () => {
 				const tip = `Please use ${chalkPipe('green')(
 					'`brew install pngpaste`',
 				)} to solve`;
-				spinner.fail(
-					`Required ${chalkPipe('green')('`pngpaste`')}\n\n` +
-						boxen(tip, {padding: 1}),
-				);
+				spinner.fail(`Required ${chalkPipe('green')('`pngpaste`')}\n\n${tip}`);
 				process.exit(1);
 			}
 

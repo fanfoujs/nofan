@@ -1,4 +1,4 @@
-import {Separator, search} from '@inquirer/prompts';
+import {Separator, select} from '@inquirer/prompts';
 import {type Trend} from 'fanfou-sdk';
 
 type TrendChoice = string | Separator;
@@ -20,15 +20,8 @@ export const trendsPrompt = async (
 
 	const choices = [...hotList, ...savedList];
 
-	return search<string>({
+	return select<string>({
 		message: 'Select trends',
-		async source(term) {
-			if (!term) return choices;
-			return choices.filter((x) =>
-				typeof x === 'string'
-					? x.toLowerCase().includes(term.toLowerCase())
-					: false,
-			);
-		},
+		choices,
 	});
 };

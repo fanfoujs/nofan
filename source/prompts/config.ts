@@ -23,7 +23,7 @@ export const configPrompt = async (config: Config): Promise<Settings> => {
 			},
 			{
 				name: 'Use HTTPS',
-				value: 'uesHttps',
+				value: 'useHttps',
 				checked: config.SSL ?? false,
 			},
 			{

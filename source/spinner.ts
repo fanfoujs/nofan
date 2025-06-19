@@ -5,7 +5,11 @@ import ora, {type Ora} from 'ora';
 let {spinner}: {spinner: Ora} = process;
 
 export const start = (text: string) => {
-	spinner ||= ora(text).start();
+	if (spinner) {
+		spinner.start(text);
+	} else {
+		spinner = ora(text).start();
+	}
 };
 
 export const info = (text: string) => {

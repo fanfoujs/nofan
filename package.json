@@ -28,9 +28,8 @@
   "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
     "@inquirer/prompts": "^7.5.3",
-    "boxen": "^8.0.1",
     "chalk-pipe": "^6.2.0",
-    "fanfou-sdk": "^5.0.0",
+    "fanfou-sdk": "^6.0.0-beta.0",
     "inquirer": "^12.6.3",
     "is-wsl": "^3.1.0",
     "just-snake-case": "^3.2.0",

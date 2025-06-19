@@ -193,7 +193,7 @@ class Nofan {
 
 	async switchUser(id?: string) {
 		const {config} = this;
-		const account = util.getAccount();
+		const account = await util.getAccount();
 
 		if (id) {
 			const found = Object.keys(account).find(
@@ -268,9 +268,9 @@ class Nofan {
 	}
 
 	async trendsTimeline() {
-		const [{trends: hotTrends}, savedTrends]: [GetTrendsResult, Trend[]] = [
-			await this._get('/trends/list'),
-			await this._get('/saved_searches/list'),
+		const [{trends: hotTrends}, savedTrends] = [
+			await this._get<GetTrendsResult>('/trends/list'),
+			await this._get<Trend[]>('/saved_searches/list'),
 		];
 
 		if (hotTrends.length + savedTrends.length > 0) {
@@ -433,9 +433,8 @@ class Nofan {
 
 		const ff = this.initFanfou(user);
 		try {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const result = await ff.get(uri, parameters);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			const result = await ff.get<T>(uri, parameters);
 			return result;
 		} catch (error) {
 			this._handleError(error);
@@ -467,9 +466,8 @@ class Nofan {
 
 		const ff = this.initFanfou(user);
 		try {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const result = await ff.post(uri, parameters);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			const result = await ff.post<T>(uri, parameters);
 			return result;
 		} catch (error: any) {
 			this._handleError(error);
@@ -504,8 +502,7 @@ class Nofan {
 		const ff = this.initFanfou(user);
 
 		try {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const result: Status = await ff.post('/photos/upload', {
+			const result = await ff.post<Status>('/photos/upload', {
 				photo: fs.createReadStream(path),
 				status,
 			});
