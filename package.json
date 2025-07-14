@@ -27,10 +27,10 @@
   },
   "homepage": "https://github.com/fanfoujs/nofan#readme",
   "dependencies": {
-    "@inquirer/prompts": "^7.5.3",
+    "@inquirer/prompts": "^7.6.0",
     "chalk-pipe": "^6.2.0",
-    "fanfou-sdk": "^6.0.0-beta.0",
-    "inquirer": "^12.6.3",
+    "fanfou-sdk": "^6.0.0",
+    "inquirer": "^12.7.0",
     "is-wsl": "^3.1.0",
     "just-snake-case": "^3.2.0",
     "meow": "^13.2.0",
@@ -44,7 +44,7 @@
     "@sindresorhus/tsconfig": "^7.0.0",
     "@types/express": "^5.0.3",
     "@types/inquirer": "^9.0.8",
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.0.13",
     "@types/node-powershell": "^4.0.3",
     "del": "^8.0.0",
     "del-cli": "^6.0.0",
@@ -52,7 +52,7 @@
     "log-symbols": "^7.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "xo": "^1.1.0"
+    "xo": "^1.1.1"
   },
   "ava": {
     "files": [
