@@ -13,7 +13,11 @@ export const start = (text: string) => {
 };
 
 export const info = (text: string) => {
-	spinner ||= ora().info(text);
+	if (spinner) {
+		spinner.info(text);
+	} else {
+		spinner = ora().info(text);
+	}
 };
 
 export const succeed = (text?: string) => {
@@ -25,9 +29,17 @@ export const succeed = (text?: string) => {
 };
 
 export const fail = (text?: string) => {
-	spinner.fail(text);
+	if (spinner) {
+		spinner.fail(text);
+	} else {
+		spinner = ora().fail(text);
+	}
 };
 
 export const stop = () => {
-	spinner.stop();
+	if (spinner) {
+		spinner.stop();
+	} else {
+		spinner = ora().stop();
+	}
 };
