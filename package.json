@@ -13,6 +13,7 @@
     "distribution"
   ],
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "del-cli distribution && tsc && chmod +x distribution/cli.js",
     "test": "xo"
   },
