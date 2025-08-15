@@ -4,7 +4,6 @@ import path from 'node:path';
 import process from 'node:process';
 import chalkPipe from 'chalk-pipe';
 import {ExecaError, execa} from 'execa';
-import Shell from 'node-powershell';
 import * as spinner from './spinner.js';
 import {type AccountDict, type Config} from './types.js';
 
@@ -90,31 +89,28 @@ export const getTemporaryImagePathWindows = async () => {
 		await fs.mkdir(temporaryPath);
 	} catch {}
 
-	const ps = new Shell({
-		executionPolicy: 'Bypass',
-		noProfile: true,
-	});
-
-	void ps.addCommand('$img = Get-Clipboard -Format Image');
-	void ps.addCommand(`$img.save("${filepath}")`);
-
 	try {
-		await ps.invoke();
-	} catch (error: any) {
-		if (
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-			error?.message.match(
-				'You cannot call a method on a null-valued expression.',
-			)
-		) {
-			spinner.fail('No image data found on the clipboard');
-			process.exit(1);
-		} else {
-			console.log(error?.message);
-			process.exit(1);
+		await execa({
+			shell: true,
+			windowsVerbatimArguments: true,
+		})`powershell -Command $img = Get-clipboard -Format Image;$img.save('${filepath}')`;
+	} catch (error) {
+		if (error instanceof Error) {
+			if (
+				error.message.includes(
+					'You cannot call a method on a null-valued expression.',
+				)
+			) {
+				spinner.fail('No image data found on the clipboard');
+				process.exit(1);
+			} else {
+				console.log(error.message);
+				process.exit(1);
+			}
 		}
-	} finally {
-		void ps.dispose();
+
+		console.log('Unknown error:', error);
+		process.exit(1);
 	}
 
 	return filepath;

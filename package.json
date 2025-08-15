@@ -47,7 +47,6 @@
     "@types/express": "^5.0.3",
     "@types/inquirer": "^9.0.8",
     "@types/node": "^24.0.13",
-    "@types/node-powershell": "^4.0.3",
     "del": "^8.0.0",
     "del-cli": "^6.0.0",
     "log-symbols": "^7.0.1",
