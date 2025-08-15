@@ -56,8 +56,10 @@ export const readJsonFile = async (filename: string): any => {
 
 export const getConfig = async (): Promise<Config> => {
 	try {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const json = await readJsonFile('config');
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-		return readJsonFile('config');
+		return json;
 	} catch {
 		return defaultConfig;
 	}
@@ -65,8 +67,10 @@ export const getConfig = async (): Promise<Config> => {
 
 export const getAccount = async (): Promise<AccountDict> => {
 	try {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const account = await readJsonFile('account');
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-		return readJsonFile('account');
+		return account;
 	} catch {
 		return {};
 	}
