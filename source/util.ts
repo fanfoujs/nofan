@@ -46,17 +46,15 @@ export const createJsonFile = async (filename: string, content: any) => {
 	await fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8');
 };
 
-export const readJsonFile = async (filename: string): Promise<any> => {
+export const readJsonFile = async <T>(filename: string): Promise<T> => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	const file = await fs.readFile(filePath, 'utf8');
-	return JSON.parse(file);
+	return JSON.parse(file) as T;
 };
 
 export const getConfig = async (): Promise<Config> => {
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const json = await readJsonFile('config');
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		const json = await readJsonFile<Config>('config');
 		return json;
 	} catch {
 		return defaultConfig;
@@ -65,9 +63,7 @@ export const getConfig = async (): Promise<Config> => {
 
 export const getAccount = async (): Promise<AccountDict> => {
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const account = await readJsonFile('account');
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		const account = await readJsonFile<AccountDict>('account');
 		return account;
 	} catch {
 		return {};
