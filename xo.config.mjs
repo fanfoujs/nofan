@@ -2,7 +2,6 @@ const xoConfig = [
 	{
 		prettier: true,
 		rules: {
-			camelcase: 'off',
 			'sort-imports': [
 				'error',
 				{
@@ -13,9 +12,6 @@ const xoConfig = [
 					allowSeparatedGroups: false,
 				},
 			],
-			'import-x/no-extraneous-dependencies': 'off',
-			'import-x/no-named-as-default': 'off',
-			'import-x/extensions': 'off',
 			'import-x/order': [
 				'error',
 				{
