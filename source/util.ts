@@ -46,8 +46,7 @@ export const createJsonFile = async (filename: string, content: any) => {
 	await fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8');
 };
 
-// @ts-expect-error: Accept any JSON file
-export const readJsonFile = async (filename: string): any => {
+export const readJsonFile = async (filename: string): Promise<any> => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	const file = await fs.readFile(filePath, 'utf8');
 	return JSON.parse(file);
