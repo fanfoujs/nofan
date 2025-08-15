@@ -469,7 +469,7 @@ class Nofan {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			const result = await ff.post<T>(uri, parameters);
 			return result;
-		} catch (error: any) {
+		} catch (error) {
 			this._handleError(error);
 		}
 	}
@@ -507,7 +507,7 @@ class Nofan {
 				status,
 			});
 			return result;
-		} catch (error: any) {
+		} catch (error) {
 			this._handleError(error);
 		}
 	}
