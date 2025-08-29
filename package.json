@@ -32,7 +32,6 @@
     "chalk-pipe": "^6.2.0",
     "execa": "^9.6.0",
     "fanfou-sdk": "^6.0.0",
-    "inquirer": "^12.7.0",
     "is-wsl": "^3.1.0",
     "just-snake-case": "^3.2.0",
     "meow": "^13.2.0",
@@ -43,25 +42,11 @@
   },
   "devDependencies": {
     "@sindresorhus/tsconfig": "^7.0.0",
-    "@types/express": "^5.0.3",
-    "@types/inquirer": "^9.0.8",
     "@types/node": "^24.0.13",
     "del": "^8.0.0",
     "del-cli": "^6.0.0",
     "log-symbols": "^7.0.1",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "xo": "^1.1.1"
-  },
-  "ava": {
-    "files": [
-      "test/*"
-    ],
-    "extensions": {
-      "ts": "module"
-    },
-    "nodeArguments": [
-      "--loader=ts-node/esm"
-    ]
   }
 }
