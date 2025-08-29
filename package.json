@@ -1,6 +1,6 @@
 {
   "name": "nofan",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "CLI for Fanfou",
   "type": "module",
   "bin": {
