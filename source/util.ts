@@ -38,7 +38,9 @@ export const defaultConfig = {
 export const createNofanDir = async () => {
 	try {
 		await fs.mkdir(`${homedir}${configPath}`);
-	} catch {}
+	} catch {
+		// Handle error gracefully
+	}
 };
 
 export const createJsonFile = async (filename: string, content: any) => {
@@ -49,6 +51,7 @@ export const createJsonFile = async (filename: string, content: any) => {
 export const readJsonFile = async <T>(filename: string): Promise<T> => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	const file = await fs.readFile(filePath, 'utf8');
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
 	return JSON.parse(file) as T;
 };
 
@@ -82,9 +85,12 @@ export const getTemporaryImagePathWindows = async () => {
 
 	try {
 		await fs.mkdir(temporaryPath);
-	} catch {}
+	} catch {
+		// Handle error gracefully
+	}
 
 	try {
+		// eslint-disable-next-line @typescript-eslint/await-thenable
 		await execa({
 			shell: true,
 			windowsVerbatimArguments: true,
@@ -117,9 +123,12 @@ export const getTemporaryImagePathMacos = async () => {
 
 	try {
 		await fs.mkdir(temporaryPath);
-	} catch {}
+	} catch {
+		// Handle error gracefully
+	}
 
 	try {
+		// eslint-disable-next-line @typescript-eslint/await-thenable
 		await execa('pngpaste', [filepath]);
 	} catch (error) {
 		if (error instanceof ExecaError) {

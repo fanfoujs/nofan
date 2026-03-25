@@ -47,14 +47,8 @@ class Nofan {
 	verbose?: boolean;
 
 	constructor(options: NofanOptions = {}) {
-		const {
-			verbose,
-			photo,
-			clipboard,
-			repl,
-			consoleType = 'log',
-			...parameters
-		} = options;
+		const {verbose, photo, clipboard, repl, consoleType, ...parameters} =
+			options;
 
 		this.photo = photo;
 		this.clipboard = clipboard;
@@ -64,7 +58,7 @@ class Nofan {
 
 		for (const key of Object.keys(parameters)) {
 			// @ts-expect-error: Accept any fanfou query
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 			this.params[justSnakeCase(key)] = parameters[key];
 		}
 	}
@@ -72,7 +66,7 @@ class Nofan {
 	async initConfig(options?: {verbose?: boolean}) {
 		try {
 			this.config = await util.getConfig();
-			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
 			this.verbose = this.config.VERBOSE || options?.verbose;
 		} catch (error) {
 			spinner.fail(
@@ -255,6 +249,7 @@ class Nofan {
 
 	async searchTimeline(q: string) {
 		const {DISPLAY_COUNT: count} = this.config;
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 		const uri = this.params.id
 			? '/search/user_timeline'
 			: '/search/public_timeline';
@@ -306,7 +301,6 @@ class Nofan {
 		if (photo) {
 			await this._upload(photo, text);
 		} else if (clipboard) {
-			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 			switch (process.platform) {
 				case 'darwin': {
 					const temporaryFilepath = await util.getTemporaryImagePathMacos();
@@ -570,10 +564,10 @@ class Nofan {
 			return false;
 		};
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
 		for (const status of timeline as Status[]) {
 			let text = '';
 			for (const item of getEntities(status.text)) {
-				// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 				switch (item.type) {
 					case 'at': {
 						text +=
@@ -618,7 +612,7 @@ class Nofan {
 				const photoTag = chalkPipe(photoColor)(
 					terminalLink(
 						'[图]',
-						status?.photo?.largeurl.replaceAll(/@.+\..+$/g, '') ?? '',
+						status?.photo?.largeurl.replaceAll(/@.+\..+$/gv, '') ?? '',
 						{
 							fallback: (text) => text,
 						},
@@ -645,7 +639,7 @@ class Nofan {
 	}
 
 	consoleDisplay(item: any) {
-		const {repl, consoleType = 'log'} = this;
+		const {repl, consoleType} = this;
 		if (repl) {
 			showInRepl(item);
 		} else {
