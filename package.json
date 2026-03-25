@@ -4,13 +4,13 @@
   "description": "CLI for Fanfou",
   "type": "module",
   "bin": {
-    "nofan": "distribution/cli.js"
+    "nofan": "distribution/source/cli.js"
   },
   "engines": {
     "node": ">=20.12"
   },
   "files": [
-    "distribution"
+    "distribution/source"
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
