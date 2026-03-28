@@ -10,5 +10,8 @@ export const switchPrompt = async (
 		message: 'Switch account to',
 		choices,
 		pageSize: 20,
+		theme: {
+			keybindings: ['emacs', 'vim'],
+		},
 	});
 };
