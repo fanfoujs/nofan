@@ -9,7 +9,6 @@ process.on('uncaughtException', (error) => {
 	if (error instanceof Error && error.name === 'ExitPromptError') {
 		console.log('Aborted');
 	} else {
-		// eslint-disable-next-line @typescript-eslint/only-throw-error
 		throw error;
 	}
 });
@@ -76,6 +75,7 @@ const {clipboard, photo} = cli.flags;
 const nofan = new Nofan(cli.flags);
 await nofan.initConfig({verbose: cli.flags.verbose});
 
+// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 switch (commands[0]) {
 	case 'config': {
 		void nofan.configure();

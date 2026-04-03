@@ -2,7 +2,7 @@ import {input, password as pwd} from '@inquirer/prompts';
 
 export const loginPrompt = async (options?: {currentUsername?: string}) => {
 	const username =
-		options?.currentUsername ||
+		options?.currentUsername ??
 		(await input({
 			message: 'Enter your username',
 		}));

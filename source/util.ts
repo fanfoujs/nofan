@@ -90,7 +90,6 @@ export const getTemporaryImagePathWindows = async () => {
 	}
 
 	try {
-		// eslint-disable-next-line @typescript-eslint/await-thenable
 		await execa({
 			shell: true,
 			windowsVerbatimArguments: true,
@@ -128,7 +127,6 @@ export const getTemporaryImagePathMacos = async () => {
 	}
 
 	try {
-		// eslint-disable-next-line @typescript-eslint/await-thenable
 		await execa('pngpaste', [filepath]);
 	} catch (error) {
 		if (error instanceof ExecaError) {

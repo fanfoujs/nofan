@@ -66,8 +66,7 @@ class Nofan {
 	async initConfig(options?: {verbose?: boolean}) {
 		try {
 			this.config = await util.getConfig();
-
-			this.verbose = this.config.VERBOSE || options?.verbose;
+			this.verbose = this.config.VERBOSE ?? options?.verbose;
 		} catch (error) {
 			spinner.fail(
 				error instanceof Error
@@ -301,6 +300,7 @@ class Nofan {
 		if (photo) {
 			await this._upload(photo, text);
 		} else if (clipboard) {
+			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 			switch (process.platform) {
 				case 'darwin': {
 					const temporaryFilepath = await util.getTemporaryImagePathMacos();
@@ -568,6 +568,7 @@ class Nofan {
 		for (const status of timeline as Status[]) {
 			let text = '';
 			for (const item of getEntities(status.text)) {
+				// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 				switch (item.type) {
 					case 'at': {
 						text +=

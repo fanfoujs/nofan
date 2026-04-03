@@ -42,8 +42,8 @@
   },
   "devDependencies": {
     "@sindresorhus/tsconfig": "^8.1.0",
-    "@types/node": "^25.5.0",
-    "@typescript/native-preview": "^7.0.0-dev.20260331.1",
+    "@types/node": "^25.5.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260403.1",
     "del": "^8.0.1",
     "del-cli": "^7.0.0",
     "log-symbols": "^7.0.1",
