@@ -3,8 +3,8 @@
 [![](https://github.com/fanfoujs/nofan/workflows/Node/badge.svg)](https://github.com/fanfoujs/nofan/actions)
 [![](https://img.shields.io/npm/v/nofan.svg)](https://www.npmjs.com/package/nofan)
 [![](https://img.shields.io/npm/l/nofan.svg)](https://github.com/fanfoujs/nofan/blob/master/LICENSE)
-[![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://www.youtube.com/watch?v=9auOCbH5Ns4)
 [![](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/xojs/xo)
+[![](https://stoptranslatingmy.app/badge.svg)](https://stoptranslatingmy.app)
 
 CLI for Fanfou
 
@@ -189,7 +189,7 @@ You could use `--repl` option to inspect the result in [REPL](https://nodejs.org
 nofan get users/show --id=litomore --repl
 
 #=> result.name
-#=> 'LitoMore' 
+#=> 'LitoMore'
 ```
 
 ## Related
