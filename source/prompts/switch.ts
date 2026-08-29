@@ -5,8 +5,8 @@ export const switchPrompt = async (
 		value: string;
 		disabled: string | boolean;
 	}>,
-) => {
-	return select({
+) =>
+	select({
 		message: 'Switch account to',
 		choices,
 		pageSize: 20,
@@ -14,4 +14,3 @@ export const switchPrompt = async (
 			keybindings: ['emacs', 'vim'],
 		},
 	});
-};

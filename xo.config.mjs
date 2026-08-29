@@ -24,6 +24,7 @@ const xoConfig = [
 					'newlines-between': 'never',
 				},
 			],
+			'@typescript-eslint/strict-boolean-expressions': 'off',
 			'unicorn/no-process-exit': 'off',
 		},
 	},

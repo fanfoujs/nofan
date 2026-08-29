@@ -4,6 +4,7 @@ import path from 'node:path';
 import process from 'node:process';
 import chalkPipe from 'chalk-pipe';
 import {ExecaError, execa} from 'execa';
+import {type StatusEntity} from 'fanfou-sdk';
 import * as spinner from './spinner.js';
 import {type AccountDict, type Config} from './types.js';
 
@@ -12,7 +13,7 @@ export const configPath =
 export const homedir = os.homedir();
 
 export const defaultConfig = {
-	/* eslint-disable @typescript-eslint/naming-convention */
+	/* eslint-disable @typescript-eslint/naming-convention -- Config file uses this format. */
 	CONSUMER_KEY: '13456aa784cdf7688af69e85d482e011',
 	CONSUMER_SECRET: 'f75c02df373232732b69354ecfbcabea',
 	DISPLAY_COUNT: 10,
@@ -35,6 +36,33 @@ export const defaultConfig = {
 	/* eslint-enable @typescript-eslint/naming-convention */
 };
 
+export const formatEntityText = (
+	item: StatusEntity,
+	style: string,
+	highlightColor: string,
+	isVerbose = false,
+) => {
+	const appendText =
+		isVerbose && item.type === 'at' ? chalkPipe(style)(`:${item.id}`) : '';
+
+	if (item.boldTexts) {
+		const highlightText = item.boldTexts
+			.map((keyword) => {
+				if (keyword.isBold) {
+					const boldColor = `${style}.${highlightColor}`;
+					return chalkPipe(boldColor)(keyword.text);
+				}
+
+				return chalkPipe(style)(keyword.text);
+			})
+			.join('');
+
+		return highlightText + appendText;
+	}
+
+	return false;
+};
+
 export const createNofanDir = async () => {
 	try {
 		await fs.mkdir(`${homedir}${configPath}`);
@@ -51,7 +79,7 @@ export const createJsonFile = async (filename: string, content: any) => {
 export const readJsonFile = async <T>(filename: string): Promise<T> => {
 	const filePath = `${homedir}${configPath}${filename}.json`;
 	const file = await fs.readFile(filePath, 'utf8');
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+
 	return JSON.parse(file) as T;
 };
 
@@ -102,11 +130,11 @@ export const getTemporaryImagePathWindows = async () => {
 				)
 			) {
 				spinner.fail('No image data found on the clipboard');
-				process.exit(1);
 			} else {
 				console.log(error.message);
-				process.exit(1);
 			}
+
+			process.exit(1);
 		}
 
 		console.log('Unknown error:', error);

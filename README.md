@@ -88,7 +88,7 @@ Here is [valid styles list](https://github.com/LitoMore/chalk-pipe#valid-styles)
 
 **Example**
 
-```
+```text
 > #ff99cc
 > bold.#ff0000
 > pink.underline

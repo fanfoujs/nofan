@@ -56,10 +56,9 @@ class Nofan {
 		this.consoleType = consoleType;
 		this.params = {};
 
-		for (const key of Object.keys(parameters)) {
-			// @ts-expect-error: Accept any fanfou query
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			this.params[justSnakeCase(key)] = parameters[key];
+		for (const [key, value] of Object.entries(parameters)) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			this.params[justSnakeCase(key)] = value;
 		}
 	}
 
@@ -79,12 +78,12 @@ class Nofan {
 
 	async login(username: string, password: string) {
 		const {config} = this;
-		const login = async (username: string, password: string) => {
+		const login = async (username_: string, password_: string) => {
 			const ff = new Fanfou({
 				consumerKey: config.CONSUMER_KEY,
 				consumerSecret: config.CONSUMER_SECRET,
-				username,
-				password,
+				username: username_,
+				password: password_,
 				protocol: config.SSL ? 'https:' : 'http:',
 				apiDomain: config.API_DOMAIN,
 				oauthDomain: config.OAUTH_DOMAIN,
@@ -101,7 +100,7 @@ class Nofan {
 				await util.setConfig(config);
 				const account = await util.getAccount();
 				account[username] = {
-					/* eslint-disable @typescript-eslint/naming-convention */
+					/* eslint-disable @typescript-eslint/naming-convention -- Config file uses this format. */
 					CONSUMER_KEY: config.CONSUMER_KEY,
 					CONSUMER_SECRET: config.CONSUMER_SECRET,
 					OAUTH_TOKEN: token.oauthToken,
@@ -138,10 +137,11 @@ class Nofan {
 	async logout() {
 		spinner.start('Logging out');
 		const {config} = this;
-		if (config.USER) {
+		const configUser = config.USER;
+		if (configUser) {
 			const account = await util.getAccount();
 			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete account[config.USER];
+			delete account[configUser];
 			config.USER = Object.keys(account)[0] ?? '';
 			await util.setConfig(config);
 			await util.setAccount(account);
@@ -157,7 +157,7 @@ class Nofan {
 			settings.consumerKey || util.defaultConfig.CONSUMER_KEY;
 		config.CONSUMER_SECRET =
 			settings.consumerSecret || util.defaultConfig.CONSUMER_SECRET;
-		config.DISPLAY_COUNT = Number(settings.displayCount);
+		config.DISPLAY_COUNT = settings.displayCount;
 		config.TIME_TAG = settings.displayConfigs.includes('timeTag');
 		config.PHOTO_TAG = settings.displayConfigs.includes('photoTag');
 		config.SSL = settings.displayConfigs.includes('useHttps');
@@ -219,31 +219,31 @@ class Nofan {
 
 	async homeTimeline() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/home_timeline', {
+		const statuses = await this.#get('/statuses/home_timeline', {
 			count,
 			format: 'html',
 			...this.params,
 		});
-		this._displayTimeline(statuses, {verbose: this.verbose});
+		this.#displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async publicTimeline() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/public_timeline', {
+		const statuses = await this.#get('/statuses/public_timeline', {
 			count,
 			format: 'html',
 			...this.params,
 		});
-		this._displayTimeline(statuses, {verbose: this.verbose});
+		this.#displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async contextTimeline(id: string) {
-		const statuses = await this._get('/statuses/context_timeline', {
+		const statuses = await this.#get('/statuses/context_timeline', {
 			id,
 			format: 'html',
 			...this.params,
 		});
-		this._displayTimeline(statuses, {verbose: this.verbose});
+		this.#displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async searchTimeline(q: string) {
@@ -252,19 +252,19 @@ class Nofan {
 		const uri = this.params.id
 			? '/search/user_timeline'
 			: '/search/public_timeline';
-		const statuses = await this._get(uri, {
+		const statuses = await this.#get(uri, {
 			q,
 			count,
 			format: 'html',
 			...this.params,
 		});
-		this._displayTimeline(statuses, {verbose: this.verbose});
+		this.#displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async trendsTimeline() {
 		const [{trends: hotTrends}, savedTrends] = [
-			await this._get<GetTrendsResult>('/trends/list'),
-			await this._get<Trend[]>('/saved_searches/list'),
+			await this.#get<GetTrendsResult>('/trends/list'),
+			await this.#get<Trend[]>('/saved_searches/list'),
 		];
 
 		if (hotTrends.length + savedTrends.length > 0) {
@@ -281,36 +281,36 @@ class Nofan {
 
 	async userTimeline(id: string) {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/user_timeline', {
+		const statuses = await this.#get('/statuses/user_timeline', {
 			id,
 			count,
 			format: 'html',
 			...this.params,
 		});
-		this._displayTimeline(statuses, {verbose: this.verbose});
+		this.#displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async update(text: string) {
-		await this._post('/statuses/update', {status: text, ...this.params});
+		await this.#post('/statuses/update', {status: text, ...this.params});
 		spinner.succeed('Sent!');
 	}
 
 	async upload(text: string) {
 		const {photo, clipboard} = this;
 		if (photo) {
-			await this._upload(photo, text);
+			await this.#upload(photo, text);
 		} else if (clipboard) {
 			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
 			switch (process.platform) {
 				case 'darwin': {
 					const temporaryFilepath = await util.getTemporaryImagePathMacos();
-					await this._upload(temporaryFilepath, text);
+					await this.#upload(temporaryFilepath, text);
 					break;
 				}
 
 				case 'win32': {
 					const temporaryFilepath = await util.getTemporaryImagePathWindows();
-					await this._upload(temporaryFilepath, text);
+					await this.#upload(temporaryFilepath, text);
 					break;
 				}
 
@@ -319,7 +319,7 @@ class Nofan {
 					if (isWsl) {
 						process.env['NPS'] = 'powershell.exe';
 						const temporaryFilepath = await util.getTemporaryImagePathWindows();
-						await this._upload(temporaryFilepath, text);
+						await this.#upload(temporaryFilepath, text);
 						break;
 					}
 				}
@@ -338,36 +338,36 @@ class Nofan {
 	}
 
 	async undo() {
-		const statuses = await this._get<Status[]>('/statuses/user_timeline', {});
+		const statuses = await this.#get<Status[]>('/statuses/user_timeline', {});
 		// @ts-expect-error: Assume the first status is the latest one
-		await this._post<Status>('/statuses/destroy', {id: statuses[0].id});
+		await this.#post<Status>('/statuses/destroy', {id: statuses[0].id});
 		spinner.succeed('Deleted!');
 	}
 
 	async mentions() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/mentions', {
+		const statuses = await this.#get('/statuses/mentions', {
 			count,
 			format: 'html',
 			...this.params,
 		});
-		this._displayTimeline(statuses, {verbose: this.verbose});
+		this.#displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async me() {
 		const {DISPLAY_COUNT: count} = this.config;
-		const statuses = await this._get('/statuses/user_timeline', {
+		const statuses = await this.#get('/statuses/user_timeline', {
 			count,
 			format: 'html',
 			...this.params,
 		});
-		this._displayTimeline(statuses, {verbose: this.verbose});
+		this.#displayTimeline(statuses, {verbose: this.verbose});
 	}
 
 	async reply(id: string, text: string) {
-		const status: Status = await this._getStatus(id);
+		const status: Status = await this.#getStatus(id);
 		const replyText = `@${status?.user?.name ?? ''} ${text}`.trim();
-		await this._post('/statuses/update', {
+		await this.#post('/statuses/update', {
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			in_reply_to_status_id: id,
 			status: replyText,
@@ -377,11 +377,11 @@ class Nofan {
 	}
 
 	async repost(id: string, text: string) {
-		const status: Status = await this._getStatus(id);
+		const status: Status = await this.#getStatus(id);
 		const repostText = `${text} 转@${status?.user?.name ?? ''} ${getPlainText(
 			getEntities(status.text),
 		)}`.trim();
-		await this._post('/statuses/update', {
+		await this.#post('/statuses/update', {
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			repost_status_id: id,
 			status: repostText,
@@ -391,26 +391,27 @@ class Nofan {
 	}
 
 	async show(id: string) {
-		const status = await this._getStatus(id);
-		this._displayTimeline([status], {verbose: this.verbose});
+		const status = await this.#getStatus(id);
+		this.#displayTimeline([status], {verbose: this.verbose});
 	}
 
 	async get<T>(uri: string): Promise<T> {
-		return this._get<T>(uri, this.params);
+		return this.#get<T>(uri, this.params);
 	}
 
 	async post<T>(uri: string): Promise<T> {
-		return this._post<T>(uri, this.params);
+		return this.#post<T>(uri, this.params);
 	}
 
 	// @ts-expect-error: We've handled undefined return by throwing error
-	async _get<T>(uri: string, parameters?: any): Promise<T> {
+	// eslint-disable-next-line unicorn/consistent-class-member-order
+	async #get<T>(uri: string, parameters?: any): Promise<T> {
 		const {config} = this;
 		const account = await util.getAccount();
 		let user = account[config.USER ?? ''];
 		if (!user) {
 			for (const name in account) {
-				if (account[name]) {
+				if (account[name] !== undefined) {
 					user = account[name];
 					config.USER = name;
 					break;
@@ -431,19 +432,19 @@ class Nofan {
 			const result = await ff.get<T>(uri, parameters);
 			return result;
 		} catch (error) {
-			this._handleError(error);
+			this.#handleError(error);
 		}
 	}
 
 	// @ts-expect-error: We've handled undefined return by throwing error
-	async _post<T>(uri: string, parameters: any): Promise<T> {
+	async #post<T>(uri: string, parameters: any): Promise<T> {
 		const {config} = this;
 		const account = await util.getAccount();
 		let user = account[config.USER ?? ''];
 
 		if (!user) {
 			for (const name in account) {
-				if (account[name]) {
+				if (account[name] !== undefined) {
 					user = account[name];
 					config.USER = name;
 					break;
@@ -464,22 +465,22 @@ class Nofan {
 			const result = await ff.post<T>(uri, parameters);
 			return result;
 		} catch (error) {
-			this._handleError(error);
+			this.#handleError(error);
 		}
 	}
 
-	async _getStatus(id: string) {
-		return this._get<Status>('/statuses/show', {id, format: 'html'});
+	async #getStatus(id: string) {
+		return this.#get<Status>('/statuses/show', {id, format: 'html'});
 	}
 
 	// @ts-expect-error: We've handled undefined return by throwing error
-	async _upload(path: string, status: string): Promise<Status> {
+	async #upload(path: string, status: string): Promise<Status> {
 		const {config} = this;
 		const account = await util.getAccount();
 		let user = account[config.USER ?? ''];
 		if (!user) {
 			for (const name in account) {
-				if (account[name]) {
+				if (account[name] !== undefined) {
 					user = account[name];
 					config.USER = name;
 					break;
@@ -502,11 +503,11 @@ class Nofan {
 			});
 			return result;
 		} catch (error) {
-			this._handleError(error);
+			this.#handleError(error);
 		}
 	}
 
-	_handleError(error: unknown) {
+	#handleError(error: unknown) {
 		spinner.fail(error instanceof Error ? error.message : 'Unknown error');
 		if (this.repl) {
 			showInRepl(error);
@@ -516,13 +517,12 @@ class Nofan {
 	}
 
 	// eslint-disable-next-line complexity
-	_displayTimeline(timeline: any, options: any) {
+	#displayTimeline(timeline: any, options: any) {
 		const {config} = this;
 
 		spinner.stop();
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const {verbose = false} = options;
+		const {verbose: isVerbose = false} = options as {verbose?: boolean};
 		const hasTimeTag = config.TIME_TAG;
 		const hasPhotoTag = config.PHOTO_TAG;
 		const {COLORS: defaultColors} = util.defaultConfig;
@@ -539,85 +539,64 @@ class Nofan {
 			highlight: highlightColor,
 		} = colors;
 
-		const parseHighlight = (style: string, item: StatusEntity) => {
-			let appendText = '';
+		const formatEntityText = (item: StatusEntity) => {
+			// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
+			switch (item.type) {
+				case 'at': {
+					return (
+						util.formatEntityText(item, atColor, highlightColor, isVerbose) ||
+						chalkPipe(atColor)(
+							isVerbose ? `${item.text}:${item.id}` : item.text,
+						)
+					);
+				}
 
-			if (verbose && item.type === 'at') {
-				appendText = chalkPipe(style)(`:${item.id}`);
+				case 'link': {
+					return (
+						util.formatEntityText(item, linkColor, highlightColor, isVerbose) ||
+						chalkPipe(linkColor)(item.text)
+					);
+				}
+
+				case 'tag': {
+					return (
+						util.formatEntityText(item, tagColor, highlightColor, isVerbose) ||
+						chalkPipe(tagColor)(item.text)
+					);
+				}
+
+				default: {
+					return (
+						util.formatEntityText(item, textColor, highlightColor, isVerbose) ||
+						chalkPipe(textColor)(item.text)
+					);
+				}
 			}
-
-			if (item.boldTexts) {
-				const highlightText = item.boldTexts
-					.map((keyword) => {
-						if (keyword.isBold) {
-							const boldColor = `${style}.${highlightColor}`;
-							return chalkPipe(boldColor)(keyword.text);
-						}
-
-						return chalkPipe(style)(keyword.text);
-					})
-					.join('');
-
-				return highlightText + appendText;
-			}
-
-			return false;
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
 		for (const status of timeline as Status[]) {
 			let text = '';
 			for (const item of getEntities(status.text)) {
-				// eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
-				switch (item.type) {
-					case 'at': {
-						text +=
-							parseHighlight(atColor, item) ||
-							chalkPipe(atColor)(
-								verbose ? `${item.text}:${item.id}` : item.text,
-							);
-						break;
-					}
-
-					case 'link': {
-						text +=
-							parseHighlight(linkColor, item) ||
-							chalkPipe(linkColor)(item.text);
-						break;
-					}
-
-					case 'tag': {
-						text +=
-							parseHighlight(tagColor, item) || chalkPipe(tagColor)(item.text);
-						break;
-					}
-
-					default: {
-						text +=
-							parseHighlight(textColor, item) ||
-							chalkPipe(textColor)(item.text);
-						break;
-					}
-				}
+				text += formatEntityText(item);
 			}
 
 			const name =
 				chalkPipe(textColor)('[') +
 				chalkPipe(nameColor)(
-					verbose
+					isVerbose
 						? `${status?.user?.name}(${status?.user?.id}):${status.id}`
 						: status?.user?.name,
 				) +
 				chalkPipe(textColor)(']');
 			if (status.photo && hasPhotoTag) {
+				const largeUrl = status?.photo?.largeurl ?? '';
+				const photoUrl = largeUrl.includes('@')
+					? largeUrl.slice(0, largeUrl.indexOf('@'))
+					: largeUrl;
 				const photoTag = chalkPipe(photoColor)(
-					terminalLink(
-						'[图]',
-						status?.photo?.largeurl.replaceAll(/@.+\..+$/gv, '') ?? '',
-						{
-							fallback: (text) => text,
-						},
-					),
+					terminalLink('[图]', photoUrl, {
+						fallback: (label) => label,
+					}),
 				);
 				text += text.length > 0 ? ` ${photoTag}` : photoTag;
 			}
@@ -625,10 +604,10 @@ class Nofan {
 			if (hasTimeTag) {
 				const statusTimeAgo = chalkPipe(timeagoColor)(
 					`(${
-						verbose
-							? `${moment(new Date(status.createdAt))
+						isVerbose
+							? moment(new Date(status.createdAt))
 									.local()
-									.format('YYYY-MM-DD HH:mm:ss')}`
+									.format('YYYY-MM-DD HH:mm:ss')
 							: timeago.format(status.createdAt)
 					})`,
 				);
