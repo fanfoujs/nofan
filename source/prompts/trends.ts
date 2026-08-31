@@ -23,5 +23,8 @@ export const trendsPrompt = async (
 	return select<string>({
 		message: 'Select trends',
 		choices,
+		theme: {
+			keybindings: ['emacs', 'vim'],
+		},
 	});
 };
