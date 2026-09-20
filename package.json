@@ -1,53 +1,51 @@
 {
-  "name": "nofan",
-  "version": "3.0.0-beta.2",
-  "description": "CLI for Fanfou",
-  "type": "module",
-  "bin": {
-    "nofan": "distribution/source/cli.js"
-  },
-  "engines": {
-    "node": ">=20.12"
-  },
-  "files": [
-    "distribution/source"
-  ],
-  "scripts": {
-    "prepublishOnly": "npm run build",
-    "build": "del-cli distribution && tsc && chmod +x distribution/source/cli.js",
-    "test": "xo"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fanfoujs/nofan.git"
-  },
-  "author": "LitoMore",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/fanfoujs/nofan/issues"
-  },
-  "homepage": "https://github.com/fanfoujs/nofan#readme",
-  "dependencies": {
-    "@inquirer/prompts": "^8.7.0",
-    "chalk-pipe": "^6.2.0",
-    "execa": "^9.6.1",
-    "fanfou-sdk": "^7.0.0-beta.2",
-    "is-wsl": "^3.1.1",
-    "just-snake-case": "^3.2.0",
-    "meow": "^14.1.0",
-    "moment": "^2.30.1",
-    "ora": "^9.4.1",
-    "terminal-link": "^5.0.0",
-    "timeago.js": "^4.0.2"
-  },
-  "devDependencies": {
-    "@sindresorhus/tsconfig": "^8.1.0",
-    "@types/node": "^26.4.0",
-    "del": "^8.0.1",
-    "del-cli": "^7.0.0",
-    "log-symbols": "^7.0.1",
-    "typescript": "^6.0.3",
-    "typescript-7": "npm:typescript@^7.0.2",
-    "xo": "^4.0.0"
-  }
+	"name": "nofan",
+	"version": "3.0.0-beta.2",
+	"description": "CLI for Fanfou",
+	"license": "MIT",
+	"repository": "github:fanfoujs/nofan",
+	"homepage": "https://github.com/fanfoujs/nofan#readme",
+	"bugs": "https://github.com/fanfoujs/nofan/issues",
+	"author": "LitoMore",
+	"type": "module",
+	"bin": {
+		"nofan": "./distribution/source/cli.js"
+	},
+	"engines": {
+		"node": ">=20.12"
+	},
+	"scripts": {
+		"prepublishOnly": "npm run build",
+		"build": "del-cli distribution && tsc && chmod +x distribution/source/cli.js",
+		"test": "xo"
+	},
+	"files": [
+		"distribution/source"
+	],
+	"keywords": [
+		"fanfou"
+	],
+	"dependencies": {
+		"@inquirer/prompts": "^8.7.0",
+		"chalk-pipe": "^6.2.0",
+		"execa": "^9.6.1",
+		"fanfou-sdk": "^7.0.0-beta.2",
+		"is-wsl": "^3.1.1",
+		"just-snake-case": "^3.2.0",
+		"meow": "^14.1.0",
+		"moment": "^2.30.1",
+		"ora": "^9.4.1",
+		"terminal-link": "^5.0.0",
+		"timeago.js": "^4.0.2"
+	},
+	"devDependencies": {
+		"@sindresorhus/tsconfig": "^8.1.0",
+		"@types/node": "^26.4.0",
+		"del": "^8.0.1",
+		"del-cli": "^7.0.0",
+		"log-symbols": "^7.0.1",
+		"typescript": "^6.0.3",
+		"typescript-7": "npm:typescript@^7.0.2",
+		"xo": "^5.0.1"
+	}
 }

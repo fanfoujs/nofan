@@ -138,15 +138,17 @@ class Nofan {
 		spinner.start('Logging out');
 		const {config} = this;
 		const configUser = config.USER;
-		if (configUser) {
-			const account = await util.getAccount();
-			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete account[configUser];
-			config.USER = Object.keys(account)[0] ?? '';
-			await util.setConfig(config);
-			await util.setAccount(account);
-			spinner.succeed('Logout succeed!');
+		if (!configUser) {
+			return;
 		}
+
+		const account = await util.getAccount();
+		// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+		delete account[configUser];
+		config.USER = Object.keys(account)[0] ?? '';
+		await util.setConfig(config);
+		await util.setAccount(account);
+		spinner.succeed('Logout succeed!');
 	}
 
 	async configure() {
@@ -588,7 +590,7 @@ class Nofan {
 						: status?.user?.name,
 				) +
 				chalkPipe(textColor)(']');
-			if (status.photo && hasPhotoTag) {
+			if (hasPhotoTag && status.photo) {
 				const largeUrl = status?.photo?.largeurl ?? '';
 				const photoUrl = largeUrl.includes('@')
 					? largeUrl.slice(0, largeUrl.indexOf('@'))
