@@ -12,7 +12,7 @@
 		"nofan": "./distribution/source/cli.js"
 	},
 	"engines": {
-		"node": ">=20.12"
+		"node": ">=22"
 	},
 	"scripts": {
 		"prepublishOnly": "npm run build",
