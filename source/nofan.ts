@@ -47,8 +47,14 @@ class Nofan {
 	verbose?: boolean;
 
 	constructor(options: NofanOptions = {}) {
-		const {verbose, photo, clipboard, repl, consoleType, ...parameters} =
-			options;
+		const {
+			verbose,
+			photo,
+			clipboard,
+			repl,
+			consoleType = 'log',
+			...parameters
+		} = options;
 
 		this.photo = photo;
 		this.clipboard = clipboard;
