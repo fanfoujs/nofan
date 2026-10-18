@@ -49,6 +49,7 @@ Commands:
 `,
 	{
 		importMeta: import.meta,
+		booleanDefault: undefined,
 		flags: {
 			help: {
 				type: 'boolean',
@@ -61,6 +62,9 @@ Commands:
 			photo: {
 				type: 'string',
 				shortFlag: 'p',
+			},
+			repl: {
+				type: 'boolean',
 			},
 			verbose: {
 				type: 'boolean',

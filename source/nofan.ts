@@ -71,7 +71,7 @@ class Nofan {
 	async initConfig(options?: {verbose?: boolean}) {
 		try {
 			this.config = await util.getConfig();
-			this.verbose = this.config.VERBOSE ?? options?.verbose;
+			this.verbose = options?.verbose ?? this.config.VERBOSE;
 		} catch (error) {
 			spinner.fail(
 				error instanceof Error
@@ -100,12 +100,12 @@ class Nofan {
 			});
 
 			try {
-				config.USER = username;
+				config.USER = username_;
 				const token = await ff.xauth();
 				await util.createNofanDir();
 				await util.setConfig(config);
 				const account = await util.getAccount();
-				account[username] = {
+				account[username_] = {
 					/* eslint-disable @typescript-eslint/naming-convention -- Config file uses this format. */
 					CONSUMER_KEY: config.CONSUMER_KEY,
 					CONSUMER_SECRET: config.CONSUMER_SECRET,
@@ -505,9 +505,11 @@ class Nofan {
 		const ff = this.initFanfou(user);
 
 		try {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			const result = await ff.post<Status>('/photos/upload', {
 				photo: fs.createReadStream(path),
 				status,
+				...this.params,
 			});
 			return result;
 		} catch (error) {

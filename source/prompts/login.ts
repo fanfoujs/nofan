@@ -2,7 +2,8 @@ import {input, password as pwd} from '@inquirer/prompts';
 
 export const loginPrompt = async (options?: {currentUsername?: string}) => {
 	const username =
-		options?.currentUsername ??
+		// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- Empty usernames must trigger the prompt.
+		options?.currentUsername ||
 		(await input({
 			message: 'Enter your username',
 		}));
